@@ -1,0 +1,258 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
+import axios from "axios";
+
+const SparkleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg
+		width="32"
+		height="32"
+		viewBox="0 0 24 24"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+		{...props}
+    >
+		<path
+			d="M12 2L9.44 9.44 2 12l7.44 2.56L12 22l2.56-7.44L22 12l-7.44-2.56L12 2z"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<path
+			d="M18 8L16.5 5.5 14 4l2.5-1.5L18 0l1.5 2.5L22 4l-2.5 1.5L18 8z"
+			stroke="currentColor"
+			strokeWidth="1.5"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+const SignUp = () => {
+	
+    const router = useRouter();
+
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+	const [user, setUser] = useState({
+        username: "",
+        email: "",
+        fullname: "",
+        gender: "",
+        password: "",
+        confirmPassword: "",
+    });
+
+    const onSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault();
+		if (user.password !== user.confirmPassword) {
+			
+            toast.error("Oops! Passwords must match");
+			return;
+		}
+
+        try {
+
+            const toastId = toast.loading("Creating an account");
+
+            const response = await axios.post('/api/v1/auth/sign-up', user);
+            console.log("Signup Status: ", response);
+
+            toast.success("Account Created Successfully", { id: toastId });
+
+            setUser({
+                username: "",
+                email: "",
+                fullname: "",
+                gender: "",
+                password: "",
+                confirmPassword: "",
+            });
+
+            router.push('/signup/verify');
+        } catch(error: unknown) {
+            
+            if(error instanceof Error)  {
+                
+                console.error("Signup Failed: ", error.message);
+                toast.error(error.message);
+            }
+            else    {
+                
+                console.error("Signup Failed: ", String(error));
+                toast.error("Unexpected error occurred");
+            }
+        }
+    };
+
+	return (
+		<div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
+			<div className="w-full max-w-md bg-white rounded-3xl shadow-lg flex flex-col items-center text-center overflow-hidden p-8 sm:p-10">
+				
+				{/* Icon */}
+				<div className="text-black mb-6">
+					<SparkleIcon className="h-12 w-12" />
+				</div>
+
+				{/* Main Content */}
+				<main className="w-full">
+					<h1 className="text-3xl font-bold text-black">
+						Create account
+					</h1>
+
+					<form
+						onSubmit={onSignUp}
+						className="mt-8 space-y-4 text-left"
+                    >
+                        {/* Username */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Username
+							</label>
+							<input
+								type="text"
+								value={user.username}
+								onChange={(e) => setUser({...user, username: e.target.value})}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+								required
+							/>
+						</div>
+
+                        {/* Email Address */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Email address
+							</label>
+							<input
+								type="email"
+								value={user.email}
+								onChange={(e) => setUser({...user, email: e.target.value})}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+								required
+							/>
+						</div>
+
+						{/* Full Name */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Full Name
+							</label>
+							<input
+								type="text"
+								value={user.fullname}
+								onChange={(e) => setUser({...user, fullname: e.target.value})}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+								required
+							/>
+						</div>
+
+						{/* Gender */}
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Gender
+							</label>
+							<select
+								value={user.gender}
+								onChange={(e) => setUser({...user, gender: e.target.value})}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white"
+								required
+                            >
+								<option value="" disabled>
+									Select gender
+								</option>
+								<option value="male">Male</option>
+								<option value="female">Female</option>
+								<option value="other">Other</option>
+								<option value="prefer_not_to_say">
+									Prefer not to say
+								</option>
+							</select>
+						</div>
+
+						{/* Password */}
+						<div className="relative">
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Password
+							</label>
+							<input
+								type={showPassword ? "text" : "password"}
+								value={user.password}
+								onChange={(e) => setUser({...user, password: e.target.value})}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+								required
+							/>
+							<button
+								type="button"
+								onClick={() => setShowPassword(!showPassword)}
+								className="absolute inset-y-0 right-0 top-6 px-4 flex items-center text-gray-500">
+								{showPassword ? (
+									<EyeOff size={20} />
+								) : (
+									<Eye size={20} />
+								)}
+							</button>
+						</div>
+
+						{/* Confirm Password */}
+						<div className="relative">
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Confirm password
+							</label>
+							<input
+								type={showConfirmPassword ? "text" : "password"}
+								value={user.confirmPassword}
+								onChange={(e) =>
+									setUser({...user, confirmPassword: e.target.value})
+								}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+								required
+							/>
+							<button
+								type="button"
+								onClick={() =>
+									setShowConfirmPassword(!showConfirmPassword)
+								}
+								className="absolute inset-y-0 right-0 top-6 px-4 flex items-center text-gray-500">
+								{showConfirmPassword ? (
+									<EyeOff size={20} />
+								) : (
+									<Eye size={20} />
+								)}
+							</button>
+						</div>
+
+						{/* Create Account Button */}
+						<div className="pt-4">
+							<button
+								type="submit"
+								className="w-full block justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                            >
+								Create account
+							</button>
+						</div>
+					</form>
+
+					{/* Terms and Conditions */}
+					<p className="mt-8 text-xs text-gray-500 max-w-xs mx-auto">
+						By creating an account or signing you agree to our{" "}
+						<a
+							href="/terms-and-conditions"
+							className="font-semibold text-black hover:underline"
+                        >
+							Terms and Conditions
+						</a>
+					</p>
+				</main>
+			</div>
+		</div>
+	);
+}
+
+export default SignUp;
