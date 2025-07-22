@@ -31,7 +31,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${roboto.variable} ${geistMono.variable} antialiased`}>
+				className={`${roboto.variable}`}>
 				<Toaster position="top-center" reverseOrder={false} />
 				{children}
 			</body>
