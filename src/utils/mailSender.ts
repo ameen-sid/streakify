@@ -1,29 +1,31 @@
-import nodemailer from "nodemailer";
+import nodemailer, { SendMailOptions, SentMessageInfo, TransportOptions } from "nodemailer";
 import User from "@/models/user.model";
 import { MAIL_TYPES } from "@/constant";
 import { generateToken } from "./generateToken";
 
-interface props {
+interface MailSenderProps {
 	email: string;
 	emailType: string;
 	body?: string;
 	userId?: string;
 };
 
-const mailSender = async ({ email, emailType, body, userId }: props) => {
+const mailSender = async ({ 
+	email, emailType, body, userId 
+}: MailSenderProps): Promise<SentMessageInfo | undefined> => {
 	try {
 
 		const transporter = nodemailer.createTransport({
 			host: process.env.MAIL_HOST,
-			port: process.env.MAIL_PORT,
+			port: Number(process.env.MAIL_PORT),
 			// secure: false,
 			auth: {
 				user: process.env.MAIL_USER,
 				pass: process.env.MAIL_PASS,
 			},
-		} as nodemailer.TransportOptions );
+		} as TransportOptions );
 
-		let mailOptions = {};
+		let mailOptions: SendMailOptions;
 
 		if (emailType === MAIL_TYPES.otp) {
 
@@ -45,6 +47,8 @@ const mailSender = async ({ email, emailType, body, userId }: props) => {
 		}
 		else {
 
+			if(!userId)	throw new Error("User ID is required for this mail type");
+			
 			const token = await generateToken(userId!);
 
 			if (emailType === MAIL_TYPES.reset) {
@@ -78,13 +82,18 @@ const mailSender = async ({ email, emailType, body, userId }: props) => {
 					html: `<p>Your account is scheduled to delete after next 30 days if you want to recover your account <strong><a href="${token}">click</a></strong> on this to recover your account.<br/><strong>token: </strong>${token}</p> `,
 				}
 			}
+			else {
+				throw new Error("Invalid email type");
+			}
 		}
 
 		const mailResponse = await transporter.sendMail(mailOptions);
 
 		return mailResponse;
-	} catch (error: unknown) {
+	} catch (error) {
+		
 		console.error("Error while sending mail: ", error);
+		return undefined;
 	}
 };
 

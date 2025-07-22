@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const generateToken = async (userId: string) => {
+const generateToken = async (userId: string): Promise<string> => {
 	try {
 		
 		if (!process.env.JWT_SECRET) {
@@ -10,8 +10,10 @@ const generateToken = async (userId: string) => {
 		}
 		
 		return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1d' });
-	} catch (error: unknown) {
+	} catch (error) {
+		
 		console.error("Error while generating token: ", error);
+		throw new Error("Token generation failed");
 	}
 };
 

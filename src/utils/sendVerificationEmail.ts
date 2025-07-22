@@ -1,7 +1,7 @@
 import { MAIL_TYPES } from "@/constant";
 import { mailSender } from "./mailSender";
 
-const sendVerificationEmail = async (email: string, otp: string) => {
+const sendVerificationEmail = async (email: string, otp: string): Promise<void> => {
 	try {
 
 		const mailResponse = await mailSender({
@@ -11,7 +11,7 @@ const sendVerificationEmail = async (email: string, otp: string) => {
 		});
 
 		console.log("Mail Response: ", mailResponse);
-	} catch (error: unknown) {
+	} catch (error) {
 		
 		console.error("Error while sending verification mail: ", error);
 		throw error;
