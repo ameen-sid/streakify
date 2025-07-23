@@ -17,6 +17,7 @@ const MAIL_TYPES = {
 // Mail Title
 const MAIL_TITLES = {
 	verify: "Verify Your Email",
+	welcome: "Welcome To Discipline Planner",
 };
 
 // User model data hide from user
