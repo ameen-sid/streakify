@@ -1,8 +1,9 @@
 import User from "@/models/user.model";
 import { APIError } from "./APIError";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async (
-	userId: string
+	userId: mongoose.Types.ObjectId
 ): Promise<{ accessToken: string, refreshToken: string }> => {
 	try {
 
