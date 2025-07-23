@@ -4,7 +4,7 @@ const DB_NAME = "DisciplinePlanner";
 // Mail Type
 const MAIL_TYPES = {
 	welcome: "WELCOME",
-	otp: "OTP",
+	verify: "VERIFY",
 	reset: "RESET",
 	daily_remainder: "DAILY_REMAINDER",
 	inactive_user_reengagement: "INACTIVE_USER_REENGAGEMENT",
@@ -14,7 +14,11 @@ const MAIL_TYPES = {
 	recover: "RECOVER",
 };
 
+// User model data hide from user
+const USER_HIDE_FIELDS = "-password -refreshToken -isVerified -verifyEmailToken -resetPasswordToken -resetPasswordExpires -isDeleted -deletedAt -deleteAccountToken -isDeactivated";
+
 export {
 	DB_NAME,
 	MAIL_TYPES,
+	USER_HIDE_FIELDS,
 };
