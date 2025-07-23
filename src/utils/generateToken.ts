@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
-const generateToken = async (userId: string): Promise<string> => {
+const generateToken = async (userId: mongoose.Types.ObjectId): Promise<string> => {
 	try {
 		
 		if (!process.env.JWT_SECRET) {

@@ -2,12 +2,13 @@ import nodemailer, { SendMailOptions, SentMessageInfo, TransportOptions } from "
 import User from "@/models/user.model";
 import { MAIL_TYPES } from "@/constant";
 import { generateToken } from "./generateToken";
+import mongoose from "mongoose";
 
 interface MailSenderProps {
 	email: string;
 	emailType: string;
 	body?: string;
-	userId?: string;
+	userId?: mongoose.Types.ObjectId;
 };
 
 const mailSender = async ({ 
@@ -27,13 +28,13 @@ const mailSender = async ({
 
 		let mailOptions: SendMailOptions;
 
-		if (emailType === MAIL_TYPES.otp) {
+		if (emailType === MAIL_TYPES.welcome) {
 
 			mailOptions = {
 				from: "Discipline Planner",
 				to: email,
-				subject: "One Time Password",
-				html: `<p>Your One Time Password is <strong>${body}</strong>!</p>`,
+				subject: "Welcome to Discipline Planner",
+				html: `<p>Welcome to Discipline Planner</p>`
 			};
 		}
 		else if (emailType === MAIL_TYPES.recover) {
@@ -51,7 +52,23 @@ const mailSender = async ({
 			
 			const token = await generateToken(userId!);
 
-			if (emailType === MAIL_TYPES.reset) {
+			if (emailType === MAIL_TYPES.verify) {
+
+				const updatedUser = await User.findByIdAndUpdate(userId, {
+					$set: {
+						verifyEmailToken: token,
+						isVerified: false,
+					}
+				});
+
+				mailOptions = {
+					from: "Discipline Planner",
+					to: email,
+					subject: "Verify Your Email",
+					html: `<p>To verify your email <a href="http://localhost:3000/verify-email/${token}">Clicl</a> on this.</p>`
+				};
+			}
+			else if (emailType === MAIL_TYPES.reset) {
 
 				const updatedUser = await User.findByIdAndUpdate(userId, {
 					$set: {
