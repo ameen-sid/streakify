@@ -1,21 +1,23 @@
-import { Request, Response, NextFunction } from "express";
+import { NextRequest, NextResponse } from "next/server";
 import { APIError } from "./APIError";
+import { APIResponse } from "./APIResponse";
 
-type AsyncFunction = (req: Request, res: Response, next: NextFunction) => Promise<void>;
+type AsyncFunction = (req: NextRequest) => Promise<NextResponse>;
 
 const asyncHandler = (fn: AsyncFunction) => {
-	return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	return async (req: NextRequest): Promise<NextResponse> => {
 		try {
 
-			await fn(req, res, next);
-		} catch (error: unknown) {
+			return await fn(req);
+		} catch (error) {
 			
-			const err = error as Partial<APIError>;
+			const err = error as APIError;
+			const status = typeof err.statusCode === 'number' ? err.statusCode : 500;
 
-			res.status(err.statusCode || 500).json({
-				success: false,
-				message: err.message || "Internal Server Error",
-			});
+			return NextResponse.json(
+				new APIResponse(status, null, err.message || "Internal Server Error"),
+				{ status }
+			);
 		}
 	};
 };
