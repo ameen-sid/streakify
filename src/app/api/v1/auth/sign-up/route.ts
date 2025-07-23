@@ -1,11 +1,13 @@
 import connectDB from "@/database";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
-import { MAIL_TYPES, USER_HIDE_FIELDS } from "@/constant";
+import { MAIL_TITLES, USER_HIDE_FIELDS } from "@/constant";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { mailSender } from "@/utils/mailSender";
+import { generateToken } from "@/utils/generateToken";
+import { verificationEmail } from "@/mail/verification.template";
 
 connectDB();
 
@@ -42,11 +44,22 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		throw new APIError(500, "Failed to create user");
 	}
 
+	const token = await generateToken(createdUser._id);
+
+	const updatedUser = await User.findByIdAndUpdate(createdUser._id, {
+		$set: {
+			verifyEmailToken: token,
+			isVerified: false,
+		}
+	});
+	if(!updatedUser) {
+		throw new APIError(500, "Failed to set verify email token");
+	}
+
 	await mailSender({ 
 		email, 
-		emailType: MAIL_TYPES.verify, 
-		body: "", 
-		userId: user._id,
+		title: MAIL_TITLES.verify, 
+		body: verificationEmail(user.username, `http://localhost:3000/verify-email/${token}`)
 	});
 
 	return NextResponse.json(
