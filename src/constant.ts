@@ -22,9 +22,16 @@ const MAIL_TITLES = {
 // User model data hide from user
 const USER_HIDE_FIELDS = "-password -refreshToken -isVerified -verifyEmailToken -resetPasswordToken -resetPasswordExpires -isDeleted -deletedAt -deleteAccountToken -isDeactivated";
 
+// Cookies options
+const COOKIE_OPTIONS = {
+	httpOnly: true,
+	secure: false,	// true for production
+};
+
 export {
 	DB_NAME,
 	MAIL_TYPES,
 	USER_HIDE_FIELDS,
 	MAIL_TITLES,
+	COOKIE_OPTIONS,
 };
