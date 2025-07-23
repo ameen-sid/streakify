@@ -46,23 +46,28 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 	const token = await generateToken(createdUser._id);
 
-	const updatedUser = await User.findByIdAndUpdate(createdUser._id, {
-		$set: {
-			verifyEmailToken: token,
-			isVerified: false,
-		}
-	});
+	user.verifyEmailToken = token;
+
+	const updatedUser = await user.save({ validateBeforeSave: false });
 	if(!updatedUser) {
 		throw new APIError(500, "Failed to set verify email token");
 	}
 
+	// send mail to default mail for testing only
+	await mailSender({ 
+		email: process.env.DEFAULT_MAIL!, 
+		title: MAIL_TITLES.verify, 
+		body: verificationEmail(user.username, `http://localhost:3000/verify-email/${updatedUser.verifyEmailToken}`)
+	});
+
 	await mailSender({ 
 		email, 
 		title: MAIL_TITLES.verify, 
-		body: verificationEmail(user.username, `http://localhost:3000/verify-email/${token}`)
+		body: verificationEmail(user.username, `http://localhost:3000/verify-email/${updatedUser.verifyEmailToken}`)
 	});
 
 	return NextResponse.json(
-		new APIResponse(201, createdUser, "User Registered Successfully")
+		new APIResponse(201, createdUser, "User Registered Successfully"),
+		{ status: 201 },
 	);
 });
