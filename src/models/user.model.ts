@@ -43,6 +43,13 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	refreshToken: {
 		type: String,
 	},
+	isVerified: {
+		type: Boolean,
+		default: false,
+	},
+	verifyEmailToken: {
+		type: String,
+	},
 	resetPasswordToken: {
 		type: String,
 	},

@@ -10,6 +10,8 @@ export interface IUser {
 	gender: string;
 	password: string;
 	refreshToken: string;
+	isVerified: boolean;
+	verifyEmailToken: string;
 	resetPasswordToken: string;
 	resetPasswordExpires: Date;
 	isDeleted: boolean;
