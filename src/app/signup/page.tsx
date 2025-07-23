@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -62,7 +63,7 @@ const SignUp = () => {
 
             const toastId = toast.loading("Creating an account");
 
-            const response = await axios.post('/api/v1/auth/sign-up', user);
+            const response = await axios.post("/api/v1/auth/sign-up", user);
             console.log("Signup Status: ", response);
 
             toast.success("Account Created Successfully", { id: toastId });
@@ -167,12 +168,8 @@ const SignUp = () => {
 								<option value="" disabled>
 									Select gender
 								</option>
-								<option value="male">Male</option>
-								<option value="female">Female</option>
-								<option value="other">Other</option>
-								<option value="prefer_not_to_say">
-									Prefer not to say
-								</option>
+								<option value="Male">Male</option>
+								<option value="Female">Female</option>
 							</select>
 						</div>
 
@@ -242,12 +239,12 @@ const SignUp = () => {
 					{/* Terms and Conditions */}
 					<p className="mt-8 text-xs text-gray-500 max-w-xs mx-auto">
 						By creating an account or signing you agree to our{" "}
-						<a
+						<Link
 							href="/terms-and-conditions"
 							className="font-semibold text-black hover:underline"
                         >
 							Terms and Conditions
-						</a>
+						</Link>
 					</p>
 				</main>
 			</div>
