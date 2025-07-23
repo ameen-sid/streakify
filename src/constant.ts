@@ -14,6 +14,11 @@ const MAIL_TYPES = {
 	recover: "RECOVER",
 };
 
+// Mail Title
+const MAIL_TITLES = {
+	verify: "Verify Your Email",
+};
+
 // User model data hide from user
 const USER_HIDE_FIELDS = "-password -refreshToken -isVerified -verifyEmailToken -resetPasswordToken -resetPasswordExpires -isDeleted -deletedAt -deleteAccountToken -isDeactivated";
 
@@ -21,4 +26,5 @@ export {
 	DB_NAME,
 	MAIL_TYPES,
 	USER_HIDE_FIELDS,
+	MAIL_TITLES,
 };
