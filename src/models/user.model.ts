@@ -55,6 +55,7 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	},
 	resetPasswordExpires: {
 		type: Date,
+		default: null,
 	},
 	isDeleted: {
 		type: Boolean,

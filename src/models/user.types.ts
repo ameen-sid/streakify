@@ -13,7 +13,7 @@ export interface IUser {
 	isVerified: boolean;
 	verifyEmailToken: string;
 	resetPasswordToken: string;
-	resetPasswordExpires: Date;
+	resetPasswordExpires: Date | null;
 	isDeleted: boolean;
 	deletedAt: Date;
 	deleteAccountToken: string;
