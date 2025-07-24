@@ -8,7 +8,7 @@ import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { mailSender } from "@/utils/mailSender";
 import { generateAccessAndRefreshTokens } from "@/utils/generateAccessAndRefreshTokens";
-import { welcomeEmail } from "@/mail/welcome.template";
+import { welcomeEmail } from "@/mails/welcome.template";
 
 connectDB();
 

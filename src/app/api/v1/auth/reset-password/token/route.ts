@@ -7,7 +7,7 @@ import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { mailSender } from "@/utils/mailSender";
 import { generateToken } from "@/utils/generateToken";
-import { resetPasswordEmail } from "@/mail/reset-password.template";
+import { resetPasswordEmail } from "@/mails/reset-password.template";
 
 connectDB();
 

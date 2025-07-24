@@ -7,7 +7,7 @@ import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { mailSender } from "@/utils/mailSender";
 import { generateToken } from "@/utils/generateToken";
-import { verificationEmail } from "@/mail/verification.template";
+import { verificationEmail } from "@/mails/verification.template";
 
 connectDB();
 
