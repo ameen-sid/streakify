@@ -6,65 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff, CircleCheck } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
-
-const SparkleIcon = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-		{...props}
-    >
-		<path
-			d="M12 2L9.44 9.44 2 12l7.44 2.56L12 22l2.56-7.44L22 12l-7.44-2.56L12 2z"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
-
-const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg
-		fill="currentColor"
-		viewBox="0 0 16 16"
-		height="1em"
-		width="1em"
-		{...props}
-    >
-		<path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0 0 3.604 0 8.049c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-	</svg>
-);
-
-const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg
-		fill="currentColor"
-		viewBox="0 0 48 48"
-		height="1em"
-		width="1em"
-		{...props}
-    >
-		<path
-			fill="#FFC107"
-			d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-		/>
-		<path
-			fill="#FF3D00"
-			d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
-		/>
-		<path
-			fill="#4CAF50"
-			d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-		/>
-		<path
-			fill="#1976D2"
-			d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C44.572 36.846 48 30.828 48 24c0-1.341-.138-2.65-.389-3.917z"
-		/>
-	</svg>
-);
+import SparkleIcon from "@/components/sparkle-icon-single";
 
 const LoginPage = () => {
     
