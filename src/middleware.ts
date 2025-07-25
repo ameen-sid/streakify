@@ -12,7 +12,10 @@ interface JWTPayload {
 
 export const middleware = async (request: NextRequest) => {
 	
-	// const path = request.nextUrl.pathname;
+	const pathname = request.nextUrl.pathname;
+	if (pathname === '/profile/account-deleted') {
+    	return NextResponse.next();
+  	}
 	// const isPublicPath = path === '/signup' || path === '/verify-email' || path === '/login' || path === '/reset-password-email' || path === '/reset-password' || path === '/player-profile/:path*' || path === '/leaderboard' || path === '/achievements' || path === '/join-team' || path === '/all-players';
 	
 	const token = request.cookies.get("accessToken")?.value;
