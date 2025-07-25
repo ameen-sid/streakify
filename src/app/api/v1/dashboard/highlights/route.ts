@@ -21,6 +21,8 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 		throw new APIError(401, "Unauthorized: User is not authenticated.");
 	}
 
+	const userAvatar = request.cookies.get("user-avatar")?.value;
+
 	const { searchParams } = new URL(request.url);
 	const month = searchParams.get("month");
 	if(!month || !/^\d{4}-\d{2}$/.test(month)) {
@@ -50,7 +52,8 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 		new APIResponse(
 			200,
 			{
-				highlights
+				highlights,
+				userAvatar
 			},
 			"Highlights Fetched Successfully",
 		),

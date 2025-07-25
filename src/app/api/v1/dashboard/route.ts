@@ -20,6 +20,8 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 	if(!userId) {
 		throw new APIError(401, "Unauthorized: User is not authenticated.");
 	}
+	
+	const userAvatar = request.cookies.get("user-avatar")?.value;
 
 	const { searchParams } = new URL(request.url);
 	const month = searchParams.get("month");
@@ -75,7 +77,9 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 		return NextResponse.json(
 			new APIResponse(
 				200,
-				{},
+				{
+					userAvatar
+				},
 				"Dashboard Not Present",
 			),
 			{ status: 200 }
@@ -133,6 +137,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 	const dashboardData = {
         monthlyStats,
         taskBreakdown,
+		userAvatar,
     };
 
 	// dashboardData = {
@@ -145,6 +150,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 	// 		labels: [ {}, {}, {} ],
 	// 		data: [ {}, {}, {} ],
 	// 	},
+		// avatar: string,
 	// };
 
     return NextResponse.json(

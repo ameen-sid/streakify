@@ -1,13 +1,13 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
-import { Types } from "mongoose";
 import { COOKIE_OPTIONS } from "./constant";
 
 interface JWTPayload {
   _id: string;
   email: string;
   username: string;
+  avatar: string;
 }
 
 export const middleware = async (request: NextRequest) => {
@@ -28,6 +28,7 @@ export const middleware = async (request: NextRequest) => {
 
 		const response = NextResponse.next();
 		response.cookies.set("user-id", user._id, COOKIE_OPTIONS);
+		response.cookies.set("user-avatar", user.avatar, COOKIE_OPTIONS);
 
 		return response;
 	} catch(error: any) {

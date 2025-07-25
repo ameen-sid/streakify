@@ -27,6 +27,7 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	avatar: {
 		type: String,
 		required: true,
+		default: "https://placehold.co/100x100/E2E8F0/4A5568?text=AD",
 	},
 	dateOfBirth: {
 		type: Date,
@@ -91,7 +92,8 @@ userSchema.methods.generateAccessToken = function (this: UserDocument): string {
 		{
     		_id: this._id,
   	  		username: this.username,
-    		email: this.email
+    		email: this.email,
+			avatar: this.avatar
 		},
 		process.env.ACCESS_TOKEN_SECRET!,
 		{ expiresIn: process.env.ACCESS_TOKEN_EXPIRY as any }
