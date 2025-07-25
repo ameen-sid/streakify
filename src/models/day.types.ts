@@ -12,7 +12,7 @@ export interface IDay {
 	date: Date,
 	user: Types.ObjectId;
 	discipline: Types.ObjectId;
-	taskState: ITaskState;
+	taskState: ITaskState[];
 	highlight: String;
 }
 
