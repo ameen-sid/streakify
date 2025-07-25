@@ -15,8 +15,8 @@ export interface IUser {
 	resetPasswordToken: string;
 	resetPasswordExpires: Date | null;
 	isDeleted: boolean;
-	deletedAt: Date;
-	deleteAccountToken: string;
+	deletedAt: Date | null;
+	deleteAccountToken: string | null;
 	isDeactivated: boolean;
 }
 

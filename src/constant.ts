@@ -20,6 +20,7 @@ const MAIL_TITLES = {
 	welcome: "Welcome To Discipline Planner",
 	reset: "Reset Your Password",
 	delete: "DELETE",
+	recover: "RECOVER",
 };
 
 // User model data hide from user
