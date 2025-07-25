@@ -50,13 +50,13 @@ export const DELETE = asyncHandler(async (request: NextRequest) => {
 	await mailSender({ 
 		email: process.env.DEFAULT_MAIL!, 
 		title: MAIL_TITLES.delete, 
-		body: deleteAccountEmail(updatedUser.username, `http://localhost:3000/recover-account/${updatedUser.deleteAccountToken}`)
+		body: deleteAccountEmail(updatedUser.username, `http://localhost:3000/profile/account-recover/${updatedUser.deleteAccountToken}`)
 	});
 
 	await mailSender({
 		email: user.email,
 		title: MAIL_TITLES.delete,
-		body: deleteAccountEmail(updatedUser.username, `http://localhost:3000/recover-account/${updatedUser.deleteAccountToken}`)
+		body: deleteAccountEmail(updatedUser.username, `http://localhost:3000/profile/account-recover/${updatedUser.deleteAccountToken}`)
 	});
 
 	const cookieStore = await cookies();
