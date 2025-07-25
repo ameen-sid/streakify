@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Edit } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -13,8 +12,6 @@ type userDetailsType = {
 }
 
 const EditProfileDetailsPage = () => {
-
-	const router = useRouter();
     
 	const [userDetails, setUserDetails] = useState<userDetailsType | null>(null);
     const [loading, setLoading] = useState(false);
@@ -67,8 +64,6 @@ const EditProfileDetailsPage = () => {
             console.log("Update Profile Status: ", response);
 
 			toast.success("Details updated successfully!", { id: toastId });
-            
-			router.push("/profile");
 		} catch(error) {
 
 			if (axios.isAxiosError(error)) {
