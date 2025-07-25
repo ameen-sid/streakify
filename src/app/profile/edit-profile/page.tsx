@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -12,7 +12,7 @@ type userDetailsType = {
 	gender: string;
 }
 
-export default function EditProfileDetailsPage() {
+const EditProfileDetailsPage = () => {
 
 	const router = useRouter();
     
@@ -166,4 +166,6 @@ export default function EditProfileDetailsPage() {
         </div>
 		
     );
-}
+};
+
+export default EditProfileDetailsPage;
