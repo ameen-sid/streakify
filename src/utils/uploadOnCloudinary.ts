@@ -1,28 +1,30 @@
+import cloudinaryConnect from '@/config/cloudinary';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import fs from "fs";
+import streamifier from "streamifier";
 
 const uploadOnCloudinary = async (
-	localFilePath: string
-): Promise<UploadApiResponse | null> => {
-	try {
+	fileBuffer: Buffer,
+	filename: string
+): Promise<{ url: string }> => {
 
-		if (!localFilePath) return null;
+	await cloudinaryConnect();
+	
+	return new Promise((resolve, reject) => {
 
-		const response = await cloudinary.uploader.upload(localFilePath, {
-			resource_type: "auto",
-			folder: process.env.CLOUDINARY_FOLDER_NAME,
-		});
-		console.log("File is uploaded on cloudinary: ", response);
+		const uploadStream = cloudinary.uploader.upload_stream(
+			{
+				folder: process.env.CLOUDINARY_FOLDER_NAME,
+				public_id: filename.split('.')[0],
+			},
+			(error, result) => {
 
-		fs.unlinkSync(localFilePath);
+				if(error)	return reject(error);
+				resolve({ url: result?.secure_url! });
+			}
+		);
 
-		return response;
-	} catch (error) {
-
-		console.error("Error while uploading to cloudinary:", error);
-		if(fs.existsSync(localFilePath))	fs.unlinkSync(localFilePath);
-		return null;
-	}
+		streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+	});
 };
 
 export { uploadOnCloudinary };
