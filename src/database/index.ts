@@ -1,38 +1,39 @@
 import mongoose from "mongoose";
 import { DB_NAME } from "@/constant";
 
+
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  throw new Error("MONGODB_URI environment variable is not defined.");
+}
+
+let cached = (global as any).mongoose;
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
+
 const connectDB = async () => {
-	try {
+		
+	if (cached.conn) return cached.conn;
 
-		if(!process.env.MONGODB_URI) {
-			
-			console.error("MONGODB_URI environment variable is not defined.");
-			process.exit(1);
-		}
+	if (!cached.promise) {
+    	
+		cached.promise = mongoose.connect(`${MONGODB_URI}/${DB_NAME}`, {
+      		bufferCommands: false,
+    	}).then((mongooseInstance) => {
+      		
+			console.log("✅ MongoDB connected");
+      		return mongooseInstance;
+    	}).catch((error) => {
+      		
+			console.error("❌ MongoDB connection error:", error);
+      		throw error;
+    	});
+  	}
 
-		mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`);
-
-		const connection = mongoose.connection;
-
-		connection.on('connected', () => console.log("Database Connected") );
-
-		connection.on('error', (err) => {
-			
-			console.error("MongoDB connection error: " + err);
-			process.exit(1);
-		});
-
-		process.on('SIGINT', async () => {
-			
-			await mongoose.connection.close();
-			console.log("MongoDB connection closed due to Node.js process termination");
-			process.exit(0);
-		});
-	} catch(error: unknown) {
-
-		console.error("Error connecting to database: ", error);
-		process.exit(1);
-	}
+	cached.conn = await cached.promise;
+  	return cached.conn;
 }
 
 export default connectDB;
