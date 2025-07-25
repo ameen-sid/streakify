@@ -34,7 +34,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		username: username.toLowerCase(),
 		email,
 		fullname,
-		avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${username}`,
+		avatar: `https://placehold.co/100x100/E2E8F0/4A5568?text=${fullname[0]}${fullname.split(' ')[1][0]}`,
 		gender,
 		password
 	});
