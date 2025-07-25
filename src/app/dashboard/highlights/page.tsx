@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { MessageSquareQuote } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import AppLayout from "@/components/app-layout";
+import AppLayout from "@/components/common/app-layout";
 import HighlightCard from "@/components/dashboard/highlight-card";
 import { Log } from "@/components/dashboard/highlight-card";
 

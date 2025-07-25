@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import SparkleIcon from "@/components/sparkle-icon";
+import SparkleIcon from "@/components/icons/sparkle-icon";
 
 const PasswordChangeConfirmationPage = () => {
 	return (

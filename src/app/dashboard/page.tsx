@@ -11,7 +11,7 @@ import {
 } from "chart.js";
 import toast from "react-hot-toast";
 import axios from "axios";
-import AppLayout from "@/components/app-layout";
+import AppLayout from "@/components/common/app-layout";
 import TaskBreakdownChart from "@/components/dashboard/task-breakdown-chart";
 import StatsCard from "@/components/dashboard/stats-card";
 

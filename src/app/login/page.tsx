@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff, CircleCheck } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import SparkleIcon from "@/components/sparkle-icon-single";
+import SparkleIcon from "@/components/icons/sparkle-icon-single";
 
 const LoginPage = () => {
     

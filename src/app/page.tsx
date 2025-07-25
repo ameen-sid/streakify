@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import Logo from "@/components/logo";
+import Logo from "@/components/icons/logo";
 import AiTag from "@/components/ai-tag";
 
 const Home = () => {
