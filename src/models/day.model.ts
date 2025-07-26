@@ -35,7 +35,6 @@ const daySchema = new Schema<IDay>({
 	],
 	highlight: {
 		type: String,
-		required: [true, "Short Description is required"],
 	},
 },
 	{ timestamps: true },
