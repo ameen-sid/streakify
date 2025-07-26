@@ -1,0 +1,162 @@
+"use client";
+
+import React, { useState, useEffect, ReactNode } from "react";
+import { Calendar, CheckCircle, Circle, Menu, X, BrainCircuit, ListTodo, Settings, LayoutDashboard, BarChart3, Star, UserCircle, LogOut, History, MessageSquareQuote } from "lucide-react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import AppLayout from "@/components/common/app-layout";
+
+type Task = {
+    _id: string;
+    name: string;
+    description: string;
+    priority: number;
+};
+
+type TaskState = {
+    _id: string;
+    task: Task;
+    isCompleted: boolean;
+};
+
+type DailyLog = {
+    _id: string;
+    date: string;
+    taskState: TaskState[];
+    highlight: string;
+};
+
+const PastTaskItem = ({ taskState }: { taskState: TaskState }) => {
+
+    const { task, isCompleted } = taskState;
+
+    return (
+        <div className={`p-4 rounded-2xl border flex items-start gap-4 ${isCompleted ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+            <div>
+                {isCompleted ? (
+                    <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                ) : (
+                    <Circle className="h-6 w-6 text-gray-400 flex-shrink-0 mt-1" />
+                )}
+            </div>
+            <div className="flex-grow">
+                <h3 className={`font-bold text-lg ${isCompleted ? 'text-gray-500 line-through' : 'text-black'}`}>
+                    {task.name}
+                </h3>
+            </div>
+        </div>
+    );
+};
+
+const PastLogsContent = () => {
+
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [logData, setLogData] = useState<DailyLog | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+
+        const fetchLogForDate = async (date: string) => {
+
+            setLoading(true);
+            setLogData(null); // Clear previous data
+            const toastId = toast.loading(`Fetching log for ${date}...`);
+            try {
+
+                const response = await axios.get(`/api/v1/dailylogs/by-date/${date}`);
+				console.log("Logs Fetch Status: ", response);
+
+                if (response.data.data) {
+                    
+					const log: DailyLog = response.data.data;
+                    log.taskState.sort((a,b) => a.task.priority - b.task.priority);
+                    setLogData(log);
+                } else {
+                    setLogData(null);
+                }
+
+                toast.success("Log fetched!", { id: toastId });
+            } catch (error) {
+                
+				setLogData(null);
+                toast.error("Could not fetch log for this date.", { id: toastId });
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (selectedDate) {
+            
+			fetchLogForDate(selectedDate);
+        }
+    }, [selectedDate]);
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedDate(e.target.value);
+    };
+
+    return (
+        <div className="p-4 sm:p-6 lg:p-8">
+            <div className="w-full max-w-2xl mx-auto">
+                <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-black">Past Logs</h1>
+                        <p className="mt-1 text-gray-600">Review your progress from previous days.</p>
+                    </div>
+                    <div className="relative">
+                        <label htmlFor="log-date" className="sr-only">Select a Date</label>
+                        <input
+                            type="date"
+                            id="log-date"
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            className="bg-white border-2 border-gray-200 rounded-lg py-2 pl-3 pr-3 text-black focus:outline-none focus:ring-2 focus:ring-black"
+                        />
+                    </div>
+                </header>
+
+                <main>
+                    {loading ? (
+                        <div className="text-center py-16"><p>Loading log...</p></div>
+                    ) : logData ? (
+                        <div className="space-y-8">
+                            <div>
+                                <h2 className="text-xl font-bold text-black mb-4">Tasks for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</h2>
+                                <div className="space-y-4">
+                                    {logData.taskState.map(ts => (
+                                        <PastTaskItem key={ts._id} taskState={ts} />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                                <h2 className="text-xl font-bold text-black">Highlight of the Day</h2>
+                                {logData.highlight ? (
+                                    <p className="mt-2 text-gray-700 italic">"{logData.highlight}"</p>
+                                ) : (
+                                    <p className="mt-2 text-gray-500">No highlight was saved for this day.</p>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-200">
+                            <Calendar className="h-12 w-12 mx-auto text-gray-400" />
+                            <h3 className="mt-4 text-xl font-semibold text-black">No Log Found</h3>
+                            <p className="mt-2 text-gray-500">There is no saved log for the selected date.</p>
+                        </div>
+                    )}
+                </main>
+            </div>
+        </div>
+    );
+};
+
+const FullPastLogsPage = () => {
+    return (
+        <AppLayout>
+            <PastLogsContent />
+        </AppLayout>
+    );
+};
+
+export default FullPastLogsPage;
