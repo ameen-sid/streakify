@@ -8,6 +8,8 @@ export interface IDiscipline {
 	endDate: Date;
 	owner: Types.ObjectId;
 	status: string;
+	currentStreak: number;
+	longestStreak: number;
 }
 
 export type DisciplineDocument = Document<unknown, {}, IDiscipline> & IDiscipline;
