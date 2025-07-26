@@ -1,5 +1,5 @@
 import React, { useState, ReactNode } from "react";
-import { BrainCircuit, ListTodo, Settings, UserCircle, LogOut, Menu, X, Star, LayoutDashboard, BarChart3 } from "lucide-react";
+import { BrainCircuit, ListTodo, Settings, UserCircle, LogOut, Menu, X, Star, LayoutDashboard, BarChart3, History } from "lucide-react";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -65,6 +65,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     
     const navigation = [
         { name: "Today's Log", href: '/today', icon: ListTodo },
+        { name: 'Past Logs', href: '/history', icon: History },
         { name: 'Disciplines', href: '/disciplines', icon: Settings },
         { name: 'Grid Dashboard', href: '/dashboard/grid', icon: LayoutDashboard },
         { name: 'Summary Dashboard', href: '/dashboard/summary', icon: BarChart3 },
