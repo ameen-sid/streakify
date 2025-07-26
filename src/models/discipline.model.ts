@@ -24,6 +24,11 @@ const disciplineSchema = new Schema<IDiscipline>({
 		unique: [true, "Owner should have one discipline only"],
 		index: true,
 	},
+	status: {
+		type: String,
+		default: "Active",
+		enum: ["Active", "Completed", "Failed"],
+	},
 },
 	{ timestamps: true }
 );

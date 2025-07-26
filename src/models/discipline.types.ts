@@ -7,6 +7,7 @@ export interface IDiscipline {
 	startDate: Date;
 	endDate: Date;
 	owner: Types.ObjectId;
+	status: string;
 }
 
 export type DisciplineDocument = Document<unknown, {}, IDiscipline> & IDiscipline;
