@@ -1,6 +1,7 @@
 import { Schema, model, models } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { ITask, TaskModel } from "./task.types";
+import { MODEL_NAMES } from "@/constant";
 
 const taskSchema = new Schema<ITask>({
 	name: {
@@ -9,6 +10,7 @@ const taskSchema = new Schema<ITask>({
 	},
 	description: {
 		type: String,
+		required: [true, "Description is required"],
 	},
 	priority: {
 		type: Number,
@@ -16,7 +18,7 @@ const taskSchema = new Schema<ITask>({
 	},
 	discipline: {
 		type: Schema.Types.ObjectId,
-		ref: 'Discipline',
+		ref: MODEL_NAMES.DISCIPLINE,
 		required: [true, "Task should be belongs to one discipline"],
 		index: true,
 	},
@@ -26,6 +28,6 @@ const taskSchema = new Schema<ITask>({
 
 taskSchema.plugin(aggregatePaginate);
 
-const Task = (models.Task as TaskModel) || model<ITask, TaskModel>('Task', taskSchema);
+const Task = (models.Task as TaskModel) || model<ITask, TaskModel>(MODEL_NAMES.TASK, taskSchema);
 
 export default Task;

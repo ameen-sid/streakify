@@ -1,17 +1,17 @@
 import { Schema, model, models } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { IDay, DayModel, ITaskState } from "./day.types";
+import { MODEL_NAMES } from "@/constant";
 
 const taskStateSchema = new Schema<ITaskState>({
 	task: {
 		type: Schema.Types.ObjectId,
-		ref: 'Task',
+		ref: MODEL_NAMES.TASK,
 		required: [true, "Task is required"],
 	},
 	isCompleted: {
 		type: Boolean,
 		default: false,
-		required: [true, "isCompleted is required"],
 	},
 });
 
@@ -22,12 +22,13 @@ const daySchema = new Schema<IDay>({
 	},
 	user: {
 		type: Schema.Types.ObjectId,
-		ref: 'User',
+		ref: MODEL_NAMES.USER,
 		required: [true, "Day should be belongs to user"],
+		index: true,
 	},
 	discipline: {
 		type: Schema.Types.ObjectId,
-		ref: 'Discipline',
+		ref: MODEL_NAMES.DISCIPLINE,
 		required: [true, "Day should be belongs to discipline"],
 	},
 	taskState: [
@@ -42,6 +43,6 @@ const daySchema = new Schema<IDay>({
 
 daySchema.plugin(aggregatePaginate);
 
-const Day = (models.Day as DayModel) || model<IDay, DayModel>('Day', daySchema);
+const Day = (models.Day as DayModel) || model<IDay, DayModel>(MODEL_NAMES.DAY, daySchema);
 
 export default Day;

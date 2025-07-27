@@ -13,7 +13,7 @@ export interface IDay {
 	user: Types.ObjectId;
 	discipline: Types.ObjectId;
 	taskState: ITaskState[];
-	highlight: String;
+	highlight: String;	// (optional) store when user add highlight
 }
 
 export type DayDocument = Document<unknown, {}, IDay> & IDay;

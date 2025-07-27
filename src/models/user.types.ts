@@ -6,18 +6,18 @@ export interface IUser {
 	email: string;
 	fullname: string;
 	avatar: string;
-	dateOfBirth: Date;
+	dateOfBirth: Date;	// (optional) store when user want
 	gender: string;
 	password: string;
-	refreshToken: string;
+	refreshToken: string;	// (optional) store when user login
 	isVerified: boolean;
-	verifyEmailToken: string;
-	resetPasswordToken: string;
-	resetPasswordExpires: Date | null;
-	isDeleted: boolean;
-	deletedAt: Date | null;
-	deleteAccountToken: string | null;
-	isDeactivated: boolean;
+	verifyEmailToken: string;	// (optional) store when user verify email, and delete when user verified
+	resetPasswordToken: string;	// (optional) store when user request reset password, and delete when password is reset
+	resetPasswordExpires: Date;	// (optional) store when user request reset password, and delete when password is reset
+	isDeleted: boolean;	// (optional) store when user request delete account, and delete after user recovered account
+	deletedAt: Date;	// (optional) store when user request delete account, and delete after user recovered account
+	deleteAccountToken: string;	// (optional) store when user request delete account, and delete after user recovered account
+	isDeactivated: boolean;	// (optional) store when user cannot recovered account, and delete when admin recovered user's account
 }
 
 export type UserDocument = Document<unknown, {}, IUser> & IUser;

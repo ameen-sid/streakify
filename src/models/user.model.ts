@@ -1,13 +1,14 @@
 import { Schema, model, models } from "mongoose";
-import { UserDocument, UserDocumentMethods, UserModel } from "./user.types";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { UserDocument, UserDocumentMethods, UserModel } from "./user.types";
+import { MODEL_NAMES, GENDER_OPTIONS, DEFAULT_AVATAR } from "@/constant";
 
 const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	username: {
 		type: String,
 		required: [true, "Username is required"],
-		unique: [true, "Username should be unique"],
+		unique: true,
 		lowercase: true,
 		trim: true,
 		index: true,
@@ -15,7 +16,7 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	email: {
 		type: String,
 		required: [true, "Email is required"],
-		unique: [true, "Email should be unique"],
+		unique: true,
 		lowercase: true,
 		trim: true,
 		index: true,
@@ -27,14 +28,14 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	avatar: {
 		type: String,
 		required: true,
-		default: "https://placehold.co/100x100/E2E8F0/4A5568?text=AD",
+		default: DEFAULT_AVATAR,
 	},
 	dateOfBirth: {
 		type: Date,
 	},
 	gender: {
 		type: String,
-		enum: ["Male", "Female"],
+		enum: GENDER_OPTIONS,
 		required: [true, "Gender is required"],
 	},
 	password: {
@@ -56,11 +57,9 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	},
 	resetPasswordExpires: {
 		type: Date,
-		default: null,
 	},
 	isDeleted: {
 		type: Boolean,
-		default: false,
 	},
 	deletedAt: {
 		type: Date,
@@ -70,7 +69,6 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	},
 	isDeactivated: {
 		type: Boolean,
-		default: false,
 	},
 },
 	{ timestamps: true }
@@ -109,6 +107,6 @@ userSchema.methods.generateRefreshToken = function (this: UserDocument): string 
 };
 
 
-const User = (models.User as UserModel) || model<UserDocument & UserDocumentMethods, UserModel>('User', userSchema);
+const User = (models.User as UserModel) || model<UserDocument & UserDocumentMethods, UserModel>(MODEL_NAMES.USER, userSchema);
 
 export default User;

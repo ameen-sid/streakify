@@ -1,5 +1,6 @@
 import { Schema, model, models } from "mongoose";
 import { IDiscipline, DisciplineModel } from "./discipline.types";
+import { DISCIPLINE_STATUS, MODEL_NAMES } from "@/constant";
 
 const disciplineSchema = new Schema<IDiscipline>({
 	name: {
@@ -19,15 +20,14 @@ const disciplineSchema = new Schema<IDiscipline>({
 	},
 	owner: {
 		type: Schema.Types.ObjectId,
-		ref: 'User',
+		ref: MODEL_NAMES.USER,
 		required: [true, "Owner is required"],
-		unique: [true, "Owner should have one discipline only"],
 		index: true,
 	},
 	status: {
 		type: String,
-		default: "Active",
-		enum: ["Active", "Completed", "Failed"],
+		default: DISCIPLINE_STATUS.ACTIVE,
+		enum: [DISCIPLINE_STATUS.ACTIVE, DISCIPLINE_STATUS.COMPLETED, DISCIPLINE_STATUS.FAILED],
 	},
 	currentStreak: {
         type: Number,
@@ -41,6 +41,6 @@ const disciplineSchema = new Schema<IDiscipline>({
 	{ timestamps: true }
 );
 
-const Discipline = (models.Discipline as DisciplineModel) || model<IDiscipline, DisciplineModel>('Discipline', disciplineSchema);
+const Discipline = (models.Discipline as DisciplineModel) || model<IDiscipline, DisciplineModel>(MODEL_NAMES.DISCIPLINE, disciplineSchema);
 
 export default Discipline;

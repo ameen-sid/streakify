@@ -6,7 +6,7 @@ export interface ITask {
 	name: string;
 	description: string;
 	priority: number;
-	discipline: Types.ObjectId
+	discipline: Types.ObjectId;
 }
 
 export type TaskDocument = Document<unknown, {}, ITask> & ITask;
