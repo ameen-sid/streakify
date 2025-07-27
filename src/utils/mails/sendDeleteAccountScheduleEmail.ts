@@ -1,7 +1,11 @@
-export const deleteAccountEmail = (
+import { EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
+import { APIError } from "../APIError";
+import { mailSender } from "../mailSender";
+
+const deleteAccountScheduleTemplate = (
 	username: string,
-	recoverAccountLink: string
-) => {
+	recoverAccountLink: string,
+): string => {
 	return `<!DOCTYPE html>
 			<html lang="en">
 				<head>
@@ -95,6 +99,31 @@ export const deleteAccountEmail = (
 						</tr>
 					</table>
 				</body>
-			</html>
-`
+			</html>`;
 };
+
+const sendDeleteAccountScheduleEmail = async (
+	email: string,
+	username: string,
+	recoverAccountLink: string,
+): Promise<void> => {
+	try {
+
+		const title = EMAIL_SUBJECTS.DELETE_ACCOUNT_SCHEDULED;
+		const body = deleteAccountScheduleTemplate(username, recoverAccountLink);
+
+		await mailSender({
+			email,
+			title,
+			body
+		});
+
+		console.log("Delete Account Schedule Email sent successfully to: ", email);
+	} catch(error) {
+
+		console.error("Error while sending delete account schedule email: ", error);
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to send delete account schedule email. Please try again.");
+	}
+};
+
+export { sendDeleteAccountScheduleEmail };

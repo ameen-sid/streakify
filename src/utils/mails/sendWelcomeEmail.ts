@@ -1,14 +1,18 @@
-export const verificationEmail = (
+import { EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
+import { APIError } from "../APIError";
+import { mailSender } from "../mailSender";
+
+const welcomeEmailTemplate = (
 	username: string,
-	verificationLink: string
-) => {
+	disciplinePageLink: string,
+): string => {
 	return `<!DOCTYPE html>
 			<html lang="en">
 				<head>
-    				<meta charset="UTF-8">
-    				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+					<meta charset="UTF-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1.0">
 					<meta http-equiv="X-UA-Compatible" content="ie=edge">
-					<title>Verify Your Email Address</title>
+					<title>Welcome to Discipline Planner!</title>
 					<style>
 						/* Basic Resets */
 						body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -33,7 +37,7 @@ export const verificationEmail = (
 						<tr>
 							<td align="center" style="background-color: #f7fafc;">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" class="container">
-						
+									
 									<!-- Header -->
 									<tr>
 										<td align="center" style="padding: 40px 20px 20px 20px;">
@@ -52,7 +56,7 @@ export const verificationEmail = (
 												<tr>
 													<td align="center" style="padding-bottom: 20px;">
 														<h2 style="font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; color: #111827; margin: 0;">
-															Confirm Your Email Address
+															Welcome, ${username}!
 														</h2>
 													</td>
 												</tr>
@@ -60,27 +64,27 @@ export const verificationEmail = (
 												<!-- Body Text -->
 												<tr>
 													<td align="center" style="padding-bottom: 20px; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
-														Hi ${username}, thanks for signing up! Please click the button below to verify your email address and activate your account.
+														We're thrilled to have you on board. You've taken the first step towards building lasting disciplines and achieving your goals. Let's get you started.
 													</td>
 												</tr>
 
-												<!-- Verification Button -->
+												<!-- CTA Button -->
 												<tr>
 													<td align="center" style="padding: 20px 0;">
 														<table border="0" cellspacing="0" cellpadding="0">
 															<tr>
 																<td align="center" style="border-radius: 8px;" bgcolor="#111827">
-																	<a href="${verificationLink}" target="_blank" style="font-size: 18px; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 8px; padding: 15px 25px; border: 1px solid #111827; display: inline-block; font-weight: bold;">Verify Email Address</a>
+																	<a href="${disciplinePageLink}" target="_blank" style="font-size: 18px; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 8px; padding: 15px 25px; border: 1px solid #111827; display: inline-block; font-weight: bold;">Set Up Your First Discipline</a>
 																</td>
 															</tr>
 														</table>
 													</td>
 												</tr>
 
-												<!-- Security Note -->
+												<!-- Info Text -->
 												<tr>
-													<td align="center" style="padding-top: 10px; font-family: Arial, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
-														If you did not sign up for an account, you can safely ignore this email.
+													<td align="center" style="padding-top: 20px; font-family: Arial, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
+														If you have any questions, just reply to this email — we're always happy to help out.
 													</td>
 												</tr>
 											</table>
@@ -94,11 +98,37 @@ export const verificationEmail = (
 										</td>
 									</tr>
 
-                				</table>
-            				</td>
+								</table>
+							</td>
 						</tr>
 					</table>
 
 				</body>
-			</html>`
+			</html>`;
 };
+
+const sendWelcomeEmail = async (
+	email: string,
+	username: string,
+	disciplinePageLink: string,
+): Promise<void> => {
+	try {
+
+		const title = EMAIL_SUBJECTS.WELCOME;
+		const body = welcomeEmailTemplate(username, disciplinePageLink);
+
+		await mailSender({
+			email,
+			title,
+			body
+		});
+
+		console.log("Welcome Email sent successfully to: ", email);
+	} catch(error) {
+
+		console.error("Error while sending welcome email: ", error);
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to send welcome email. Please try again.");
+	}
+};
+
+export { sendWelcomeEmail };

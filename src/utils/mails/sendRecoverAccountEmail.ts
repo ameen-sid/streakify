@@ -1,7 +1,11 @@
-export const recoverAccountEmail = (
+import { EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
+import { APIError } from "../APIError";
+import { mailSender } from "../mailSender";
+
+const recoverAccountEmailTemplate = (
 	username: string,
-	loginPageLink: string
-) => {
+	loginPageLink: string,
+): string => {
 	return `<!DOCTYPE html>
 			<html lang="en">
 				<head>
@@ -95,6 +99,31 @@ export const recoverAccountEmail = (
 						</tr>
 					</table>
 				</body>
-			</html>
-`
+			</html>`;
 };
+
+const sendRecoverAccountEmail = async (
+	email: string,
+	username: string,
+	loginPageLink: string,
+): Promise<void> => {
+	try {
+
+		const title = EMAIL_SUBJECTS.RECOVER_ACCOUNT;
+		const body = recoverAccountEmailTemplate(username, loginPageLink);
+
+		await mailSender({
+			email,
+			title,
+			body
+		});
+
+		console.log("Recover Account Email sent successfully to: ", email);
+	} catch(error) {
+
+		console.error("Error while sending recover account email: ", error);
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to send recover account email. Please try again.");
+	}
+};
+
+export { sendRecoverAccountEmail };

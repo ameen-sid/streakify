@@ -1,7 +1,11 @@
-export const resetPasswordEmail = (
+import { EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
+import { APIError } from "../APIError";
+import { mailSender } from "../mailSender";
+
+const resetPasswordEmailTemplate = (
 	username: string,
 	resetPasswordLink: string,
-) => {
+): string => {
 	return `<!DOCTYPE html>
 			<html lang="en">
 				<head>
@@ -107,6 +111,31 @@ export const resetPasswordEmail = (
 					</table>
 
 				</body>
-			</html>
-`
+			</html>`;
 };
+
+const sendResetPasswordEmail = async (
+	email: string,
+	username: string,
+	resetPasswordLink: string,
+): Promise<void> => {
+	try {
+
+		const title = EMAIL_SUBJECTS.RESET_PASSWORD;
+		const body = resetPasswordEmailTemplate(username, resetPasswordLink);
+
+		await mailSender({
+			email,
+			title,
+			body
+		});
+
+		console.log("Reset Password Email sent successfully to: ", email);
+	} catch(error) {
+
+		console.error("Error while sending reset password email: ", error);
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to send reset password email. Please try again.");
+	}
+};
+
+export { sendResetPasswordEmail };
