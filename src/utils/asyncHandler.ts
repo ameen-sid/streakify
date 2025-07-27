@@ -1,22 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
 import { APIError } from "./APIError";
 import { APIResponse } from "./APIResponse";
 
-type AsyncFunction = (req: NextRequest) => Promise<NextResponse>;
+type AsyncFunction = (
+	req: NextRequest,
+	context: { params: any }
+) => Promise<NextResponse>;
 
 const asyncHandler = (fn: AsyncFunction) => {
-	return async (req: NextRequest): Promise<NextResponse> => {
+	return async (req: NextRequest, context: { params: any }): Promise<NextResponse> => {
 		try {
 
-			return await fn(req);
+			return await fn(req, context);
 		} catch (error) {
+
+			console.error("API Error Caught: ", error);
 			
-			const err = error as APIError;
-			const status = typeof err.statusCode === 'number' ? err.statusCode : 500;
+			if(error instanceof APIError) {
+
+				return NextResponse.json(
+					new APIResponse(error.statusCode, null, error.message),
+					{ status: error.statusCode }
+				);
+			}
 
 			return NextResponse.json(
-				new APIResponse(status, null, err.message || "Internal Server Error"),
-				{ status }
+				new APIResponse(HTTP_STATUS.INTERNAL_SERVER_ERROR, null, "An internal server error occurred."),
+				{ status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
 			);
 		}
 	};

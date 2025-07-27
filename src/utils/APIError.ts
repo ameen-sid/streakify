@@ -1,15 +1,22 @@
+import { DEFAULT_ERROR_MESSAGE } from "@/constant";
+
 class APIError extends Error {
+	
 	statusCode: number;
-	data: Record<string, unknown>;
+	data: Record<string, unknown> | null;
 	success: boolean;
 	errors: any[];
 
-	constructor(statusCode: number, message: string = "Something went wrong", errors: any[] = [], stack?: string) {
+	constructor(
+		statusCode: number, 
+		message: string = DEFAULT_ERROR_MESSAGE, 
+		errors: any[] = [], 
+		stack?: string
+	) {
 		
 		super(message);
-
 		this.statusCode = statusCode;
-		this.data = {};
+		this.data = null;
 		this.success = false;
 		this.errors = errors;
 

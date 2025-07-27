@@ -1,4 +1,6 @@
 import nodemailer, { SendMailOptions, SentMessageInfo, TransportOptions } from "nodemailer";
+import { APP_NAME, HTTP_STATUS } from "@/constant";
+import { APIError } from "./APIError";
 
 interface MailSenderProps {
 	email: string;
@@ -8,27 +10,29 @@ interface MailSenderProps {
 
 const mailSender = async ({ 
 	email, title, body 
-}: MailSenderProps): Promise<SentMessageInfo | undefined> => {
+}: MailSenderProps): Promise<SentMessageInfo> => {
 	try {
+
+		if (!process.env.MAIL_HOST || !process.env.MAIL_USER || !process.env.MAIL_PASS || !process.env.MAIL_FROM_ADDRESS) {
+            throw new Error("Mail server environment variables are not fully defined.");
+        }
 
 		const transporter = nodemailer.createTransport({
 			host: process.env.MAIL_HOST,
 			// port: Number(process.env.MAIL_PORT),
-			// secure: false,
+			// secure: true, // Use 'true' for port 465, 'false' for other ports
 			auth: {
 				user: process.env.MAIL_USER,
 				pass: process.env.MAIL_PASS,
 			},
 		} as TransportOptions );
 
-		let mailOptions: SendMailOptions;
-
-		mailOptions = await transporter.sendMail({
-			from: `Discipline Planner`,
+		const mailOptions: SendMailOptions = {
+			from: APP_NAME,
 			to: email,
 			subject: title,
 			html: body,
-		});
+		};
 
 		const mailResponse = await transporter.sendMail(mailOptions);
 
@@ -36,7 +40,7 @@ const mailSender = async ({
 	} catch (error) {
 		
 		console.error("Error while sending mail: ", error);
-		return undefined;
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to send the email.");
 	}
 };
 

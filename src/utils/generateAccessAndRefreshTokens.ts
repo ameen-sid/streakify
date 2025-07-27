@@ -1,31 +1,33 @@
+import { Types } from "mongoose";
 import User from "@/models/user.model";
+import { HTTP_STATUS } from "@/constant";
 import { APIError } from "./APIError";
-import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async (
-	userId: mongoose.Types.ObjectId
+	userId: Types.ObjectId
 ): Promise<{ accessToken: string, refreshToken: string }> => {
 	try {
 
 		const user = await User.findById(userId);
 		if(!user) {
-			throw new APIError(404, "User not found");
+			throw new APIError(HTTP_STATUS.NOT_FOUND, "User not found");
 		}
 
 		const accessToken = user.generateAccessToken();
 		const refreshToken = user.generateRefreshToken();
 
 		user.refreshToken = refreshToken;
-		await user.save({ validateBeforeSave: false });
+
+		const updatedUser = await user.save({ validateBeforeSave: false });
+		if(!updatedUser) {
+			throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to save refresh token");
+		}
 
 		return { accessToken, refreshToken };
 	} catch (error) {
 
 		if(error instanceof APIError) throw error;
-		throw new APIError(
-			500,
-			"Something went wrong while generating access and refresh token"
-		);
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Something went wrong while generating access and refresh token");
 	}
 };
 

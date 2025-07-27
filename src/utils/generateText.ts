@@ -1,27 +1,31 @@
 "use server";
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { MODEL_NAME, HTTP_STATUS } from "@/constant";
+import { APIError } from "./APIError";
 
 const apiKey = process.env.GEMINI_API_KEY;
-if(!apiKey) {
-	throw new Error("Api key not found");
+if (!apiKey) {
+    throw new Error("GEMINI_API_KEY environment variable is not defined.");
 }
 
-const ai = new GoogleGenAI({ apiKey });
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-const generateText = async (prompt: string) => {
+const generateText = async (prompt: string): Promise<string> => {
+	try {
 
-	const response = await ai.models.generateContent({
-		model: "gemini-2.5-flash",
-		contents: prompt,
-		config: {
-			thinkingConfig: {
-				thinkingBudget: 0,	// Disables thinking
-			},
-		},
-	});
+		const result = await model.generateContent(prompt);
 
-	return response.text;
+		const response = result.response;
+		const text = response.text();
+		
+		return text;
+	} catch(error) {
+
+		console.error("Error generating text with Gemini API: ", error);
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to generate AI text. Please try again");
+	}
 };
 
 export { generateText };
