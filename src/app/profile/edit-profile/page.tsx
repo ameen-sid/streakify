@@ -1,166 +1,150 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { GENDER_OPTIONS } from "@/constant";
+import { getProfileDetails, updateProfileDetails } from "@/services/profile.service";
+import { formatDateForInput } from "@/utils/formatDateForInput";
+import AppLayout from "@/components/common/app-layout";
 
-type userDetailsType = {
-	fullname: string;
-	dateOfBirth: Date;
-	gender: string;
-}
+type UserDetails = {
+    fullname: string;
+    dateOfBirth: string;
+    gender: string;
+};
 
-const EditProfileDetailsPage = () => {
+const initialState: UserDetails = {
+    fullname: "",
+    dateOfBirth: "",
+    gender: "",
+};
+
+const EditProfileDetailsContent = () => {
     
-	const [userDetails, setUserDetails] = useState<userDetailsType | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [userDetails, setUserDetails] = useState<UserDetails>(initialState);
+    const [loading, setLoading] = useState(true);
 
-	const getEditProfileDetails = async () => {
-		try {
+    useEffect(() => {
+        const fetchDetails = async () => {
 
-			const response = await axios.get("/api/v1/profile/edit");
-			console.log("Edit Profile Details Status: ", response);
-
-			setUserDetails(response.data.data);
-		} catch(error) {
-			
-			if (axios.isAxiosError(error)) {
+            setLoading(true);
+            try {
                 
-				console.error("Profile Data Fetch Failed: ", error.message);
-                toast.error(error.response?.data?.message || "Failed to fetch data");
-			} else if (error instanceof Error) {
+                const data = await getProfileDetails();
+                
+                setUserDetails({
+                    fullname: data.fullname,
+                    gender: data.gender,
+                    dateOfBirth: formatDateForInput(data.dateOfBirth),
+                });
+            } catch (error) {
+
+                if (error instanceof Error) {
                     
-				console.error("Profile Data Fetch Failed: ", error.message);
-                toast.error(error.message);
-            } else {
+				    console.error("Profile Details Fetch Failed: ", error.message);
+                    toast.error(error.message);
+                } else {
                     
-				console.error("Profile Data Fetch Failed: ", String(error));
-                toast.error("An unexpected error occurred");
+				    console.error("Profile Details Fetch Failed: ", String(error));
+                    toast.error("An unexpected error occurred");
+                }
+            } finally {
+                setLoading(false);
             }
-		}
-	}
+        };
 
-	useEffect(() => {
+        fetchDetails();
+    }, []);
 
-		getEditProfileDetails();
-	}, []);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        
-		const { name, value } = e.target;
-        setUserDetails(prevDetails => ({ ...prevDetails!, [name]: value }));
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    
+        const { name, value } = e.target;
+        setUserDetails(prevDetails => ({ ...prevDetails, [name]: value }));
     };
 
-    const OnUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-        
-		e.preventDefault();
+    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    
+        e.preventDefault();
         setLoading(true);
-        const toastId = toast.loading("Saving user details...");
-
+        const toastId = toast.loading("Saving changes...");
         try {
-			
-			const response = await axios.patch("/api/v1/profile", userDetails);
-            console.log("Update Profile Status: ", response);
-
-			toast.success("Details updated successfully!", { id: toastId });
-		} catch(error) {
-
-			if (axios.isAxiosError(error)) {
-                
-				console.error("Profile Data Fetch Failed: ", error.message);
-                toast.error(error.response?.data?.message || "Failed to fetch data", { id: toastId });
-			} else if (error instanceof Error) {
+    
+            await updateProfileDetails(userDetails);
+    
+            toast.success("Details updated successfully!", { id: toastId });
+        } catch (error) {
+            
+            if (error instanceof Error) {
                     
-				console.error("Profile Data Fetch Failed: ", error.message);
-                toast.error(error.message, { id: toastId });
-            } else {
+				    console.error("Profile Updation Failed: ", error.message);
+                    toast.error(error.message, { id: toastId });
+                } else {
                     
-				console.error("Profile Data Fetch Failed: ", String(error));
-                toast.error("An unexpected error occurred", { id: toastId });
-            }
-		}
+				    console.error("Profile Updation Failed: ", String(error));
+                    toast.error("An unexpected error occurred", { id: toastId });
+                }
+        } finally {
+            setLoading(false);
+        }
     };
+
+    if (loading && !userDetails.fullname) {
+        return <div className="p-8 text-center"><p>Loading...</p></div>;
+    }
 
     return (
-		<div className="min-h-screen bg-gray-100 p-4 flex justify-center items-center font-sans">
+        <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
+                
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
-                    
-					<div className="p-8">
+                    <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
-                            <a href="/profile" className="p-2 rounded-full hover:bg-gray-100">
+                            <Link href="/profile" className="p-2 rounded-full hover:bg-gray-100">
                                 <ArrowLeft size={24} className="text-black" />
-                            </a>
+                            </Link>
                             <h1 className="text-3xl font-bold text-black">Edit Profile Details</h1>
                         </div>
-
-                        <form onSubmit={OnUpdate} className="space-y-6">
-                            {/* Form Fields */}
+                        <form onSubmit={onSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6">
-                                {/* Full Name */}
                                 <div>
-                                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                                    <input 
-                                        type="text" 
-                                        id="fullname"
-                                        name="fullname" 
-                                        value={userDetails?.fullname} 
-                                        onChange={handleInputChange} 
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black" 
-                                        required 
-                                    />
+                                    <label htmlFor="fullname" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <input type="text" id="fullname" name="fullname" value={userDetails.fullname} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black" required />
                                 </div>
-
-                                {/* Date of Birth */}
                                 <div>
-                                    <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                                    <input 
-                                        type="date" 
-                                        id="dateOfBirth"
-                                        name="dateOfBirth" 
-                                        value={userDetails?.dateOfBirth instanceof Date ? userDetails.dateOfBirth.toISOString().split('T')[0] : userDetails?.dateOfBirth ? new Date(userDetails.dateOfBirth).toISOString().split('T')[0] : ''}
-                                        onChange={handleInputChange} 
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black" 
-                                        required
-                                    />
+                                    <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                                    <input type="date" id="dateOfBirth" name="dateOfBirth" value={userDetails.dateOfBirth} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black" required />
                                 </div>
-
-                                {/* Gender */}
                                 <div>
                                     <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                                    <select 
-                                        id="gender"
-                                        name="gender" 
-                                        value={userDetails?.gender} 
-                                        onChange={handleInputChange} 
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white" 
-                                        required
-                                    >
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
+                                    <select id="gender" name="gender" value={userDetails.gender} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white" required>
+                                        {GENDER_OPTIONS.map(option => (
+                                            <option key={option} value={option}>{option}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
-
-                            {/* Save Button */}
                             <div className="pt-6">
-                                <button 
-                                    type="submit" 
-                                    disabled={loading}
-                                    className="w-full block justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-400"
-                                >
+                                <button type="submit" disabled={loading} className="w-full block justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-400">
                                     {loading ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </div>
                         </form>
                     </div>
-
                 </div>
+                
             </div>
         </div>
-		
     );
 };
 
-export default EditProfileDetailsPage;
+const FullEditProfilePage = () => {
+    return (
+        <AppLayout>
+            <EditProfileDetailsContent />
+        </AppLayout>
+    );
+};
+
+export default FullEditProfilePage;

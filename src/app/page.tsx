@@ -2,8 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import Logo from "@/components/icons/logo";
+import { BrainCircuit } from "lucide-react";
 import AiTag from "@/components/ai-tag";
+import { APP_NAME } from "@/constant";
 
 const Home = () => {
 	return (
@@ -13,7 +14,7 @@ const Home = () => {
 					
 					{/* Left Column: Image/Graphic (visible on desktop) */}
 					<div className="hidden lg:flex items-center justify-center h-full">
-						<Logo className="w-2/3 h-auto max-w-xs" />
+						<BrainCircuit className="w-2/3 h-auto max-w-xs text-black" />
 					</div>
 
 					{/* Right Column: Content */}
@@ -21,13 +22,13 @@ const Home = () => {
 						
 						{/* Graphic for Mobile View */}
 						<div className="lg:hidden mb-12">
-							<Logo className="w-40 h-auto" />
+							<BrainCircuit className="w-40 h-auto text-black" />
 						</div>
 
 						{/* Text Content */}
 						<div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-4">
 							<h1 className="text-4xl md:text-5xl font-bold leading-tight">
-								Discipline Planner
+								{APP_NAME}
 							</h1>
 							<AiTag />
 						</div>
@@ -49,6 +50,7 @@ const Home = () => {
 								Create account
 							</Link>
 						</div>
+						
 					</div>
 
 				</div>

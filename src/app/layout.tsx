@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import { APP_NAME } from "@/constant";
 
 const roboto = Roboto({
 	variable: "--font-roboto",
@@ -19,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Discipline Planner",
-	description: "Discipline Planner Application Designed by Ameen Sid",
+	title: APP_NAME,
+	description: "Discipline Planner Application Designed and Developed by Ameen Sid",
 };
 
 export default function RootLayout({

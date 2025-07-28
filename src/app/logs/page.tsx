@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, ReactNode } from "react";
-import { Calendar, CheckCircle, Circle, Menu, X, BrainCircuit, ListTodo, Settings, LayoutDashboard, BarChart3, Star, UserCircle, LogOut, History, MessageSquareQuote } from "lucide-react";
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { Calendar } from "lucide-react";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { getLogByDate } from "@/services/dailylog.service";
+import PastTaskItem from "@/components/pages/pastlogs/past-logs-item";
 import AppLayout from "@/components/common/app-layout";
 
 type Task = {
@@ -13,7 +14,7 @@ type Task = {
     priority: number;
 };
 
-type TaskState = {
+export type TaskState = {
     _id: string;
     task: Task;
     isCompleted: boolean;
@@ -26,28 +27,6 @@ type DailyLog = {
     highlight: string;
 };
 
-const PastTaskItem = ({ taskState }: { taskState: TaskState }) => {
-
-    const { task, isCompleted } = taskState;
-
-    return (
-        <div className={`p-4 rounded-2xl border flex items-start gap-4 ${isCompleted ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
-            <div>
-                {isCompleted ? (
-                    <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
-                ) : (
-                    <Circle className="h-6 w-6 text-gray-400 flex-shrink-0 mt-1" />
-                )}
-            </div>
-            <div className="flex-grow">
-                <h3 className={`font-bold text-lg ${isCompleted ? 'text-gray-500 line-through' : 'text-black'}`}>
-                    {task.name}
-                </h3>
-            </div>
-        </div>
-    );
-};
-
 const PastLogsContent = () => {
 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -55,50 +34,51 @@ const PastLogsContent = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
         const fetchLogForDate = async (date: string) => {
-
+            
             setLoading(true);
-            setLogData(null); // Clear previous data
+            setLogData(null);
             const toastId = toast.loading(`Fetching log for ${date}...`);
             try {
-
-                const response = await axios.get(`/api/v1/dailylogs/by-date/${date}`);
-				console.log("Logs Fetch Status: ", response);
-
-                if (response.data.data) {
-                    
-					const log: DailyLog = response.data.data;
-                    log.taskState.sort((a,b) => a.task.priority - b.task.priority);
-                    setLogData(log);
+            
+                const data = await getLogByDate(date);
+            
+                if (data) {
+                    data.taskState.sort((a,b) => a.task.priority - b.task.priority);
+                    setLogData(data);
                 } else {
                     setLogData(null);
                 }
-
                 toast.success("Log fetched!", { id: toastId });
             } catch (error) {
                 
-				setLogData(null);
-                toast.error("Could not fetch log for this date.", { id: toastId });
-                console.error(error);
+                if (error instanceof Error) {
+                    
+				    console.error("Log Fetch Failed: ", error.message);
+                    toast.error(error.message, { id: toastId });
+                } else {
+                    
+				    console.error("Log Fetch Failed: ", String(error));
+                    toast.error("An unexpected error occurred", { id: toastId });
+                }
             } finally {
                 setLoading(false);
             }
         };
 
         if (selectedDate) {
-            
-			fetchLogForDate(selectedDate);
+            fetchLogForDate(selectedDate);
         }
     }, [selectedDate]);
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSelectedDate(e.target.value);
     };
 
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
+               
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-black">Past Logs</h1>
@@ -146,6 +126,7 @@ const PastLogsContent = () => {
                         </div>
                     )}
                 </main>
+                
             </div>
         </div>
     );
