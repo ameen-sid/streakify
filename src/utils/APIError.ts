@@ -5,12 +5,12 @@ class APIError extends Error {
 	statusCode: number;
 	data: Record<string, unknown> | null;
 	success: boolean;
-	errors: any[];
+	errors: Error[];
 
 	constructor(
 		statusCode: number, 
 		message: string = DEFAULT_ERROR_MESSAGE, 
-		errors: any[] = [], 
+		errors: Error[] = [], 
 		stack?: string
 	) {
 		

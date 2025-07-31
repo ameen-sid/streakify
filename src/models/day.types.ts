@@ -13,9 +13,9 @@ export interface IDay {
 	user: Types.ObjectId;
 	discipline: Types.ObjectId;
 	taskState: ITaskState[];
-	highlight: String;	// (optional) store when user add highlight
+	highlight: string;	// (optional) store when user add highlight
 }
 
-export type DayDocument = Document<unknown, {}, IDay> & IDay;
+export type DayDocument = Document<unknown, Record<string, never>, IDay> & IDay;
 
 export interface DayModel extends AggregatePaginateModel<DayDocument> {}

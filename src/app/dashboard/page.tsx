@@ -131,10 +131,10 @@ const DashboardContent = () => {
                                             <Zap className="h-6 w-6 text-black" />
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-black">This Month's Insight</p>
+                                            <p className="font-semibold text-black">This Month&apos;s Insight</p>
                                             <p className="mt-2 text-gray-600">
                                                 {aiInsight ? (
-                                                    <span className="italic">"{aiInsight}"</span>
+                                                    <span className="italic">&quot;{aiInsight}&quot;</span>
                                                 ) : (
                                                     <span>Generating insight...</span>
                                                 )}

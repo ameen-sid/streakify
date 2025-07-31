@@ -1,14 +1,22 @@
 import mongoose from "mongoose";
+import type { Mongoose } from "mongoose";
 import { DB_NAME } from "@/constant";
+
+declare global {
+	var mongoose: {
+    	conn: Mongoose | null;
+    	promise: Promise<Mongoose> | null;
+  	};
+}
 
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
   throw new Error("MONGODB_URI environment variable is not defined.");
 }
 
-let cached = (global as any).mongoose;
+let cached = global.mongoose;
 if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
 const connectDB = async () => {

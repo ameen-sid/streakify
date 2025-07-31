@@ -101,7 +101,7 @@ const MyDisciplinesContent = () => {
                     <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                         <div>
                             <h1 className="text-3xl font-bold text-black">My Disciplines</h1>
-                            <p className="mt-1 text-gray-600">Here are all the disciplines you've created.</p>
+                            <p className="mt-1 text-gray-600">Here are all the disciplines you&apos;ve created.</p>
                         </div>
                         <Link href="/disciplines/create" className="mt-4 sm:mt-0 w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition-colors">
                             <PlusCircle size={20} className="mr-2" />Create New
@@ -114,7 +114,7 @@ const MyDisciplinesContent = () => {
                         ) : disciplines.length > 0 ? (
                             <div className="space-y-6">{disciplines.map(discipline => (<DisciplineCard key={discipline._id} discipline={discipline} onDeleteClick={openDeleteModal} />))}</div>
                         ) : (
-                            <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-200"><h3 className="text-xl font-semibold text-black">No Disciplines Yet</h3><p className="mt-2 text-gray-500">Click "Create New" to start your first discipline.</p></div>
+                            <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-200"><h3 className="text-xl font-semibold text-black">No Disciplines Yet</h3><p className="mt-2 text-gray-500">Click &quot;Create New&quot; to start your first discipline.</p></div>
                         )}
                     </main>
 

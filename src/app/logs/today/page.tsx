@@ -221,7 +221,7 @@ const DailyContent = () => {
                
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-black">Today's Plan</h1>
+                        <h1 className="text-3xl font-bold text-black">Today&apos;s Plan</h1>
                         <p className="mt-1 text-gray-600 flex items-center"><Calendar size={16} className="mr-2" />{currentDate}</p>
                     </div>
                     {showStreak && discipline && (

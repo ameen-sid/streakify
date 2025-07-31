@@ -14,11 +14,11 @@ const VerifyEmailContent = () =>  {
     return (
         <>
             <p className="mt-4 text-gray-600 max-w-xs">
-                We've sent a verification link to <span className="font-semibold text-black">{userEmail || 'your email'}</span>. Please check your inbox and click the link to activate your account.
+                We&apos;ve sent a verification link to <span className="font-semibold text-black">{userEmail || 'your email'}</span>. Please check your inbox and click the link to activate your account.
             </p>
 
             <p className="mt-8 text-xs text-gray-500">
-                Can't find the email? Check your spam folder.
+                Can&apos;t find the email? Check your spam folder.
             </p>
 
             <footer className="mt-8 pt-4 border-t border-gray-200 w-full">

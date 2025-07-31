@@ -135,7 +135,7 @@ const DisciplineTasksContent = () => {
                         {tasks.length > 0 ? (
                             <div className="space-y-6">{tasks.map(task => (<TaskCard key={task._id} task={task} disciplineId={discipline._id} onDeleteClick={openDeleteModal} />))}</div>
                         ) : (
-                            <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-200"><h3 className="text-xl font-semibold text-black">No Tasks Yet</h3><p className="mt-2 text-gray-500">Click "Add New Task" to set up the tasks for this discipline.</p></div>
+                            <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-200"><h3 className="text-xl font-semibold text-black">No Tasks Yet</h3><p className="mt-2 text-gray-500">Click &quot;Add New Task&quot; to set up the tasks for this discipline.</p></div>
                         )}
                     </main>
                     

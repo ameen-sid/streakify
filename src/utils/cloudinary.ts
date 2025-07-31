@@ -35,7 +35,7 @@ const uploadOnCloudinary = async (
                     return reject(new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "File upload failed after processing."));
                 }
 
-				resolve({ url: result?.secure_url! });
+				resolve({ url: result?.secure_url ?? "" });
 			}
 		);
 

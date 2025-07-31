@@ -3,9 +3,8 @@ import { CheckCircle } from "lucide-react";
 
 const VerificationSuccessModal = ({ isOpen }: { isOpen: boolean }) => {
 	
-	if (!isOpen) return null;
 	const [countdown, setCountdown] = useState(3);
-
+	
 	useEffect(() => {
 		if (countdown > 0) {
 			
@@ -13,7 +12,9 @@ const VerificationSuccessModal = ({ isOpen }: { isOpen: boolean }) => {
 			return () => clearTimeout(timer);
 		}
 	}, [countdown]);
-
+	
+	if (!isOpen) return null;
+	
 	return (
 		<div className="fixed inset-0 bg-transparent bg-opacity-50 backdrop-blur-xs z-50 flex justify-center items-center p-4">
 			<div className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 text-center">

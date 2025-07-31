@@ -8,7 +8,7 @@ const HighlightCard = ({ log }: { log: HighlightLog }) => (
     		<span className="text-xl">{new Date(log.date).getUTCDate()}</span>
 		</div>
 		<div>
-			<p className="text-gray-700 italic">"{log.highlight}"</p>
+			<p className="text-gray-700 italic">&quot;{log.highlight}&quot;</p>
 		</div>
 	</div>
 );

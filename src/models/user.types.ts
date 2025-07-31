@@ -20,7 +20,7 @@ export interface IUser {
 	isDeactivated: boolean;	// (optional) store when user cannot recovered account, and delete when admin recovered user's account
 }
 
-export type UserDocument = Document<unknown, {}, IUser> & IUser;
+export type UserDocument = Document<unknown, Record<string, never>, IUser> & IUser;
 
 export interface UserDocumentMethods {
 	isPasswordCorrect(password: string): Promise<boolean>;

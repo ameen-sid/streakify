@@ -9,6 +9,6 @@ export interface ITask {
 	discipline: Types.ObjectId;
 }
 
-export type TaskDocument = Document<unknown, {}, ITask> & ITask;
+export type TaskDocument = Document<unknown, Record<string, never>, ITask> & ITask;
 
 export interface TaskModel extends AggregatePaginateModel<TaskDocument> {}

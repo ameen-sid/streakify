@@ -58,8 +58,10 @@ disciplineSchema.pre<DisciplineDocument>('deleteOne', { document: true, query: f
 		await Day.deleteMany({ discipline: this._id });
 
 		next();
-	} catch(error: any) {
-		next(error);
+	} catch(error) {
+		
+		if (error instanceof Error)	next(error);
+  		else	next(new Error("Unknown error occurred"));
 	}
 });
 

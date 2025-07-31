@@ -112,7 +112,7 @@ const PastLogsContent = () => {
                             <div className="bg-white rounded-2xl p-6 border border-gray-200">
                                 <h2 className="text-xl font-bold text-black">Highlight of the Day</h2>
                                 {logData.highlight ? (
-                                    <p className="mt-2 text-gray-700 italic">"{logData.highlight}"</p>
+                                    <p className="mt-2 text-gray-700 italic">&quot;{logData.highlight}&quot;</p>
                                 ) : (
                                     <p className="mt-2 text-gray-500">No highlight was saved for this day.</p>
                                 )}

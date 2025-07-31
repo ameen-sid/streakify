@@ -5,11 +5,11 @@ import { APIResponse } from "./APIResponse";
 
 type AsyncFunction = (
 	req: NextRequest,
-	context: { params: any }
+	context: { params: Record<string, string> }
 ) => Promise<NextResponse>;
 
 const asyncHandler = (fn: AsyncFunction) => {
-	return async (req: NextRequest, context: { params: any }): Promise<NextResponse> => {
+	return async (req: NextRequest, context: { params: Record<string, string> }): Promise<NextResponse> => {
 		try {
 
 			return await fn(req, context);

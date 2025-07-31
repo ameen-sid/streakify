@@ -18,11 +18,9 @@ const getAuthUser = async (request: NextRequest) => {
 			throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: No access token provided.");
 		}
 
-		let decodedPayload: { _id: string };
-		
 		const secret = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET!);
 		const { payload } = await jwtVerify(token, secret);
-		decodedPayload = payload as { _id: string };
+		const decodedPayload = payload as { _id: string };
 		
 		const user = await User.findById(decodedPayload._id).select(USER_HIDE_FIELDS);
 		if(!user) {

@@ -77,7 +77,7 @@ const ForgotPasswordPage = () => {
                         Forgot password?
                     </h1>
                     <p className="mt-2 text-gray-600">
-                        Don't worry! It happens. Please enter the email address
+                        Don&apos;t worry! It happens. Please enter the email address
                         associated with your account.
                     </p>
 

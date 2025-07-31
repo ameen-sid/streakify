@@ -32,7 +32,7 @@ const NotFoundPage = () => {
                                 className="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 rounded-lg shadow-sm text-base font-semibold text-black bg-white hover:bg-gray-50"
                             >
                                 <ListTodo size={20} className="mr-2" />
-                                Go to Today's Plan
+                                Go to Today&apos;s Plan
                             </Link>
                         </div>
                     </div>

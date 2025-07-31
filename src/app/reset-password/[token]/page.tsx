@@ -84,7 +84,7 @@ const ResetPasswordPage = () => {
                 
                 <main className="py-8 flex-grow flex flex-col">
                     <h1 className="text-3xl font-bold text-black">Reset password</h1>
-                    <p className="mt-2 text-gray-600">Please type something you'll remember.</p>
+                    <p className="mt-2 text-gray-600">Please type something you&apos;ll remember.</p>
                     <form onSubmit={onSubmit} className="mt-8 space-y-6">
                         <PasswordInputField
                             label="New password"

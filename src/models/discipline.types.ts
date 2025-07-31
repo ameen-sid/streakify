@@ -13,6 +13,6 @@ export interface IDiscipline {
 	longestStreak: number;
 }
 
-export type DisciplineDocument = Document<unknown, {}, IDiscipline> & IDiscipline;
+export type DisciplineDocument = Document<unknown, Record<string, never>, IDiscipline> & IDiscipline;
 
 export interface DisciplineModel extends AggregatePaginateModel<DisciplineDocument> {}

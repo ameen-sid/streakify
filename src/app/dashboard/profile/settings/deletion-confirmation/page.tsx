@@ -12,7 +12,7 @@ const AccountDeletedPage = () => {
             title="Account Deletion Scheduled"
         >
             <p className="mt-4 text-gray-600 max-w-xs">
-                Your account is now scheduled for deletion. In 30 days, all your data will be permanently deleted. If you want to recover your account, please check the email we've sent you.
+                Your account is now scheduled for deletion. In 30 days, all your data will be permanently deleted. If you want to recover your account, please check the email we&apos;ve sent you.
             </p>
 
             <div className="mt-8 w-full">

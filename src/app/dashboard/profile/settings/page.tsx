@@ -10,9 +10,10 @@ import AppLayout from "@/components/common/app-layout";
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose: () => void, onConfirm: () => void }) => {
     
-    if (!isOpen) return null;
     const [confirmText, setConfirmText] = useState('');
     const isConfirmEnabled = confirmText === 'DELETE';
+    
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs z-50 flex justify-center items-center p-4">
@@ -31,7 +32,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }: { isOpen: boole
 
                 <div className="mt-6">
                     <label htmlFor="confirm-delete" className="block text-sm font-medium text-gray-700">
-                        To confirm, please type "DELETE" in the box below.
+                        To confirm, please type &quot;DELETE&quot; in the box below.
                     </label>
                     <input
                         type="text"
@@ -101,7 +102,7 @@ const AccountSettingsContent = () => {
                         <div className="border-2 border-red-200 rounded-lg p-6">
                             <h2 className="text-xl font-bold text-red-800">Delete Account</h2>
                             <p className="mt-2 text-gray-600">
-                                Once you delete your account, it will be scheduled for deletion. You’ll have 30 days to recover it. After that, all your data will be permanently erased. Please proceed only if you're sure.
+                                Once you delete your account, it will be scheduled for deletion. You&apos;ll have 30 days to recover it. After that, all your data will be permanently erased. Please proceed only if you're sure.
                             </p>
                             <div className="mt-6">
                                 <button
