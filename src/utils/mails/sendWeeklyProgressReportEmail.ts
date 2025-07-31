@@ -1,4 +1,4 @@
-import { EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
+import { APP_NAME, EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
 import { APIError } from "../APIError";
 import { mailSender } from "../mailSender";
 
@@ -50,7 +50,7 @@ const weeklyProgressReportTemplate = (
 									<tr>
 										<td align="center" style="padding: 40px 20px 20px 20px;">
 											<h1 style="font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; color: #111827; margin: 0;">
-												Discipline Planner
+												${APP_NAME}
 											</h1>
 										</td>
 									</tr>
@@ -133,7 +133,7 @@ const weeklyProgressReportTemplate = (
 										<td align="center" style="padding: 30px 20px; font-family: Arial, sans-serif; font-size: 12px; line-height: 18px; color: #9ca3af;">
 											You are receiving this email because you opted in for weekly summaries. You can change this in your account settings.
 											<br><br>
-											&copy; 2025 Discipline Planner. All rights reserved.
+											&copy; 2025 ${APP_NAME}. All rights reserved.
 										</td>
 									</tr>
 

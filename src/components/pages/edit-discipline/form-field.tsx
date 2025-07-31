@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { DisciplineData } from "@/app/disciplines/edit/page";
+import { DisciplineData } from "@/app/disciplines/[disciplineId]/edit/page";
 
 interface FormFieldProps {
     label: string;

@@ -1,57 +1,55 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-import { COOKIE_OPTIONS } from "./constant";
 
-interface JWTPayload {
-  _id: string;
-  email: string;
-  username: string;
-  avatar: string;
+const PUBLIC_PATHS = [
+  '/',
+  '/signup',
+  '/signup/confirmation',
+  '/verify-email',
+  '/login',
+  '/forgot-password',
+  '/reset-password',
+  '/reset-password/success',
+  '/recover-account',
+];
+
+const isPublicRoute = (path: string): boolean => {
+
+	if(PUBLIC_PATHS.includes(path))	return true;
+
+	return (
+		path.startsWith('/verify-email/') ||
+		path.startsWith('/reset-password/') ||
+		path.startsWith('/recover-account/')
+	);
 }
 
 export const middleware = async (request: NextRequest) => {
 	
-	const pathname = request.nextUrl.pathname;
-	if (pathname === '/profile/account-deleted' || pathname.startsWith('/profile/account-recover/')) {
-    	return NextResponse.next();
-  	}
-	// const isPublicPath = path === '/signup' || path === '/verify-email' || path === '/login' || path === '/reset-password-email' || path === '/reset-password' || path === '/player-profile/:path*' || path === '/leaderboard' || path === '/achievements' || path === '/join-team' || path === '/all-players';
-	
+	const { pathname } = request.nextUrl;
 	const token = request.cookies.get("accessToken")?.value;
-	if(!token) {
+
+	const userLoggedIn = !!token;
+	const publicRoute = isPublicRoute(pathname);
+
+	// if user is logged in and tries to access public pages, redirect to home
+	if(userLoggedIn && publicRoute) {
+		return NextResponse.redirect(new URL("/", request.url));
+	}
+
+	// if user is not logged in and tries to access private pages, redirect to login
+	if(!userLoggedIn && !publicRoute) {
 		return NextResponse.redirect(new URL("/login", request.url));
 	}
 
-	try {
-
-		const secret = new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET!);
-		const { payload } = await jwtVerify(token, secret);
-    	const user = payload as unknown as JWTPayload;
-
-		const response = NextResponse.next();
-		response.cookies.set("user-id", user._id, COOKIE_OPTIONS);
-		response.cookies.set("user-avatar", user.avatar, COOKIE_OPTIONS);
-
-		return response;
-	} catch(error: any) {
-
-		console.error("JWT verification failed", error.message);
-		return NextResponse.redirect(new URL("/login", request.url));
-	}
-
-	// if(isPublicPath && token) {
-		// return NextResponse.redirect(new URL('/', request.url));
-	// }
-
-	// if(!isPublicPath && !token) {
-		// return NextResponse.redirect(new URL('/login', request.url));
-	// }
+	return NextResponse.next();
 }
 
 export const config = {
 	matcher: [
 		'/dashboard/:path*',
 		'/profile/:path*',
-	]
-}
+		'/disciplines/:path*',
+		'/logs/:path*',
+	],
+};

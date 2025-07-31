@@ -1,10 +1,10 @@
-import { ListTodo, History, Settings, LayoutDashboard, BarChart3, Star, UserCircle } from "lucide-react";
+import { ListTodo, History, Settings, LayoutDashboard, Star, UserCircle } from "lucide-react";
 
 // ----- FRONTEND CONSTANTS -----
 // ------------------------------
 
 // --- APPLICATION ---
-export const APP_NAME = "Discipline Planner";
+export const APP_NAME = "Streakify";
 
 // --- GEMINI AI ---
 export const MODEL_NAME =  "gemini-1.5-flash-latest";
@@ -166,14 +166,14 @@ export const SENSITIVE_USER_FIELDS = [
 
 // --- EMAIL CONSTANTS ---
 export const EMAIL_SUBJECTS = {
-    WELCOME: "Welcome to Discipline Planner!",
+    WELCOME: `Welcome to ${APP_NAME}!`,
     VERIFY_EMAIL: "Please Verify Your Email Address",
-    RESET_PASSWORD: "Reset Your Discipline Planner Password",
+    RESET_PASSWORD: `Reset Your ${APP_NAME} Password`,
     RECOVER_ACCOUNT: "Your Account Has Been Recovered",
     DELETE_ACCOUNT_SCHEDULED: "Your Account Deletion is Scheduled",
 	DAILY_REMINDER: "A quick reminder to keep your streak going!",
 	INACTIVE_USER: "Your discipline is waiting for you...",
-	WEEKLY_PROGRESS_REPORT: "Your Weekly Summary from Discipline Planner",
+	WEEKLY_PROGRESS_REPORT: `Your Weekly Summary from ${APP_NAME}`,
 } as const;
 
 // --- MODELS ---

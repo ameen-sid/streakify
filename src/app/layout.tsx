@@ -4,10 +4,10 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { APP_NAME } from "@/constant";
 
-// const roboto = Roboto({
-// 	variable: "--font-roboto",
-// 	subsets: ["latin"],
-// });
+const roboto = Roboto({
+	variable: "--font-roboto",
+	subsets: ["latin"],
+});
 
 // const geistSans = Geist({
 // 	variable: "--font-geist-sans",
@@ -21,7 +21,7 @@ import { APP_NAME } from "@/constant";
 
 export const metadata: Metadata = {
 	title: APP_NAME,
-	description: "Discipline Planner Application Designed and Developed by Ameen Sid",
+	description: `${APP_NAME} Application Designed and Developed by Ameen Sid`,
 };
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				// className={`${roboto.variable}`}
+				className={`${roboto.variable}`}
 			>
 				<Toaster position="top-center" reverseOrder={false} />
 				{children}

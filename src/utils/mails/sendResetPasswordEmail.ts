@@ -1,4 +1,4 @@
-import { EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
+import { APP_NAME, EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
 import { APIError } from "../APIError";
 import { mailSender } from "../mailSender";
 
@@ -12,7 +12,7 @@ const resetPasswordEmailTemplate = (
 					<meta charset="UTF-8">
 					<meta name="viewport" content="width=device-width, initial-scale=1.0">
 					<meta http-equiv="X-UA-Compatible" content="ie=edge">
-					<title>Reset Your Discipline Planner Password</title>
+					<title>Reset Your ${APP_NAME} Password</title>
 					<style>
 						/* Basic Resets */
 						body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -42,7 +42,7 @@ const resetPasswordEmailTemplate = (
 									<tr>
 										<td align="center" style="padding: 40px 20px 20px 20px;">
 											<h1 style="font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; color: #111827; margin: 0;">
-												Discipline Planner
+												${APP_NAME}
 											</h1>
 										</td>
 									</tr>
@@ -101,7 +101,7 @@ const resetPasswordEmailTemplate = (
 									<!-- Footer -->
 									<tr>
 										<td align="center" style="padding: 30px 20px; font-family: Arial, sans-serif; font-size: 12px; line-height: 18px; color: #9ca3af;">
-											&copy; 2025 Discipline Planner. All rights reserved.
+											&copy; 2025 ${APP_NAME}. All rights reserved.
 										</td>
 									</tr>
 

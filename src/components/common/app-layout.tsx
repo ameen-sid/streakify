@@ -32,7 +32,7 @@ const Header = ({ onMenuClick, user }: { onMenuClick: () => void, user: UserData
     );
 };
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, user }: { sidebarOpen: boolean, setSidebarOpen: (open: boolean) => void, user: UserData }) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen, user, date }: { sidebarOpen: boolean, setSidebarOpen: (open: boolean) => void, user: UserData, date: string }) => {
 
     const router = useRouter();
 
@@ -77,7 +77,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, user }: { sidebarOpen: boolean, 
                 </div>
                 <nav className="mt-6 px-2 space-y-1">
                     {APP_NAVIGATION_LINKS.map((item) => (
-                        <Link key={item.name} href={item.href} className="text-gray-600 hover:bg-gray-100 hover:text-black group flex items-center px-2 py-2 text-base font-medium rounded-md">
+                        <Link key={item.name} href={typeof item.href === "function" ? item.href(date) : item.href} className="text-gray-600 hover:bg-gray-100 hover:text-black group flex items-center px-2 py-2 text-base font-medium rounded-md">
                             <item.icon className="mr-4 flex-shrink-0 h-6 w-6 text-gray-400 group-hover:text-gray-500" />
                             {item.name}
                         </Link>
@@ -117,8 +117,10 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
     
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [user, setUser] = useState<UserData | null>(null);
+    const today = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
+
         const fetchUser = async () => {
             try {
                 
@@ -144,7 +146,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user} />
+            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user} date={today} />
             <div className="lg:pl-64 flex flex-col flex-1">
                 <Header onMenuClick={() => setSidebarOpen(true)} user={user} />
                 <main className="flex-1 pb-8">
