@@ -13,7 +13,7 @@ const mailSender = async ({
 }: MailSenderProps): Promise<SentMessageInfo> => {
 	try {
 
-		if (!process.env.MAIL_HOST || !process.env.MAIL_USER || !process.env.MAIL_PASS || !process.env.MAIL_FROM_ADDRESS) {
+		if (!process.env.MAIL_HOST || !process.env.MAIL_USER || !process.env.MAIL_PASS) {
             throw new Error("Mail server environment variables are not fully defined.");
         }
 

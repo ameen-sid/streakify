@@ -2,80 +2,72 @@ import mongoose from "mongoose";
 import connectDB from "@/database";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { COOKIE_OPTIONS, HTTP_STATUS } from "@/constant";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateAccessAndRefreshTokens } from "@/utils/generateAccessAndRefreshTokens";
-import { sendRecoverAccountEmail } from "@/utils/mails/sendRecoverAccountEmail";
+import { sanitizeUser } from "@/utils/sanitizeUser";
+import { sendWelcomeEmail } from "@/utils/mails/sendWelcomeEmail";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const session = await mongoose.startSession();
 	try {
-
+		
 		session.startTransaction();
 
 		const body = await request.json();
         const { token } = body;
         if (!token) {
-            throw new APIError(HTTP_STATUS.BAD_REQUEST, "Recovery token is required");
+            throw new APIError(HTTP_STATUS.BAD_REQUEST, "Verification token is required");
         }
 
-		const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
 		const user = await User.findOneAndUpdate(
-			{
-				deleteAccountToken: token,
-				deletedAt: { $gt: thirtyDaysAgo }
-			},
-			{
-				$unset: {
-					isDeleted: "",
-					deletedAt: "",
-					deleteAccountToken: ""
-				}
-			},
-			{ new: true, session }
-		);
+            { verifyEmailToken: token },
+            {
+                $set: { isVerified: true },
+                $unset: { verifyEmailToken: "" }
+            },
+            { new: true, session }
+        );
 
 		if (!user) {
-            throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid or expired recovery token. Please try again.");
+            throw new APIError(HTTP_STATUS.NOT_FOUND, "Invalid or expired verification token");
         }
 
 		const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-        const loginUrl = `${baseUrl}/login`;
-
-        await sendRecoverAccountEmail(
-            user.email,
-            user.username,
-            loginUrl
-        );
+        const disciplinePageLink = `${baseUrl}/disciplines`;
+        
+		await sendWelcomeEmail(
+			user.email, 
+			user.username, 
+			disciplinePageLink
+		);
 		
 		await session.commitTransaction();
 
 		const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
-		const response = NextResponse.json(
+		const cookieStore = await cookies();
+		cookieStore.set("accessToken", accessToken, COOKIE_OPTIONS);
+		cookieStore.set("refreshToken", refreshToken, COOKIE_OPTIONS);
+		
+        return NextResponse.json(
             new APIResponse(
                 HTTP_STATUS.OK,
-                null, 
-                "Account recovered successfully"
+                { user: sanitizeUser(user) },
+                "User Verified Successfully"
             ),
             { status: HTTP_STATUS.OK }
         );
-
-		response.cookies.set("accessToken", accessToken, COOKIE_OPTIONS);
-        response.cookies.set("refreshToken", refreshToken, COOKIE_OPTIONS);
-        
-        return response;
 	} catch(error) {
-
+		
 		await session.abortTransaction();
-        throw error;
+		throw error;
 	} finally {
 		await session.endSession();
 	}

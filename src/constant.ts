@@ -18,25 +18,31 @@ export const DISCIPLINE_STATUS = {
 	UNKNOWN: 'Unknown',
 } as const;
 
+// --- API HEADERS ---
+export const HEADERS = {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json'
+};
+
 // --- API ROUTES ---
 export const API_BASE_URL = "/api/v1";
 
 // --- AUTH ---
 export const AUTH_ROUTES = {
-	SIGN_UP: `${API_BASE_URL}/auth/sign-up`,
-	VERIFY_EMAIL: `${API_BASE_URL}/auth/verify`,
+	SIGN_UP: `${API_BASE_URL}/auth/signup`,
+	VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
 	LOGIN: `${API_BASE_URL}/auth/login`,
-	FORGOT_PASSWORD: `${API_BASE_URL}/auth/reset-password/token`,
-	RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
 	LOGOUT: `${API_BASE_URL}/auth/logout`,
+	FORGOT_PASSWORD: `${API_BASE_URL}/auth/reset-password/request`,
+	RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
+	REFRESH_TOKEN: `${API_BASE_URL}/auth/refresh-token`,
 } as const;
 
 // --- PROFILE --- 
 export const PROFILE_ROUTES = {
 	GET_PROFILE: `${API_BASE_URL}/profile`,
-	UPDATE_AVATAR: `${API_BASE_URL}/profile/avatar`,
-	GET_PROFILE_DETAILS: `${API_BASE_URL}/profile/edit`,
 	UPDATE_PROFILE_DETAILS: `${API_BASE_URL}/profile`,
+	UPDATE_AVATAR: `${API_BASE_URL}/profile/avatar`,
 	CHANGE_PASSWORD: `${API_BASE_URL}/profile/password`,
 	DELETE_ACCOUNT: `${API_BASE_URL}/profile/account`,
 	RECOVER_ACCOUNT: `${API_BASE_URL}/profile/account/recover`,
@@ -45,45 +51,55 @@ export const PROFILE_ROUTES = {
 // --- DISCIPLINE ---
 export const DISCIPLINE_ROUTES = {
 	GET_ALL: `${API_BASE_URL}/disciplines`,
-	DELETE: (id: string) => `${API_BASE_URL}/disciplines/${id}`,
 	CREATE: `${API_BASE_URL}/disciplines`,
 	GET_BY_ID: (id: string) => `${API_BASE_URL}/disciplines/${id}`,
 	UPDATE: (id: string) => `${API_BASE_URL}/disciplines/${id}`,
+	DELETE: (id: string) => `${API_BASE_URL}/disciplines/${id}`,
 } as const;
 
 // --- TASK ---
 export const TASK_ROUTES = {
 	GET_BY_DISCIPLINE: (disciplineId: string) => `${API_BASE_URL}/disciplines/${disciplineId}/tasks`,
-    DELETE: (taskId: string) => `${API_BASE_URL}/tasks/${taskId}`,
 	CREATE: (disciplineId: string) => `${API_BASE_URL}/disciplines/${disciplineId}/tasks`,
 	GET_BY_ID: (taskId: string) => `${API_BASE_URL}/tasks/${taskId}`,
 	UPDATE: (taskId: string) => `${API_BASE_URL}/tasks/${taskId}`,
+    DELETE: (taskId: string) => `${API_BASE_URL}/tasks/${taskId}`,
+} as const;
+
+// --- DASHBOARD ROUTES ---
+export const DASHBOARD_ROUTES = {
+	GET_SUMMARY: (month: string) => `${API_BASE_URL}/dashboard?month=${month}`,
+    GET_HIGHLIGHTS: (month: string) => `${API_BASE_URL}/dashboard/highlights?month=${month}`,
 } as const;
 
 // --- DAILY LOG ROUTES ---
 export const DAILYLOG_ROUTES = {
-    GET_TODAY: `${API_BASE_URL}/dailylogs/today`,
-    UPDATE_TASK: (taskId: string) => `${API_BASE_URL}/dailylogs/today/tasks/${taskId}`,
-    SAVE_HIGHLIGHT: `${API_BASE_URL}/dailylogs/today/highlight`,
-	GET_BY_DATE: (date: string) => `${API_BASE_URL}/dailylogs/by-date/${date}`,
-};
+    GET_TODAY: `${API_BASE_URL}/daily-logs/today`,
+    SAVE_HIGHLIGHT: `${API_BASE_URL}/daily-logs/today/highlight`,
+    UPDATE_TASK: (taskId: string) => `${API_BASE_URL}/daily-logs/today/tasks/${taskId}`,
+	GET_BY_DATE: (date: string) => `${API_BASE_URL}/daily-logs/by-date/${date}`,
+} as const;
 
-// --- DASHBOARD ROUTES ---
-export const DASHBOARD_ROUTES = {
-    GET_HIGHLIGHTS: (month: string) => `${API_BASE_URL}/dashboard/highlights?month=${month}`, // Add this
-	GET_SUMMARY: (month: string) => `${API_BASE_URL}/dashboard?month=${month}`
-};
+// --- CRON JOB ROUTES ---
+export const CRON_ROUTES = {
+	ADD_DAY: `${API_BASE_URL}/cron/day`,
+	UPDATE_DISCIPLINES_STATUS: `${API_BASE_URL}/cron/disciplines-status`,
+	DELETE_SCHEDULED_USERS: `${API_BASE_URL}/cron/scheduled-users`,
+	DAILY_REMINDERS: `${API_BASE_URL}/cron/daily-reminders`,
+	INACTIVE_USERS: `${API_BASE_URL}/cron/inactive-users`,
+	WEEKLY_PROGRESS_REPORT: `${API_BASE_URL}/cron/weekly-progress/report`,
+} as const;
 
 // --- NAVIGATION ---
 export const APP_NAVIGATION_LINKS = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: "Today's Log", href: '/today', icon: ListTodo },
+    { name: "Today's Log", href: '/logs/today', icon: ListTodo },
     { name: 'Disciplines', href: '/disciplines', icon: Settings },
     { name: 'Highlights', href: '/dashboard/highlights', icon: Star },
-    { name: 'Past Logs', href: '/logs', icon: History },
+    { name: 'Past Logs', href: (date: string) => `/logs/${date}`, icon: History },
     // { name: 'Grid View', href: '/dashboard/grid', icon: LayoutDashboard },
     // { name: 'Summary View', href: '/dashboard/summary', icon: BarChart3 },
-    { name: 'Profile', href: '/profile', icon: UserCircle },
+    { name: 'Profile', href: '/dashboard/profile', icon: UserCircle },
 ];
 
 // ------------------------------
@@ -128,6 +144,7 @@ export const HTTP_STATUS = {
 	UNAUTHORIZED: 401,
 	FORBIDDEN: 403,
 	NOT_FOUND: 404,
+	CONFLICT: 409,
 
 	// Server Errors
 	INTERNAL_SERVER_ERROR: 500,
@@ -154,6 +171,9 @@ export const EMAIL_SUBJECTS = {
     RESET_PASSWORD: "Reset Your Discipline Planner Password",
     RECOVER_ACCOUNT: "Your Account Has Been Recovered",
     DELETE_ACCOUNT_SCHEDULED: "Your Account Deletion is Scheduled",
+	DAILY_REMINDER: "A quick reminder to keep your streak going!",
+	INACTIVE_USER: "Your discipline is waiting for you...",
+	WEEKLY_PROGRESS_REPORT: "Your Weekly Summary from Discipline Planner",
 } as const;
 
 // --- MODELS ---
@@ -173,7 +193,13 @@ export const COOKIE_OPTIONS = {
 };
 
 // USER MODEL DATA FIELDS HIDE FROM USER
-export const USER_HIDE_FIELDS = "-password -refreshToken -isVerified -verifyEmailToken -resetPasswordToken -resetPasswordExpires -isDeleted -deletedAt -deleteAccountToken -isDeactivated";
+export const USER_HIDE_FIELDS = "-password -refreshToken -verifyEmailToken -resetPasswordToken -resetPasswordExpires -isDeleted -deletedAt -deleteAccountToken -isDeactivated";
+
+// AVATAR UPLOAD ALLOWED FILE TYPES
+export const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+// AVATAR MAX SIZE
+export const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
 // -----------------------------
 // ----- BACKEND CONSTANTS -----

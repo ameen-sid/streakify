@@ -1,6 +1,8 @@
 import connectDB from "@/database";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
+import { getAuthUser } from "@/utils/getAuthUser";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
@@ -9,44 +11,37 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 	
 	await connectDB();
 
-	const userId = request.cookies.get("user-id")?.value;
-	if(!userId) {
-		throw new APIError(401, "Unauthorized: User is not authenticated.");
-	}
+	const user = await getAuthUser(request);
+    const userId = user._id;
 
 	const body = await request.json();
-	const { currentPassword, newPassword, confirmPassword } = body;
-	if (!currentPassword || !newPassword || !confirmPassword) {
-		throw new APIError(400, "All fields are required");
-	}
+    const { currentPassword, newPassword } = body;
+    if (!currentPassword || !newPassword) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Current password and new password are required");
+    }
 
-	if (newPassword !== confirmPassword) {
-		throw new APIError(400, "New password and confirm new password should be same");
-	}
+	const userWithPassword = await User.findById(userId);
+    if (!userWithPassword) {
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "User not found");
+    }
 
-	const user = await User.findById(userId);
-	if (!user) {
-		throw new APIError(404, "User not found");
-	}
+	const isPasswordCorrect = await userWithPassword.isPasswordCorrect(currentPassword);
+    if (!isPasswordCorrect) {
+        throw new APIError(HTTP_STATUS.UNAUTHORIZED, "The current password you entered is incorrect.");
+    }
 
-	const isValidPassword = await user.isPasswordCorrect(currentPassword);
-	if (!isValidPassword) {
-		throw new APIError(401, "Current password is wrong");
-	}
-
-	user.password = newPassword;
-
-	const updatedUser = await user.save({ validateBeforeSave: false });
-	if (!updatedUser) {
-		throw new APIError(500, "Failed to update password");
+	userWithPassword.password = newPassword;
+    const updatedUser = await userWithPassword.save();
+	if(!updatedUser) {
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to update password");
 	}
 
 	return NextResponse.json(
-		new APIResponse(
-			200,
-			{},
-			"Password Updated Successfully",
-		),
-		{ status: 200 }
-	);
+        new APIResponse(
+            HTTP_STATUS.OK,
+            null, 
+            "Password updated successfully"
+        ),
+        { status: HTTP_STATUS.OK }
+    );
 });

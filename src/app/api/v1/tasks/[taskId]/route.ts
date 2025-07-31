@@ -1,125 +1,134 @@
 import connectDB from "@/database";
 import Task from "@/models/task.model";
+import { IDiscipline } from "@/models/discipline.types";
+import { ITask } from "@/models/task.types" ;
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
+import { getAuthUser } from "@/utils/getAuthUser";
+import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 
-export const DELETE = async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	try {
-		
-		await connectDB();
-
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
-
-		const { taskId } = await params;
-		if(!taskId) {
-			throw new APIError(400, "taskId is not found");
-		}
-
-		const result = await Task.deleteOne({ _id: taskId });
-		if(result.deletedCount === 0) {
-			throw new APIError(404, "Task not found");
-		}
-
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				{},
-				"Task Deleted Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
-
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
-	}
+interface IPopulatedTask extends Omit<ITask, 'discipline'> {
+	discipline: IDiscipline;
 };
 
-export const GET = async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	try {
-		
-		await connectDB();
+export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
+	
+	await connectDB();
 
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
+	const user = await getAuthUser(request);
 
-		const { taskId } = await params;
-		if(!taskId) {
-			throw new APIError(400, "taskId is not found");
-		}
+	const { taskId } = params;
+    if (!taskId) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
+    }
 
-		const task = await Task.findById(taskId);
-		if(!task) {
-			throw new APIError(404, "Task not found");
-		}
+	const task = await Task.findById(taskId)
+	.populate<IPopulatedTask>({
+		path: 'discipline',
+		select: 'owner'
+	});
 
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				task,
-				"Task Fetched Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
+	if (!task || !task.discipline.owner.equals(user._id)) {
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to view it.");
+    }
 
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
+	return NextResponse.json(
+        new APIResponse(
+			HTTP_STATUS.OK, 
+			task, 
+			"Task fetched successfully"
+		),
+        { status: HTTP_STATUS.OK }
+    );
+});
+
+export const PATCH = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
+	
+	await connectDB();
+
+	const user = await getAuthUser(request);
+
+	const { taskId } = params;
+    if (!taskId) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
+    }
+
+	const body = await request.json();
+    const { name, description, priority } = body;
+    if (!name || !description || !priority) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields are required");
+    }
+	
+	const taskToUpdate = await Task.findById(taskId)
+	.populate<IPopulatedTask>({
+		path: 'discipline',
+		select: 'owner'
+	});
+
+	if(!taskToUpdate || !taskToUpdate.discipline.owner.equals(user._id)) {
+	    throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to edit it.");
 	}
-};
 
-export const PATCH = async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	try {
-		
-		await connectDB();
+	const updatedTask = await Task.findByIdAndUpdate(
+		taskId,
+		{
+			$set: {
+				name,
+				description,
+				priority
+			}
+		},
+		{ new: true, runValidators: true }
+	);
 
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
+	if (!updatedTask) {
+        throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to update the task.");
+    }
 
-		const { taskId } = await params;
-		if(!taskId) {
-			throw new APIError(400, "taskId is not found");
-		}
+	return NextResponse.json(
+        new APIResponse(
+			HTTP_STATUS.OK, 
+			updatedTask, 
+			"Task updated successfully"
+		),
+        { status: HTTP_STATUS.OK }
+    );
+});
 
-		const body = await request.json();
-		const { name, description, priority } = body;
-		if (!name || !description || !priority) {
-			throw new APIError(400, "All fields are required");
-		}
+export const DELETE = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
+	
+	await connectDB();
 
-		const task = await Task.findById(taskId);
-		if(!task) {
-			throw new APIError(404, "Task not found");
-		}
+	const user = await getAuthUser(request);
 
-		task.name = name;
-		task.description = description;
-		task.priority = priority;
+	const { taskId } = params;
+    if (!taskId) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
+    }
 
-		const updatedTask = await task.save({ validateBeforeSave: false });
-		if (!updatedTask) {
-			throw new APIError(500, "Failed to update task");
-		}
+	const taskToDelete = await Task.findById(taskId)
+	.populate<IPopulatedTask>({ 
+		path: 'discipline', 
+		select: 'owner' 
+	});
 
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				updatedTask,
-				"Task Updated Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
+    if (!taskToDelete || !taskToDelete.discipline.owner.equals(user._id)) {
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to delete it.");
+    }
 
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
+	const updatedTask = await Task.findByIdAndDelete(taskId);
+	if(!updatedTask) {
+		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to delete task");
 	}
-};
+
+	return NextResponse.json(
+        new APIResponse(
+			HTTP_STATUS.OK, 
+			{}, 
+			"Task deleted successfully"
+		),
+        { status: HTTP_STATUS.OK }
+    );
+});

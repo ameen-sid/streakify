@@ -1,6 +1,8 @@
 import connectDB from "@/database";
 import Day from "@/models/day.model";
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
+import { getAuthUser } from "@/utils/getAuthUser";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
@@ -15,48 +17,42 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 	
 	await connectDB();
 
-	// 1. get user and validate input
-	const userId = request.cookies.get("user-id")?.value;
-	if(!userId) {
-		throw new APIError(401, "Unauthorized: User is not authenticated.");
-	}
-
-	const userAvatar = request.cookies.get("user-avatar")?.value;
+	const user = await getAuthUser(request);
+    const userId = user._id;
 
 	const { searchParams } = new URL(request.url);
-	const month = searchParams.get("month");
-	if(!month || !/^\d{4}-\d{2}$/.test(month)) {
-		throw new APIError(400, "Invalid month format. Please use YYYY-MM");
-	}
+    const month = searchParams.get("month");
+    if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid month format. Please use YYYY-MM");
+    }
 
-	// 2. prepare the database query
 	const year = parseInt(month.split('-')[0]);
 	const monthIndex = parseInt(month.split('-')[1]) - 1;
-	const startDate = new Date(year, monthIndex, 1);
-	const endDate = new Date(year, monthIndex + 1, 0);
+    
+	// create the start date explicitly in UTC
+	const startDate = new Date(Date.UTC(year, monthIndex, 1));
+    
+	// create the end date by going to the start of the next month and subtracting one millisecond
+	const endDate = new Date(Date.UTC(year, monthIndex + 1, 1));
+	endDate.setUTCMilliseconds(-1);
 
-	// 3. fetch highlights from the database
 	const highlights = await Day.find({
-		user: userId,
-		date: {
-			$gte: startDate,
-			$lte: endDate,
-		},
-		highlight: { $ne: "" },
-	})
-	.select('date highlight')
-	.sort({ date: 'asc' });
+        user: userId,
+        date: {
+            $gte: startDate,
+            $lte: endDate,
+        },
+        highlight: { $exists: true, $ne: "" },
+    })
+    .select('date highlight')
+    .sort({ date: 'asc' });
 
-	// 4. send the response
 	return NextResponse.json(
-		new APIResponse(
-			200,
-			{
-				highlights,
-				userAvatar
-			},
-			"Highlights Fetched Successfully",
-		),
-		{ status: 200 }
-	);
+        new APIResponse(
+            HTTP_STATUS.OK,
+            { highlights },
+            "Highlights fetched successfully",
+        ),
+        { status: HTTP_STATUS.OK }
+    );
 });

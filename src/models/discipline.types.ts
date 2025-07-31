@@ -1,4 +1,5 @@
 import { Document, Model, Types } from "mongoose";
+import type { AggregatePaginateModel } from "mongoose";
 
 export interface IDiscipline {
 	_id: Types.ObjectId;
@@ -14,4 +15,4 @@ export interface IDiscipline {
 
 export type DisciplineDocument = Document<unknown, {}, IDiscipline> & IDiscipline;
 
-export interface DisciplineModel extends Model<DisciplineDocument> {}
+export interface DisciplineModel extends AggregatePaginateModel<DisciplineDocument> {}

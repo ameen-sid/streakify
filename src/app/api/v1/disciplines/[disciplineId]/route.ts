@@ -1,164 +1,113 @@
 import connectDB from "@/database";
-// import mongoose from "mongoose";
 import Discipline from "@/models/discipline.model";
-import Task from "@/models/task.model";
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
+import { getAuthUser } from "@/utils/getAuthUser";
+import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 
-export const DELETE = async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	try {
-		
-		await connectDB();
+export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
+	
+	await connectDB();
 
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
+	const user = await getAuthUser(request);
+	
+	const { disciplineId } = params;
+	if (!disciplineId) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
+    }
 
-		const { disciplineId } = await params;
-		if(!disciplineId) {
-			throw new APIError(400, "DisciplineId is not found");
-		}
+	const discipline = await Discipline.findOne({ _id: disciplineId, owner: user._id });
+    if (!discipline) {
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found");
+    }
 
-		// const session = await mongoose.startSession();
-		// session.startTransaction();
-		// try {
+	return NextResponse.json(
+        new APIResponse(
+			HTTP_STATUS.OK, 
+			discipline, 
+			"Discipline fetched successfully"
+		),
+        { status: HTTP_STATUS.OK }
+    );
+});
 
-		const discipline = await Discipline.findById(disciplineId);
-		// .session(session);
-		if (!discipline) {
+export const PATCH = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
+	
+	await connectDB();
 
-			// await session.abortTransaction();
-			// session.endSession();
-			throw new APIError(404, "Discipline not found");
-		}
+	const user = await getAuthUser(request);
 
-		const taskResult = await Task.deleteMany({ discipline: discipline._id });
-		// .session(session);
+	const { disciplineId } = params;
+	if (!disciplineId) {
+        throw new APIError(400, "Discipline ID is required");
+    }
 
-		const disciplineResult = await Discipline.deleteOne({
-			_id: discipline._id,
-			owner: userId
-		});
-		// .session(session);
+	const body = await request.json();
+    const { name, description, startDate, endDate } = body;
+    if (!name || !description || !startDate || !endDate) {
+        throw new APIError(400, "All fields are required");
+    }
 
-		if (disciplineResult.deletedCount === 0) {
+	const updatedDiscipline = await Discipline.findOneAndUpdate(
+		{
+			_id: disciplineId,
+			owner: user._id
+		},
+		{
+			$set: {
+				name,
+				description,
+				startDate,
+				endDate
+			}
+		},
+		{ new: true, runValidators: true }
+	);
 
-			// await session.abortTransaction();
-			// session.endSession();
-			throw new APIError(500, "Failed to delete discipline within transasion. Possible concurrent modification or internal error.");
-		}
+	if (!updatedDiscipline) {
+        throw new APIError(404, "Discipline not found or you do not have permission to edit it.");
+    }
 
-		// await session.commitTransaction();
-		// session.endSession();
+	return NextResponse.json(
+        new APIResponse(
+			200, 
+			updatedDiscipline, 
+			"Discipline updated successfully"
+		),
+        { status: 200 }
+    );
+});
 
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				{},
-				"Disciplines Deleted Successfully",
-			),
-			{ status: 200 }
-		);
-	// } catch(error) {
+export const DELETE = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
+	
+	await connectDB();
 
-		// await session.abortTransaction();
-		// session.endSession();
-		// console.error("Transasion aborted due to error: ", error);
+	const user = await getAuthUser(request);
 
-		// if (error instanceof APIError) throw error;
-		// else throw new APIError(500, "Internal Server Error");
-	// }
-	} catch(error) {
+	const { disciplineId } = params;
+    if (!disciplineId) {
+        throw new APIError(400, "Discipline ID is required");
+    }
 
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
-	}
-};
+	const disciplineToDelete = await Discipline.findOne({ 
+		_id: disciplineId, 
+		owner: user._id 
+	});
 
-export const GET = async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	try {
-		
-		await connectDB();
+	if (!disciplineToDelete) {
+        throw new APIError(404, "Discipline not found or you do not have permission to delete it.");
+    }
 
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
+	await disciplineToDelete.deleteOne();
 
-		const { disciplineId } = await params;
-		if(!disciplineId) {
-			throw new APIError(400, "DisciplineId is not found");
-		}
-
-		const discipline = await Discipline.findById(disciplineId);
-		if (!discipline) {
-			throw new APIError(404, "Discipline not found");
-		}
-
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				discipline,
-				"Disciplines Fetched Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
-
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
-	}
-};
-
-export const PATCH = async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	try {
-		
-		await connectDB();
-
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
-
-		const { disciplineId } = await params;
-		if(!disciplineId) {
-			throw new APIError(400, "DisciplineId is not found");
-		}
-
-		const body = await request.json();
-		const { name, description, startDate, endDate } = body;
-		if (!name || !description || !startDate || !endDate) {
-			throw new APIError(400, "All fields are required");
-		}
-
-		const discipline = await Discipline.findById(disciplineId);
-		if (!discipline) {
-			throw new APIError(404, "Discipline not found");
-		}
-
-		discipline.name = name;
-		discipline.description = description;
-		discipline.startDate = startDate;
-		discipline.endDate = endDate;
-
-		const updatedDiscipline = await discipline.save({ validateBeforeSave: false });
-		if (!updatedDiscipline) {
-			throw new APIError(500, "Failed to update discipline");
-		}
-
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				updatedDiscipline,
-				"Disciplines Updated Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
-
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
-	}
-};
+	return NextResponse.json(
+        new APIResponse(
+			200, 
+			{}, 
+			"Discipline and all its tasks deleted successfully"
+		),
+        { status: 200 }
+    );
+});

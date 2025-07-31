@@ -1,73 +1,71 @@
 import connectDB from "@/database";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
+import { getAuthUser } from "@/utils/getAuthUser";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
+import { sanitizeUser } from "@/utils/sanitizeUser";
 
 export const GET = asyncHandler(async (request: NextRequest) => {
 	
 	await connectDB();
 
-	const userId = request.cookies.get("user-id")?.value;
-	if(!userId) {
-		throw new APIError(401, "Unauthorized: User is not authenticated.");
-	}
+	const user = await getAuthUser(request);
 
-	const user = await User.findById(userId).select("username fullname avatar");
-	if(!user) {
-		throw new APIError(404, "User not found");
-	}
+	const sanitizedUser = sanitizeUser(user);
 
 	return NextResponse.json(
-		new APIResponse(
-			200,
-			user,
-			"User Fetched Successfully",
-		),
-		{ status: 200 }
-	);
+        new APIResponse(
+            HTTP_STATUS.OK,
+            sanitizedUser,
+            "User profile fetched successfully",
+        ),
+        { status: HTTP_STATUS.OK }
+    );
 });
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
 	
 	await connectDB();
 
-	const userId = request.cookies.get("user-id")?.value;
-	if(!userId) {
-		throw new APIError(401, "Unauthorized: User is not authenticated.");
-	}
+	const user = await getAuthUser(request);
+    const userId = user._id;
 
 	const body = await request.json();
-	const { fullname, dateOfBirth, gender } = body;
-	if (!fullname || !dateOfBirth || !gender) {
-		throw new APIError(400, "All fields are required");
-	}
+    const { fullname, dateOfBirth, gender } = body;
+    if (!fullname || !dateOfBirth || !gender) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Full name, date of birth, and gender are required");
+    }
 
-	const user = await User.findById(userId);
-	if(!user) {
-		throw new APIError(404, "User not found");
-	}
+	const updatedUser = await User.findByIdAndUpdate(
+		userId,
+		{
+			$set: {
+				fullname,
+				dateOfBirth,
+				gender,
+			}
+		},
+		{
+			new: true,
+			runValidators: true
+		}
+	);
 
-	user.fullname = fullname;
-	user.dateOfBirth = dateOfBirth;
-	user.gender = gender;
-
-	const updatedUser = await user.save({ validateBeforeSave: false });
 	if (!updatedUser) {
-		throw new APIError(500, "Failed to update profile");
-	}
+        throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to update user profile");
+    }
+
+	const sanitizedUser = sanitizeUser(updatedUser);
 
 	return NextResponse.json(
-		new APIResponse(
-			200,
-			{
-				fullname: updatedUser.fullname,
-				dateOfBirth: updatedUser.dateOfBirth,
-				gender: updatedUser.gender
-			},
-			"User Updated Successfully",
-		),
-		{ status: 200 }
-	);
+        new APIResponse(
+            HTTP_STATUS.OK,
+            sanitizedUser,
+            "User profile updated successfully",
+        ),
+        { status: HTTP_STATUS.OK }
+    );
 });

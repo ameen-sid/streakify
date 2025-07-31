@@ -2,95 +2,91 @@ import connectDB from "@/database";
 import Discipline from "@/models/discipline.model";
 import Task from "@/models/task.model";
 import { NextRequest, NextResponse } from "next/server";
+import { HTTP_STATUS } from "@/constant";
+import { getAuthUser } from "@/utils/getAuthUser";
+import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 
-export const GET = async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	try {
-		
-		await connectDB();
+export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
+	
+	await connectDB();
 
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
+	const user = await getAuthUser(request);
 
-		const { disciplineId } = await params;
-		if(!disciplineId) {
-			throw new APIError(400, "DisciplineId is not found");
-		}
+	const { disciplineId } = params;
+    if (!disciplineId) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
+    }
 
-		const discipline = await Discipline.findById(disciplineId);
-		if(!discipline) {
-			throw new APIError(404, "Discipline not found");
-		}
+	const discipline = await Discipline.findOne({ 
+		_id: disciplineId, 
+		owner: user._id 
+	})
+	.select("_id name");
 
-		const tasks = await Task.find({ discipline: disciplineId });
-		if (!tasks) {
-			throw new APIError(500, "Failed to fetch tasks");
-		}
+    if (!discipline) {
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found or you do not have permission to view it.");
+    }
 
-		return NextResponse.json(
-			new APIResponse(
-				200,
-				{
-					tasks,
-					discipline
-				},
-				"All Tasks Fetched Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
+	const tasks = await Task.find({ discipline: disciplineId });
+	
+	return NextResponse.json(
+        new APIResponse(
+            HTTP_STATUS.OK,
+            {
+                tasks,
+                discipline
+            },
+            "Tasks fetched successfully",
+        ),
+        { status: HTTP_STATUS.OK }
+    );
+});
 
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
-	}
-};
+export const POST = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
+	
+	await connectDB();
 
-export const POST = async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	try {
-		
-		await connectDB();
+	const user = await getAuthUser(request);
 
-		const userId = request.cookies.get("user-id")?.value;
-		if(!userId) {
-			throw new APIError(401, "Unauthorized: User is not authenticated.");
-		}
+	const { disciplineId } = params;
+    if (!disciplineId) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
+    }
 
-		const { disciplineId } = await params;
-		if(!disciplineId) {
-			throw new APIError(400, "DisciplineId is not found");
-		}
+	const discipline = await Discipline.findOne({ 
+		_id: disciplineId, 
+		owner: user._id 
+	});
 
-		const body = await request.json();
-		const { name, description, priority } = body;
-		if (!name || !description || !priority) {
-			throw new APIError(400, "All fields are required");
-		}
+    if (!discipline) {
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found or you do not have permission to add tasks to it.");
+    }
 
-		const task = await Task.create({
-			name,
-			description,
-			priority,
-			discipline: disciplineId,
-		});
+	const body = await request.json();
+    const { name, description, priority } = body;
+    if (!name || !description || !priority) {
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields (name, description, priority) are required");
+    }
 
-		if (!task) {
-			throw new APIError(500, "Failed to create task");
-		}
+	const task = await Task.create({
+        name,
+        description,
+        priority,
+        discipline: disciplineId,
+    });
 
-		return NextResponse.json(
-			new APIResponse(
-				201,
-				task,
-				"Task Created Successfully",
-			),
-			{ status: 200 }
-		);
-	} catch(error) {
+	if (!task) {
+        throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to create task. Please try again.");
+    }
 
-		if (error instanceof APIError) throw error;
-		else throw new APIError(500, "Internal Server Error");
-	}
-};
+	return NextResponse.json(
+        new APIResponse(
+            HTTP_STATUS.CREATED,
+            task,
+            "Task created successfully",
+        ),
+        { status: HTTP_STATUS.CREATED }
+    );
+});

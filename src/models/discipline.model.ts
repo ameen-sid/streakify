@@ -1,6 +1,9 @@
 import { Schema, model, models } from "mongoose";
-import { IDiscipline, DisciplineModel } from "./discipline.types";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+import { IDiscipline, DisciplineModel, DisciplineDocument } from "./discipline.types";
 import { DISCIPLINE_STATUS, MODEL_NAMES } from "@/constant";
+import Task from "./task.model";
+import Day from "./day.model";
 
 const disciplineSchema = new Schema<IDiscipline>({
 	name: {
@@ -40,6 +43,26 @@ const disciplineSchema = new Schema<IDiscipline>({
 },
 	{ timestamps: true }
 );
+
+
+disciplineSchema.plugin(aggregatePaginate);
+
+
+disciplineSchema.pre<DisciplineDocument>('deleteOne', { document: true, query: false }, async function (next) {
+
+	console.log(`Cascading delete for discipline: ${this._id}`);
+	try {
+
+		await Task.deleteMany({ discipline: this._id });
+
+		await Day.deleteMany({ discipline: this._id });
+
+		next();
+	} catch(error: any) {
+		next(error);
+	}
+});
+
 
 const Discipline = (models.Discipline as DisciplineModel) || model<IDiscipline, DisciplineModel>(MODEL_NAMES.DISCIPLINE, disciplineSchema);
 
