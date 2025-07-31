@@ -127,9 +127,9 @@ const ProfileContent = () => {
     };
 
     const settingsLinks = [
-        { href: '/profile/edit-profile', icon: User, title: 'Edit Profile Details', description: 'Update your name, date of birth, and gender.' },
-        { href: '/profile/change-password', icon: Lock, title: 'Change Password', description: 'Update your password for security.' },
-        { href: '/profile/account-settings', icon: Shield, title: 'Account Settings', description: 'Manage account deletion and other security settings.' },
+        { href: '/dashboard/profile/edit', icon: User, title: 'Edit Profile Details', description: 'Update your name, date of birth, and gender.' },
+        { href: '/dashboard/profile/change-password', icon: Lock, title: 'Change Password', description: 'Update your password for security.' },
+        { href: '/dashboard/profile/settings', icon: Shield, title: 'Account Settings', description: 'Manage account deletion and other security settings.' },
     ];
 
     if (!user) {

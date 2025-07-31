@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ReactNode, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import { Zap, TrendingUp, Target, BarChart } from "lucide-react";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import toast from "react-hot-toast";

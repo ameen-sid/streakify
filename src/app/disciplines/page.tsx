@@ -103,7 +103,7 @@ const MyDisciplinesContent = () => {
                             <h1 className="text-3xl font-bold text-black">My Disciplines</h1>
                             <p className="mt-1 text-gray-600">Here are all the disciplines you've created.</p>
                         </div>
-                        <Link href="/disciplines/create-discipline" className="mt-4 sm:mt-0 w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition-colors">
+                        <Link href="/disciplines/create" className="mt-4 sm:mt-0 w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition-colors">
                             <PlusCircle size={20} className="mr-2" />Create New
                         </Link>
                     </header>

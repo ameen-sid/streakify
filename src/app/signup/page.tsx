@@ -62,17 +62,17 @@ const SignUp = () => {
             toast.success("Account Created Successfully", { id: toastId });
             setUser(initialState);
 
-            router.push(`/signup/verify?email=${response.data.email}`);
+            router.push(`/signup/confirmation?email=${response.data.email}`);
         } catch(error) {
             
 			if (error instanceof Error) {
                     
 				console.error("Signup Failed: ", error.message);
-                toast.error(error.message);
+                toast.error(error.message, { id: toastId });
             } else {
                     
 				console.error("Signup Failed: ", String(error));
-                toast.error("An unexpected error occurred");
+                toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {
             setLoading(false);

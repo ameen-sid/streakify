@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle, Circle } from "lucide-react"
-import { TaskState } from "@/app/logs/page";
+import { TaskState } from "@/app/logs/[date]/page";
 
 const PastTaskItem = ({ taskState }: { taskState: TaskState }) => {
     const { task, isCompleted } = taskState;

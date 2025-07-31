@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AUTH_ROUTES } from "@/constant";
+import { AUTH_ROUTES, HEADERS } from "@/constant";
 
 // --- SIGN UP ---
 type UserSignUpData = {
@@ -15,14 +15,22 @@ export const signUpUser = async (userData: UserSignUpData) => {
 
 	const { confirmPassword, ...dataToSend } = userData;
 
-	const response = await axios.post(AUTH_ROUTES.SIGN_UP, dataToSend);
+	const response = await axios.post(
+		AUTH_ROUTES.SIGN_UP, 
+		dataToSend, 
+		{ headers: HEADERS }
+	);
 	return response.data;
 };
 
-// --- VERIFY EMAIL TOKEN ---
-export const verifyEmailToken = async (token: string) => {
+// --- VERIFY EMAIL ---
+export const verifyEmail = async (token: string) => {
 
-	const response = await axios.post(AUTH_ROUTES.VERIFY_EMAIL, { token });
+	const response = await axios.post(
+		AUTH_ROUTES.VERIFY_EMAIL, 
+		{ token },
+		{ headers: HEADERS }
+	);
 	return response.data;
 };
 
@@ -34,14 +42,29 @@ type Credentials = {
 
 export const loginUser = async (credentials: Credentials) => {
 
-	const response = await axios.post(AUTH_ROUTES.LOGIN, credentials);
+	const response = await axios.post(
+		AUTH_ROUTES.LOGIN, 
+		credentials,
+		{ headers: HEADERS }
+	);
 	return response.data;
 };
 
-// --- RESET PASSWORD TOKEN ---
+// --- LOGOUT ---
+export const logoutUser = async () => {
+
+	const response = await axios.post(AUTH_ROUTES.LOGOUT);
+	return response.data;
+};
+
+// --- RESET PASSWORD REQUEST ---
 export const sendResetPasswordToken = async (email: string) => {
 
-	const response = await axios.post(AUTH_ROUTES.FORGOT_PASSWORD, { email });
+	const response = await axios.post(
+		AUTH_ROUTES.FORGOT_PASSWORD, 
+		{ email },
+		{ headers: HEADERS }
+	);
 	return response.data;
 };
 
@@ -54,13 +77,19 @@ type ResetPasswordData = {
 
 export const resetPassword = async (data: ResetPasswordData) => {
 
-	const response = await axios.patch(AUTH_ROUTES.RESET_PASSWORD, data);
+	const { confirmPassword, ...dataToSend } = data;
+
+	const response = await axios.patch(
+		AUTH_ROUTES.RESET_PASSWORD, 
+		dataToSend,
+		{ headers: HEADERS }
+	);
 	return response.data;
 };
 
-// --- LOGOUT ---
-export const logoutUser = async () => {
+// --- REFRESH TOKEN ---
+export const refreshAccessToken = async () => {
 
-	const response = await axios.post(AUTH_ROUTES.LOGOUT);
+	const response = await axios.post(AUTH_ROUTES.REFRESH_TOKEN);
 	return response.data;
 };

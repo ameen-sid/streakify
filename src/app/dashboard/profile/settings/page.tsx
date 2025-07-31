@@ -69,7 +69,7 @@ const AccountSettingsContent = () => {
             await deleteAccount();
 
             toast.success("Account deletion scheduled.", { id: toastId });
-            router.push("/profile/account-deleted");
+            router.push("/dashboard/profile/settings/deletion-confirmation");
         } catch (error) {
             
             if (error instanceof Error) {
@@ -93,7 +93,7 @@ const AccountSettingsContent = () => {
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
-                            <Link href="/profile" className="p-2 rounded-full hover:bg-gray-100">
+                            <Link href="/dashboard/profile" className="p-2 rounded-full hover:bg-gray-100">
                                 <ArrowLeft size={24} className="text-black" />
                             </Link>
                             <h1 className="text-3xl font-bold text-black">Account Settings</h1>

@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { PasswordsType } from "@/app/profile/change-password/page";
+import { PasswordsType } from "@/app/dashboard/profile/change-password/page";
 
 interface PasswordFieldProps {
     label: string;

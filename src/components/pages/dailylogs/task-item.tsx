@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle, Circle } from "lucide-react"
-import { TaskState } from "@/app/today/page";
+import { TaskState } from "@/app/logs/today/page";
 
 const TaskItem = ({ taskState, onToggle }: { taskState: TaskState, onToggle: (id: string) => void }) => {
     

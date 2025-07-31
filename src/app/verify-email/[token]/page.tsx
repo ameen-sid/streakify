@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Mail, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
-import { verifyEmailToken } from "@/services/auth.service";
+import { verifyEmail } from "@/services/auth.service";
 import VerificationSuccessModal from "@/components/pages/verify-email/verification-success-modal";
 import AuthCard from "@/components/common/auth-card";
 
@@ -29,7 +29,7 @@ const VerifyEmailTokenPage = () => {
         const onVerify = async () => {
             try {
 
-                const response = await verifyEmailToken(token);
+                const response = await verifyEmail(token);
                 console.log("Verification Status: ", response);
 
                 toast.success("Verified Successfully!");
