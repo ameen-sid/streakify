@@ -8,13 +8,13 @@ const asyncHandler = <
 >(
 	fn: (
 		req: NextRequest, 
-		context: { params: TParams }
+		context?: { params?: TParams }
 	) => Promise<NextResponse>
-): (req: NextRequest, context: { params: Record<string, string> }) => Promise<NextResponse> => {
-	return async (req: NextRequest, context: { params: Record<string, string> }): Promise<NextResponse> => {
+): (req: NextRequest, context?: { params?: Record<string, string> }) => Promise<NextResponse> => {
+	return async (req: NextRequest, context?: { params?: Record<string, string> }): Promise<NextResponse> => {
 		try {
 
-			return await fn(req, { params: context.params as TParams });
+			return await fn(req, { params: context?.params as TParams });
 		} catch (error) {
 
 			console.error("API Error Caught: ", error);
