@@ -14,7 +14,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 	const user = await getAuthUser(request);
     const userId = user._id;
 
-	const { date } = params;
+	const { date } = await params;
     if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid date format. Please use YYY-MM-DD.");
     }

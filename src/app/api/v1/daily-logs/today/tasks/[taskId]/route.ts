@@ -21,7 +21,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 		const user = await getAuthUser(request);
         const userId = user._id;
 
-		const { taskId } = params;
+		const { taskId } = await params;
         if (!taskId) {
             throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
         }

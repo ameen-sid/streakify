@@ -35,7 +35,7 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	const body = await request.json();
     const { fullname, dateOfBirth, gender } = body;
-    if (!fullname || !dateOfBirth || !gender) {
+    if (!fullname?.trim() || !dateOfBirth?.trim() || !gender?.trim()) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Full name, date of birth, and gender are required");
     }
 

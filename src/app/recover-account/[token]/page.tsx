@@ -7,6 +7,7 @@ import { ShieldCheck, CheckCircle, LayoutDashboard, AlertTriangle } from "lucide
 import toast from "react-hot-toast";
 import { recoverAccount } from "@/services/profile.service";
 import AuthCard from "@/components/common/auth-card";
+import { AxiosError } from "axios";
 
 const RecoverAccountPage = () => {
 
@@ -29,20 +30,26 @@ const RecoverAccountPage = () => {
             try {
 
                 const response = await recoverAccount(token);
-                console.log("Account Recovery Status: ", response);
+                // console.log("Account Recovery Status: ", response);
 
                 toast.success("Account Recovered Successfully!");
                 setStatus('success');
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Account Recovery Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                    setErrorMessage(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Account Recovery Failed: ", error.message);
+				    // console.error("Account Recovery Failed: ", error.message);
                     toast.error(error.message);
                     setErrorMessage(error.message);
                 } else {
                     
-                    console.error("Account Recovery Failed: ", String(error));
+                    // console.error("Account Recovery Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                     setErrorMessage(String(error));
                 }

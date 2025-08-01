@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { getTaskById, updateTask } from "@/services/task.service";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 type TaskData = {
     name: string;
@@ -41,13 +42,18 @@ const EditTaskContent = () => {
                 setTask(data);
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Task Details Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Task Details Fetch Failed: ", error.message);
+				    // console.error("Task Details Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Task Details Fetch Failed: ", String(error));
+				    // console.error("Task Details Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             } finally {
@@ -82,13 +88,18 @@ const EditTaskContent = () => {
             router.back();
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Task Updation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Task Updation Failed: ", error.message);
+				// console.error("Task Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-				console.error("Task Updation Failed: ", String(error));
+				// console.error("Task Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

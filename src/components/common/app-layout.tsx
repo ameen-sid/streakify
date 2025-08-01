@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrainCircuit, LogOut, Menu, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { APP_NAME, APP_NAVIGATION_LINKS } from "@/constant";
+import { APP_NAME, APP_NAVIGATION_LINKS, DEFAULT_AVATAR } from "@/constant";
 import { getProfile } from "@/services/profile.service";
 import { logoutUser } from "@/services/auth.service";
+import { AxiosError } from "axios";
 
 type UserData = {
     fullname: string;
@@ -25,7 +26,7 @@ const Header = ({ onMenuClick, user }: { onMenuClick: () => void, user: UserData
                     <BrainCircuit className="h-8 w-8 text-black" />
                 </div>
                 <div className="ml-4 flex items-center md:ml-6">
-                    <img className="h-8 w-8 rounded-full" src={user.avatar} alt="User Avatar" />
+                    <img className="h-8 w-8 rounded-full" src={user && user.avatar || DEFAULT_AVATAR} alt="User Avatar" />
                 </div>
             </div>
         </div>
@@ -48,13 +49,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, user, date }: { sidebarOpen: boo
             router.push("/");
         } catch(error) {
 
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Log out Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message);
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Log out Failed: ", error.message);
+				// console.error("Log out Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-			    console.error("Log out Failed: ", String(error));
+			    // console.error("Log out Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         }
@@ -69,9 +75,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, user, date }: { sidebarOpen: boo
                 </div>
                 <div className="mt-8 px-4">
                     <div className="flex items-center gap-3">
-                        <img className="h-10 w-10 rounded-full" src={user.avatar} alt="User Avatar" />
+                        <img className="h-10 w-10 rounded-full" src={user && user.avatar || DEFAULT_AVATAR} alt="User Avatar" />
                         <div>
-                            <p className="font-bold text-black">{user.fullname}</p>
+                            <p className="font-bold text-black">{user && user.fullname || ""}</p>
                         </div>
                     </div>
                 </div>
@@ -129,10 +135,19 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
                 setUser(userData);
             } catch (error) {
                 
-                if (error instanceof Error) {
-				    console.error("Profile Fetch Failed: ", error.message);
+                if(error instanceof AxiosError) {
+
+                    // console.error("Profile Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
+				    
+                    // console.error("Profile Fetch Failed: ", error.message);
+                    toast.error(error.message);
                 } else {
-				    console.error("Profile Fetch Failed: ", String(error));
+
+				    // console.error("Profile Fetch Failed: ", String(error));
+                    toast.error(String(error));
                 }
             }
         };
@@ -140,15 +155,15 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         fetchUser();
     }, []);
 
-    if (!user) {
-        return <div className="min-h-screen flex items-center justify-center"><p>Loading User...</p></div>;
-    }
+    // if (!user) {
+    //     return <div className="min-h-screen flex items-center justify-center"><p>Loading User...</p></div>;
+    // }
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user} date={today} />
+            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user!} date={today} />
             <div className="lg:pl-64 flex flex-col flex-1">
-                <Header onMenuClick={() => setSidebarOpen(true)} user={user} />
+                <Header onMenuClick={() => setSidebarOpen(true)} user={user!} />
                 <main className="flex-1 pb-8">
                     {children}
                 </main>

@@ -9,6 +9,7 @@ import { createDiscipline } from "@/services/discipline.service";
 import { generateText } from "@/utils/generateText";
 import AppLayout from "@/components/common/app-layout";
 import FormField from "@/components/pages/create-discipline/form-field";
+import { AxiosError } from "axios";
 
 export type DisciplineData = {
     name: string;
@@ -57,13 +58,18 @@ const CreateDisciplineContent = () => {
             toast.success("Description generated!", { id: toastId });
         } catch (error) {
 
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Description Generation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Description Generation Failed: ", error.message);
+				// console.error("Description Generation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                 
-			    console.error("Description Generation Failed: ", String(error));
+			    // console.error("Description Generation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {
@@ -84,13 +90,18 @@ const CreateDisciplineContent = () => {
             router.push("/disciplines");
         } catch (error) {
         
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Discipline Creation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-			    console.error("Discipline Creation Failed: ", error.message);
+			    // console.error("Discipline Creation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-			    console.error("Discipline Creation Failed: ", String(error));
+			    // console.error("Discipline Creation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

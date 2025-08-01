@@ -13,7 +13,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 
 	const user = await getAuthUser(request);
 	
-	const { disciplineId } = params;
+	const { disciplineId } = await params;
 	if (!disciplineId) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
     }
@@ -86,7 +86,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
 	const user = await getAuthUser(request);
 
-	const { disciplineId } = params;
+	const { disciplineId } = await params;
     if (!disciplineId) {
         throw new APIError(400, "Discipline ID is required");
     }

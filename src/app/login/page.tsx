@@ -7,6 +7,7 @@ import { Eye, EyeOff, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { loginUser } from "@/services/auth.service";
 import SparkleIcon from "@/components/icons/sparkle-icon-single";
+import { AxiosError } from "axios";
 
 type Credentials = {
     email: string;
@@ -50,21 +51,26 @@ const LoginPage = () => {
         try {
 
             const response = await loginUser(credentials);
-            console.log("Login Status: ", response);
+            // console.log("Login Status: ", response);
 
-            toast.success("Login Successful", { id: toastId });
             setCredentials(initialState);
+            toast.success("Login Successful", { id: toastId });
 
             router.push("/dashboard");
         } catch(error) {
 
-            if(error instanceof Error) {
+            if(error instanceof AxiosError) {
 
-                console.error("Login Failed: ", error.message);
+                // console.error("Login Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+			else if(error instanceof Error) {
+
+                // console.error("Login Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
 
-                console.error("Login Failed: ", String(error));
+                // console.error("Login Failed: ", String(error));
                 toast.error("Unexpected error occurred", { id: toastId });                
             }
         } finally {

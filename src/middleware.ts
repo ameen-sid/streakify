@@ -2,7 +2,6 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const PUBLIC_PATHS = [
-  '/',
   '/signup',
   '/signup/confirmation',
   '/verify-email',
@@ -11,6 +10,7 @@ const PUBLIC_PATHS = [
   '/reset-password',
   '/reset-password/success',
   '/recover-account',
+  '/dashboard/profile/settings/deletion-confirmation',
 ];
 
 const isPublicRoute = (path: string): boolean => {
@@ -47,9 +47,24 @@ export const middleware = async (request: NextRequest) => {
 
 export const config = {
 	matcher: [
-		'/dashboard/:path*',
-		'/profile/:path*',
-		'/disciplines/:path*',
+		// Public paths
+		'/signup/:path*',
+  		'/verify-email',
+  		'/login',
+  		'/forgot-password',
+  		'/reset-password/',
+  		'/reset-password/success',
+  		'/recover-account',
+		'/dashboard/profile/settings/deletion-confirmation',
+
+		// Private Paths
+		'/dashboard',
+		'/dashboard/highlights',
+		'/dashboard/profile',
+		'/dashboard/profile/edit',
+		'/dashboard/profile/change-password',
+		'/dashboard/profile/settings',
 		'/logs/:path*',
+		'/disciplines/:path*',
 	],
 };

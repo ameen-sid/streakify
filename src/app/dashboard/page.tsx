@@ -9,6 +9,7 @@ import { generateText } from "@/utils/generateText";
 import TaskBreakdownChart from "@/components/pages/dashboard/task-breakdown-chart";
 import StatsCard from "@/components/pages/dashboard/stats-card";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -31,7 +32,13 @@ type DashboardData = {
 const DashboardContent = () => {
    
     const [aiInsight, setAiInsight] = useState("");
-    const [selectedMonth, setSelectedMonth] = useState("2025-07");
+    const [selectedMonth, setSelectedMonth] = useState(() => {
+    
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        return `${year}-${month}`;
+    });
     const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -63,20 +70,25 @@ const DashboardContent = () => {
                         setAiInsight(generatedText);
                     }).catch(err => {
                         
-                        console.error("AI Insight Generation Failed:", err);
-                        setAiInsight("Could not generate an insight at this time."); // Fallback message
+                        // console.error("AI Insight Generation Failed:", err);
+                        setAiInsight("Could not generate an insight at this time.");
                     });
 
                 }
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Data Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+			    else if (error instanceof Error) {
                     
-				    console.error("Data Fetch Failed: ", error.message);
+				    // console.error("Data Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Data Fetch Failed: ", String(error));
+				    // console.error("Data Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             } finally {

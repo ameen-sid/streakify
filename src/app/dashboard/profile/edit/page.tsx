@@ -8,6 +8,7 @@ import { GENDER_OPTIONS } from "@/constant";
 import { getProfileDetails, updateProfileDetails } from "@/services/profile.service";
 import { formatDateForInput } from "@/utils/formatDateForInput";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 type UserDetails = {
     fullname: string;
@@ -41,13 +42,18 @@ const EditProfileDetailsContent = () => {
                 });
             } catch (error) {
 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Profile Details Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Profile Details Fetch Failed: ", error.message);
+				    // console.error("Profile Details Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Profile Details Fetch Failed: ", String(error));
+				    // console.error("Profile Details Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             } finally {
@@ -76,13 +82,18 @@ const EditProfileDetailsContent = () => {
             toast.success("Details updated successfully!", { id: toastId });
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Profile Updation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+                else if (error instanceof Error) {
                     
-				console.error("Profile Updation Failed: ", error.message);
+				// console.error("Profile Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-				console.error("Profile Updation Failed: ", String(error));
+				// console.error("Profile Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

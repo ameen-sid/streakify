@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { changePassword } from "@/services/profile.service";
 import AppLayout from "@/components/common/app-layout";
 import PasswordInputField from "@/components/pages/change-password/password-input-field";
+import { AxiosError } from "axios";
 
 export type PasswordsType = {
     currentPassword: string;
@@ -21,6 +23,8 @@ const initialState: PasswordsType = {
 };
 
 const ChangePasswordContent = () => {
+
+    const router = useRouter();
     
     const [passwords, setPasswords] = useState<PasswordsType>(initialState);
     const [loading, setLoading] = useState(false);
@@ -52,17 +56,25 @@ const ChangePasswordContent = () => {
 
             toast.success("Password updated successfully!", { id: toastId });
             setPasswords(initialState);
+
+            router.push("/dashboard/profile");
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Password Updation Failed: ", error?.response?.data.message);
+                // toast.error(error?.response?.data.message, { id: toastId });
+                setError(error?.response?.data.message);
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Password Updation Failed: ", error.message);
-                toast.error(error.message, { id: toastId });
+				// console.error("Password Updation Failed: ", error.message);
+                // toast.error(error.message, { id: toastId });
                 setError(error.message);
             } else {
                     
-			    console.error("Password Updation Failed: ", String(error));
-                toast.error("An unexpected error occurred", { id: toastId });
+			    // console.error("Password Updation Failed: ", String(error));
+                // toast.error("An unexpected error occurred", { id: toastId });
                 setError(String(error));
             }
         } finally {

@@ -1,5 +1,8 @@
+import mongoose from "mongoose";
 import connectDB from "@/database";
+import Discipline from "@/models/discipline.model";
 import Task from "@/models/task.model";
+import Day from "@/models/day.model";
 import { IDiscipline } from "@/models/discipline.types";
 import { ITask } from "@/models/task.types" ;
 import { NextRequest, NextResponse } from "next/server";
@@ -19,7 +22,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 
 	const user = await getAuthUser(request);
 
-	const { taskId } = params;
+	const { taskId } = await params;
     if (!taskId) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
     }
@@ -50,14 +53,14 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
 	const user = await getAuthUser(request);
 
-	const { taskId } = params;
+	const { taskId } = await params;
     if (!taskId) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
     }
 
 	const body = await request.json();
     const { name, description, priority } = body;
-    if (!name || !description || !priority) {
+    if (!name?.trim() || !description?.trim() || !priority) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields are required");
     }
 	
@@ -100,35 +103,109 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 export const DELETE = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
 	
 	await connectDB();
+	
+	const session = await mongoose.startSession();
+    try {
 
-	const user = await getAuthUser(request);
+		session.startTransaction();
 
-	const { taskId } = params;
-    if (!taskId) {
-        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Task ID is required");
+        const user = await getAuthUser(request);
+
+        const { taskId } = params;
+        if (!mongoose.Types.ObjectId.isValid(taskId)) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid Task ID format");
+		}
+
+        const taskToDelete = await Task.findById(taskId).session(session);
+        if (!taskToDelete) {
+            throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found.");
+        }
+
+        const discipline = await Discipline.findOne({ 
+			_id: taskToDelete.discipline, 
+			owner: user._id 
+		})
+		.session(session);
+
+        if (!discipline) {
+            throw new APIError(HTTP_STATUS.FORBIDDEN, "You do not have permission to delete this task.");
+        }
+
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        const todayLog = await Day.findOne({ 
+			user: user._id, 
+			date: today 
+		})
+		.session(session);
+        
+        let wasTodayAStreakDay = false;
+        if (todayLog) {
+
+            const completedCount = todayLog.taskState.filter(ts => ts.isCompleted).length;
+            const totalCount = todayLog.taskState.length;
+            const rateBefore = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+            if (rateBefore >= 75) {
+                wasTodayAStreakDay = true;
+            }
+        }
+
+        await Day.updateMany(
+            { "taskState.task": taskId },
+            { 
+				$pull: { taskState: { task: taskId } } 
+			},
+            { session }
+        );
+
+        await Task.findByIdAndDelete(taskId, { session });
+
+        const logAfterDelete = await Day.findOne({ 
+            user: user._id, 
+            date: today 
+        })
+        .session(session);
+
+        let isTodayAStreakDay = false;
+        if (logAfterDelete && logAfterDelete.taskState.length > 0) {
+            
+            const completedCountAfter = logAfterDelete.taskState.filter(ts => ts.isCompleted).length;
+            const totalCountAfter = logAfterDelete.taskState.length;
+            const rateAfter = (completedCountAfter / totalCountAfter) * 100;
+            if (rateAfter >= 75) {
+                isTodayAStreakDay = true;
+            }
+        }
+
+        if (wasTodayAStreakDay && !isTodayAStreakDay) {
+            
+            discipline.currentStreak -= 1;
+            await discipline.save({ session });
+        } else if (!wasTodayAStreakDay && isTodayAStreakDay) {
+            
+            discipline.currentStreak += 1;
+            if (discipline.currentStreak > discipline.longestStreak) {
+                discipline.longestStreak = discipline.currentStreak;
+            }
+            await discipline.save({ session });
+        }
+
+        await session.commitTransaction();
+
+        return NextResponse.json(
+            new APIResponse(
+				HTTP_STATUS.OK, 
+				{}, 
+				"Task deleted and data updated successfully."
+			),
+            { status: HTTP_STATUS.OK }
+        );
+
+    } catch (error) {
+
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        await session.endSession();
     }
-
-	const taskToDelete = await Task.findById(taskId)
-	.populate<IPopulatedTask>({ 
-		path: 'discipline', 
-		select: 'owner' 
-	});
-
-    if (!taskToDelete || !taskToDelete.discipline.owner.equals(user._id)) {
-        throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to delete it.");
-    }
-
-	const updatedTask = await Task.findByIdAndDelete(taskId);
-	if(!updatedTask) {
-		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to delete task");
-	}
-
-	return NextResponse.json(
-        new APIResponse(
-			HTTP_STATUS.OK, 
-			{}, 
-			"Task deleted successfully"
-		),
-        { status: HTTP_STATUS.OK }
-    );
 });

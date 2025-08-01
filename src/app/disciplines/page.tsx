@@ -8,6 +8,7 @@ import { getDisciplines, deleteDiscipline } from "@/services/discipline.service"
 import AppLayout from "@/components/common/app-layout";
 import DeleteConfirmationModal from "@/components/pages/disciplines/delete-confirmation-modal";
 import DisciplineCard from "@/components/pages/disciplines/discipline-card";
+import { AxiosError } from "axios";
 
 export type StoredDisciplineStatus = 'Active' | 'Completed' | 'Failed';
 export type ComputedDisciplineStatus = StoredDisciplineStatus | 'Upcoming' | 'Unknown';
@@ -38,13 +39,18 @@ const MyDisciplinesContent = () => {
                 setDisciplines(fetchedDisciplines);
             } catch (error) {
 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Disciplines Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Disciplines Fetch Failed: ", error.message);
+				    // console.error("Disciplines Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Disciplines Fetch Failed: ", String(error));
+				    // console.error("Disciplines Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             } finally {
@@ -79,13 +85,18 @@ const MyDisciplinesContent = () => {
             toast.success("Discipline deleted.", { id: toastId });
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Discipline Deletion Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-		 	    console.error("Discipline Deletion Failed: ", error.message);
+		 	    // console.error("Discipline Deletion Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-			    console.error("Discipline Deletion Failed: ", String(error));
+			    // console.error("Discipline Deletion Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

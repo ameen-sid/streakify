@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { sendResetPasswordToken } from "@/services/auth.service";
 import SparkleIcon from "@/components/icons/sparkle-icon-single";
+import { AxiosError } from "axios";
 
 const ForgotPasswordPage = () => {
 	
@@ -37,20 +38,25 @@ const ForgotPasswordPage = () => {
 		try {
 
 			const response = await sendResetPasswordToken(email);
-			console.log("Forgot Password Email Status: ", response);
+			// console.log("Forgot Password Email Status: ", response);
 
             setSubmitted(true);
             toast.success("Email Sent Successfully", { id: toastId });
 		} catch(error) {
 
-			if(error instanceof Error) {
+            if(error instanceof AxiosError) {
 
-                console.error("Forgot Password Email Failed: ", error.message);
-                toast.error(error.message);
+                // console.error("Forgot Password Email Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+			else if(error instanceof Error) {
+
+                // console.error("Forgot Password Email Failed: ", error.message);
+                toast.error(error.message, { id: toastId });
             } else {
 
-                console.error("Forgot Password Email Failed: ", String(error));
-                toast.error("Unexpected error occurred");                
+                // console.error("Forgot Password Email Failed: ", String(error));
+                toast.error("Unexpected error occurred", { id: toastId });                
             }
 		} finally {
             setLoading(false);

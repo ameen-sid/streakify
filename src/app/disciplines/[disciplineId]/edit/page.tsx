@@ -10,6 +10,7 @@ import { generateText } from "@/utils/generateText";
 import { formatDateForInput } from "@/utils/formatDateForInput";
 import AppLayout from "@/components/common/app-layout";
 import FormField from "@/components/pages/edit-discipline/form-field";
+import { AxiosError } from "axios";
 
 export type DisciplineData = {
     name: string;
@@ -53,13 +54,18 @@ const UpdateDisciplineContent = () => {
                 });
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Discipline Details Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Discipline Details Fetch Failed: ", error.message);
+				    // console.error("Discipline Details Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Discipline Details Failed: ", String(error));
+				    // console.error("Discipline Details Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             } finally {
@@ -95,13 +101,18 @@ const UpdateDisciplineContent = () => {
             toast.success("Description generated!", { id: toastId });
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Description Generation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message);
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Description Generation Failed: ", error.message);
+				// console.error("Description Generation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                 
-			    console.error("Description Generation Failed: ", String(error));
+			    // console.error("Description Generation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {
@@ -122,13 +133,18 @@ const UpdateDisciplineContent = () => {
             router.push("/disciplines");
         } catch (error) {
 
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Discipline Updation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message);
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Discipline Updation Failed: ", error.message);
+				// console.error("Discipline Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-			    console.error("Discipline Updation Failed: ", String(error));
+			    // console.error("Discipline Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

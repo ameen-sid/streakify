@@ -16,7 +16,7 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	const body = await request.json();
     const { currentPassword, newPassword } = body;
-    if (!currentPassword || !newPassword) {
+    if (!currentPassword?.trim() || !newPassword?.trim()) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Current password and new password are required");
     }
 

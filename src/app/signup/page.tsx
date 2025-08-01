@@ -9,6 +9,7 @@ import { GENDER_OPTIONS } from "@/constant";
 import { signUpUser } from "@/services/auth.service";
 import SparkleIcon from "@/components/icons/sparkle-icon";
 import InputField from "@/components/pages/signup/input-field";
+import { AxiosError } from "axios";
 
 export type UserSignUpData = {
     username: string;
@@ -57,21 +58,26 @@ const SignUp = () => {
         try {
 
             const response = await signUpUser(user);
-            console.log("Signup Status: ", response);
+            // console.log("Signup Status: ", response);
 
             toast.success("Account Created Successfully", { id: toastId });
             setUser(initialState);
 
             router.push(`/signup/confirmation?email=${response.data.email}`);
         } catch(error) {
-            
-			if (error instanceof Error) {
+
+            if(error instanceof AxiosError) {
+
+                // console.error("Axios Error: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+			else if (error instanceof Error) {
                     
-				console.error("Signup Failed: ", error.message);
+				// console.error("Signup Failed: ", error);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-				console.error("Signup Failed: ", String(error));
+				// console.error("Signup Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { getHighlightsForMonth } from "@/services/dashboard.service";
 import AppLayout from "@/components/common/app-layout";
 import HighlightCard from "@/components/pages/dashboard-highlights/highlight-card";
+import { AxiosError } from "axios";
 
 export type HighlightLog = {
     date: string;
@@ -14,7 +15,13 @@ export type HighlightLog = {
 
 const MonthlyHighlightsContent = () => {
 
-    const [selectedMonth, setSelectedMonth] = useState('2025-07');
+    const [selectedMonth, setSelectedMonth] = useState(() => {
+    
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        return `${year}-${month}`;
+    });
     const [highlights, setHighlights] = useState<HighlightLog[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -33,13 +40,18 @@ const MonthlyHighlightsContent = () => {
                 setHighlights(data);
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Highlights Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Highlights Fetch Failed: ", error.message);
+				    // console.error("Highlights Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Highlights Fetch Failed: ", String(error));
+				    // console.error("Highlights Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             } finally {

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { resetPassword } from "@/services/auth.service";
 import SparkleIcon from "@/components/icons/sparkle-icon-single";
 import PasswordInputField from "@/components/pages/reset-password/password-input-field";
+import { AxiosError } from "axios";
 
 export type PasswordData = {
     newPassword: string;
@@ -51,21 +52,26 @@ const ResetPasswordPage = () => {
 			const token = params.token as string;
 
 			const response = await resetPassword({ ...passwords, token });
-			console.log("Reset Password Status: ", response);
+			// console.log("Reset Password Status: ", response);
 
             toast.success("Password has been reset successfully!", { id: toastId });
             router.push("/reset-password/success");
 		} catch(error) {
 				
-			if(error instanceof Error)  {
+			if(error instanceof AxiosError) {
+
+                // console.error("Reset Password Email Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+			else if(error instanceof Error)  {
                 
-                console.error("Reset Password Failed: ", error.message);
-                toast.error(error.message);
+                // console.error("Reset Password Failed: ", error.message);
+                toast.error(error.message, { id: toastId });
             }
             else    {
                 
-                console.error("Reset Password Failed: ", String(error));
-                toast.error("Unexpected error occurred");
+                // console.error("Reset Password Failed: ", String(error));
+                toast.error("Unexpected error occurred", { id: toastId });
             }
 		} finally {
             setLoading(false);

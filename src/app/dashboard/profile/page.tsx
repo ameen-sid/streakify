@@ -6,6 +6,7 @@ import { Upload, User, Lock, Shield, ChevronRight, Check, X } from "lucide-react
 import toast from "react-hot-toast";
 import { getProfile, updateAvatar } from "@/services/profile.service";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 type UserData = {
     username: string;
@@ -49,7 +50,6 @@ const ProfileContent = () => {
 
     useEffect(() => {
         const getProfileDetails = async () => {
-            
             try {
                 const fetchedUser = await getProfile();
 
@@ -57,13 +57,18 @@ const ProfileContent = () => {
                 setAvatarPreview(fetchedUser.avatar);
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Profile Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Profile Fetch Failed: ", error.message);
+				    // console.error("Profile Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
                     
-				    console.error("Profile Fetch Failed: ", String(error));
+				    // console.error("Profile Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
             }
@@ -108,14 +113,19 @@ const ProfileContent = () => {
             toast.success("Avatar updated successfully!", { id: toastId });
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Avatar Updation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Avatar Updation Failed: ", error.message);
-                toast.error(error.message);
+				// console.error("Avatar Updation Failed: ", error.message);
+                toast.error(error.message, { id: toastId });
             } else {
                     
-				console.error("Avatar Updation: ", String(error));
-                toast.error("An unexpected error occurred");
+				// console.error("Avatar Updation: ", String(error));
+                toast.error("An unexpected error occurred", { id: toastId });
             }
             setAvatarPreview(user?.avatar || null); // Revert on failure
         } finally {

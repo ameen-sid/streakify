@@ -13,7 +13,7 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	const body = await request.json();
     const { newPassword, token } = body;
-    if (!newPassword || !token) {
+    if (!newPassword?.trim() || !token?.trim()) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "New password and token are required");
     }
 

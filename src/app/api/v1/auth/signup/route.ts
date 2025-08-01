@@ -21,7 +21,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		const body = await request.json();
         const { username, email, fullname, gender, password } = body;
-        if (!username || !email || !fullname || !gender || !password) {
+        if (!username?.trim() || !email?.trim() || !fullname?.trim() || !gender?.trim() || !password?.trim()) {
             throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields are required");
         }
 

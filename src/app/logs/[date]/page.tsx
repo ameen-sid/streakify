@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { getLogByDate } from "@/services/dailylog.service";
 import PastTaskItem from "@/components/pages/pastlogs/past-logs-item";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 type Task = {
     _id: string;
@@ -38,7 +39,7 @@ const PastLogsContent = () => {
             
             setLoading(true);
             setLogData(null);
-            const toastId = toast.loading(`Fetching log for ${date}...`);
+            // const toastId = toast.loading(`Fetching log for ${date}...`);
             try {
             
                 const data = await getLogByDate(date);
@@ -49,17 +50,22 @@ const PastLogsContent = () => {
                 } else {
                     setLogData(null);
                 }
-                toast.success("Log fetched!", { id: toastId });
+                // toast.success("Log fetched!", { id: toastId });
             } catch (error) {
                 
-                if (error instanceof Error) {
+                if(error instanceof AxiosError) {
+
+                    // console.error("Log Fetch Failed: ", error?.response?.data.message);
+                    toast.error(error?.response?.data.message);
+                }
+                else if (error instanceof Error) {
                     
-				    console.error("Log Fetch Failed: ", error.message);
-                    toast.error(error.message, { id: toastId });
+				    // console.error("Log Fetch Failed: ", error.message);
+                    toast.error(error.message);
                 } else {
                     
-				    console.error("Log Fetch Failed: ", String(error));
-                    toast.error("An unexpected error occurred", { id: toastId });
+				    // console.error("Log Fetch Failed: ", String(error));
+                    toast.error("An unexpected error occurred");
                 }
             } finally {
                 setLoading(false);

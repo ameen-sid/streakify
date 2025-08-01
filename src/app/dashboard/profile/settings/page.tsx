@@ -7,6 +7,7 @@ import { ArrowLeft, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { deleteAccount } from "@/services/profile.service";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose: () => void, onConfirm: () => void }) => {
     
@@ -73,13 +74,18 @@ const AccountSettingsContent = () => {
             router.push("/dashboard/profile/settings/deletion-confirmation");
         } catch (error) {
             
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Account Deletion Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-				console.error("Account Deletion Failed: ", error.message);
+				// console.error("Account Deletion Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                 
-			    console.error("Account Deletion Failed: ", String(error));
+			    // console.error("Account Deletion Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {

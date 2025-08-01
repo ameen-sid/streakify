@@ -35,5 +35,5 @@ export const getHighlightsForMonth = async (month: string): Promise<HighlightLog
         DASHBOARD_ROUTES.GET_HIGHLIGHTS(month),
         { headers: HEADERS }
     );
-    return response.data.data;
+    return response.data.data.highlights;
 };

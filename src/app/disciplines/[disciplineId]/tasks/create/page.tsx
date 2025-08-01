@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { createTask } from "@/services/task.service";
 import AppLayout from "@/components/common/app-layout";
+import { AxiosError } from "axios";
 
 type TaskData = {
     name: string;
@@ -52,13 +53,18 @@ const CreateTaskContent = () => {
             router.back();
         } catch (error) {
 
-            if (error instanceof Error) {
+            if(error instanceof AxiosError) {
+
+                // console.error("Task Creation Failed: ", error?.response?.data.message);
+                toast.error(error?.response?.data.message, { id: toastId });
+            }
+            else if (error instanceof Error) {
                     
-			    console.error("Task Creation Failed: ", error.message);
+			    // console.error("Task Creation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
                     
-			    console.error("Task Creation Failed: ", String(error));
+			    // console.error("Task Creation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
         } finally {
