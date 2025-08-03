@@ -8,6 +8,7 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateToken } from "@/utils/generateToken";
+import { hashToken } from "@/utils/hashToken";
 import { sendDeleteAccountScheduleEmail } from "@/utils/mails/sendDeleteAccountScheduleEmail";
 
 export const DELETE = asyncHandler(async (request: NextRequest) => {
@@ -35,6 +36,7 @@ export const DELETE = asyncHandler(async (request: NextRequest) => {
         }
 
 		const recoveryToken = generateToken(userId);
+		const hashedToken = hashToken(recoveryToken);
 
 		const updatedUser = await User.findByIdAndUpdate(
 			userId,
@@ -42,7 +44,7 @@ export const DELETE = asyncHandler(async (request: NextRequest) => {
 				$set: {
 					isDeleted: true,
 					deletedAt: new Date(),
-					deleteAccountToken: recoveryToken,
+					deleteAccountToken: hashedToken,
 				},
 				$unset: { refreshToken: "" }
 			},

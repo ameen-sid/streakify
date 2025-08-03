@@ -1,4 +1,5 @@
 import { ListTodo, History, Settings, LayoutDashboard, Star, UserCircle } from "lucide-react";
+import { type ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 // ----- FRONTEND CONSTANTS -----
 // ------------------------------
@@ -190,9 +191,10 @@ export const GENDER_OPTIONS = ["Male", "Female"] as const;
 export const DEFAULT_AVATAR = "https://placehold.co/100x100/E2E8F0/4A5568?text=AD";
 
 // COOKIES OPTIONS
-export const COOKIE_OPTIONS = {
+export const COOKIE_OPTIONS: Partial<ResponseCookie> = {
 	httpOnly: true,
-	secure: false,	// true for production
+	secure: true,	// true for production
+	sameSite: "strict"
 };
 
 // USER MODEL DATA FIELDS HIDE FROM USER

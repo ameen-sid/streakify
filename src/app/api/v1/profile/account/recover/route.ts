@@ -7,6 +7,7 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateAccessAndRefreshTokens } from "@/utils/generateAccessAndRefreshTokens";
+import { hashToken } from "@/utils/hashToken";
 import { sendRecoverAccountEmail } from "@/utils/mails/sendRecoverAccountEmail";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
@@ -20,16 +21,18 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		const body = await request.json();
         const { token } = body;
-        if (!token) {
+        if (!token.trim()) {
             throw new APIError(HTTP_STATUS.BAD_REQUEST, "Recovery token is required");
         }
 
 		const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+		const hashedToken = hashToken(token);
+
 		const user = await User.findOneAndUpdate(
 			{
-				deleteAccountToken: token,
+				deleteAccountToken: hashedToken,
 				deletedAt: { $gt: thirtyDaysAgo }
 			},
 			{

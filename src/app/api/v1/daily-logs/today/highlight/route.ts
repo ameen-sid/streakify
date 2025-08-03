@@ -16,7 +16,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 	const body = await request.json();
     const { highlight } = body;
-    if (!highlight) {
+    if (!highlight?.trim()) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Highlight text is required");
     }
 

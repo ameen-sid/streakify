@@ -1,7 +1,9 @@
+import mongoose from "mongoose";
 import connectDB from "@/database";
 import Discipline from "@/models/discipline.model";
+import Day from "@/models/day.model";
 import { NextRequest, NextResponse } from "next/server";
-import { HTTP_STATUS } from "@/constant";
+import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
 import { getAuthUser } from "@/utils/getAuthUser";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
@@ -37,47 +39,124 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 	
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const session = await mongoose.startSession();
+	try {
 
-	const { disciplineId } = params;
-	if (!disciplineId) {
-        throw new APIError(400, "Discipline ID is required");
-    }
+		session.startTransaction();
 
-	const body = await request.json();
-    const { name, description, startDate, endDate } = body;
-    if (!name || !description || !startDate || !endDate) {
-        throw new APIError(400, "All fields are required");
-    }
+		const user = await getAuthUser(request);
 
-	const updatedDiscipline = await Discipline.findOneAndUpdate(
-		{
+		const { disciplineId } = await params;
+		if (!disciplineId) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
+		}
+
+		const body = await request.json();
+		const { name, description, startDate, endDate } = body;
+		if (!name?.trim() || !description?.trim() || !startDate?.trim() || !endDate?.trim()) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields are required");
+		}
+
+		const originalDiscipline = await Discipline.findOne({
 			_id: disciplineId,
-			owner: user._id
-		},
-		{
-			$set: {
-				name,
-				description,
-				startDate,
-				endDate
-			}
-		},
-		{ new: true, runValidators: true }
-	);
+			owner: user._id,
+		})
+		.session(session);
 
-	if (!updatedDiscipline) {
-        throw new APIError(404, "Discipline not found or you do not have permission to edit it.");
-    }
+		if(!originalDiscipline) {
+			throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found or you do not have permission to edit it.");
+		}
 
-	return NextResponse.json(
-        new APIResponse(
-			200, 
-			updatedDiscipline, 
-			"Discipline updated successfully"
-		),
-        { status: 200 }
-    );
+		const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        const newStartDate = new Date(startDate);
+        newStartDate.setUTCHours(0, 0, 0, 0);
+        const newEndDate = new Date(endDate);
+        newEndDate.setUTCHours(0, 0, 0, 0);
+        const originalStartDate = new Date(originalDiscipline.startDate);
+        originalStartDate.setUTCHours(0, 0, 0, 0);
+
+		if(newStartDate < originalStartDate) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "Start date cannot be moved to an earlier date.");
+		}
+		if(newStartDate > today) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "Start date cannot be moved to a future date.");
+		}
+
+		if(newEndDate < newStartDate) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "End date cannot be before the start date.");
+		}
+		
+		// handle the side effects of date changes
+		
+		// cleanup: if start date was moved forward, delete the now-irrelevant day logs
+		if(newStartDate > originalStartDate) {
+
+			await Day.deleteMany({
+				discipline: disciplineId,
+				date: {
+					$gte: originalStartDate,
+					$lt: newStartDate
+				}
+			})
+			.session(session);
+		}
+
+		let finalStatus = originalDiscipline.status;
+
+		// status update: if the new end date is in the past, the discipline is now expired
+		if(newEndDate < today) {
+
+			const logs = await Day.find({ discipline: disciplineId })
+			.session(session);
+
+			let totalTasks = 0;
+			let completedTasks = 0;
+			logs.forEach(log => {
+
+				totalTasks += log.taskState.length;
+				completedTasks += log.taskState.filter(ts => ts.isCompleted).length;
+			});
+
+			const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+			finalStatus = completionRate >= 75 ? DISCIPLINE_STATUS.COMPLETED : DISCIPLINE_STATUS.FAILED;
+		}
+
+		const updatedDiscipline = await Discipline.findByIdAndUpdate(
+			disciplineId,
+			{
+				$set: {
+					name: name.trim(),
+					description: description.trim(),
+					startDate: newStartDate,
+					endDate: newEndDate,
+					status: finalStatus
+				}
+			},
+			{ new: true, runValidators: true, session }
+		);
+
+		if(!updatedDiscipline) {
+			throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to update the discipline");
+		}
+
+		await session.commitTransaction();
+
+		return NextResponse.json(
+			new APIResponse(
+				HTTP_STATUS.OK, 
+				updatedDiscipline, 
+				"Discipline Updated Successfully"
+			),
+			{ status: HTTP_STATUS.OK }
+		);
+	} catch(error) {
+
+		await session.abortTransaction();
+        throw error;
+    } finally {
+        await session.endSession();
+	}
 });
 
 export const DELETE = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
@@ -88,7 +167,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
 	const { disciplineId } = await params;
     if (!disciplineId) {
-        throw new APIError(400, "Discipline ID is required");
+        throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
     }
 
 	const disciplineToDelete = await Discipline.findOne({ 
@@ -97,17 +176,21 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 	});
 
 	if (!disciplineToDelete) {
-        throw new APIError(404, "Discipline not found or you do not have permission to delete it.");
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found or you do not have permission to delete it.");
     }
+
+	if(disciplineToDelete.status === DISCIPLINE_STATUS.ACTIVE) {
+		throw new APIError(HTTP_STATUS.BAD_REQUEST, "Active discipline cannot be deleted. Please mark it as 'Completed' or 'Failed' first.");
+	}
 
 	await disciplineToDelete.deleteOne();
 
 	return NextResponse.json(
         new APIResponse(
-			200, 
-			{}, 
+			HTTP_STATUS.OK, 
+			null, 
 			"Discipline and all its tasks deleted successfully"
 		),
-        { status: 200 }
+        { status: HTTP_STATUS.OK }
     );
 });

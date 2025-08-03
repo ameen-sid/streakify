@@ -14,7 +14,7 @@ const getAuthUser = async (request: NextRequest) => {
 	try {
 
 		const token = request.cookies.get("refreshToken")?.value;
-		if(!token) {
+		if(!token?.trim()) {
 			throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: No access token provided.");
 		}
 

@@ -33,7 +33,7 @@ const getDisciplineState = ({ startDate, endDate, status }: Discipline): Compute
 
 	if(start <= now && end >= now)	return DISCIPLINE_STATUS.ACTIVE;
 
-	if(end < now && status === DISCIPLINE_STATUS.ACTIVE)	return DISCIPLINE_STATUS.FAILED;
+	// if(end < now && status === DISCIPLINE_STATUS.ACTIVE)	return DISCIPLINE_STATUS.FAILED;
 
   	return DISCIPLINE_STATUS.UNKNOWN;
 };

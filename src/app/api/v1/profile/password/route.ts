@@ -31,6 +31,7 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
     }
 
 	userWithPassword.password = newPassword;
+    
     const updatedUser = await userWithPassword.save();
 	if(!updatedUser) {
 		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to update password");

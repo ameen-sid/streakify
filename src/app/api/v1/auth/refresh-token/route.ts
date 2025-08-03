@@ -7,13 +7,14 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateAccessAndRefreshTokens } from "@/utils/generateAccessAndRefreshTokens";
+import { hashToken } from "@/utils/hashToken";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
 	const incomingRefreshToken = request.cookies.get("refreshToken")?.value;
-	if(!incomingRefreshToken) {
+	if(!incomingRefreshToken?.trim()) {
 		throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Refresh Token is required.");
 	}
 
@@ -24,7 +25,8 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Invalid refresh token: User not found");
 	}
 	
-	if (incomingRefreshToken !== user?.refreshToken) {
+	const hashedToken = hashToken(incomingRefreshToken);
+	if (hashedToken !== user?.refreshToken) {
 		throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Refresh token is expired or has been used");
 	}
 

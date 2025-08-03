@@ -7,6 +7,7 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateToken } from "@/utils/generateToken";
+import { hashToken } from "@/utils/hashToken";
 import { sendResetPasswordEmail } from "@/utils/mails/sendResetPasswordEmail";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
@@ -20,7 +21,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		
 		const body = await request.json();
         const { email } = body;
-        if (!email) {
+        if (!email.trim()) {
             throw new APIError(HTTP_STATUS.BAD_REQUEST, "Email is required");
         }
 
@@ -34,9 +35,10 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		if(user) {
 
 			const resetToken = generateToken(user._id);
+			const hashedToken = hashToken(resetToken);
             const resetExpires = new Date(Date.now() + 1800000);
 
-			user.resetPasswordToken = resetToken;
+			user.resetPasswordToken = hashedToken;
             user.resetPasswordExpires = resetExpires;
             await user.save({ validateBeforeSave: false, session });
 

@@ -8,6 +8,7 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateAccessAndRefreshTokens } from "@/utils/generateAccessAndRefreshTokens";
+import { hashToken } from "@/utils/hashToken";
 import { sanitizeUser } from "@/utils/sanitizeUser";
 import { sendWelcomeEmail } from "@/utils/mails/sendWelcomeEmail";
 
@@ -22,12 +23,14 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		const body = await request.json();
         const { token } = body;
-        if (!token) {
+        if (!token.trim()) {
             throw new APIError(HTTP_STATUS.BAD_REQUEST, "Verification token is required");
         }
 
+		const hashedToken = hashToken(token);
+
 		const user = await User.findOneAndUpdate(
-            { verifyEmailToken: token },
+            { verifyEmailToken: hashedToken },
             {
                 $set: { isVerified: true },
                 $unset: { verifyEmailToken: "" }

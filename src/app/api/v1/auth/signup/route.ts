@@ -8,6 +8,7 @@ import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
 import { generateToken } from "@/utils/generateToken";
 import { generatePlaceholder } from "@/utils/generatePlaceholder";
+import { hashToken } from "@/utils/hashToken";
 import { sanitizeUser } from "@/utils/sanitizeUser";
 import { sendVerificationEmail } from "@/utils/mails/sendVerificationEmail";
 
@@ -42,16 +43,18 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		const avatar = generatePlaceholder(fullname);
 
 		const user = new User({
-            username: username.toLowerCase(),
-            email,
-            fullname,
+            username: username.toLowerCase().trim(),
+            email: email.trim(),
+            fullname: fullname.trim(),
             avatar,
             gender,
             password,
         });
 
 		const verificationToken = generateToken(user._id);
-        user.verifyEmailToken = verificationToken;
+        const hashedToken = hashToken(verificationToken);
+
+        user.verifyEmailToken = hashedToken;
 
 		const createdUser = await user.save({ session });
         if (!createdUser) {

@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import User from "@/models/user.model";
 import { HTTP_STATUS } from "@/constant";
 import { APIError } from "./APIError";
+import { hashToken } from "./hashToken";
 
 const generateAccessAndRefreshTokens = async (
 	userId: Types.ObjectId
@@ -16,7 +17,9 @@ const generateAccessAndRefreshTokens = async (
 		const accessToken = user.generateAccessToken();
 		const refreshToken = user.generateRefreshToken();
 
-		user.refreshToken = refreshToken;
+		const hashedRefreshToken = hashToken(refreshToken);
+
+		user.refreshToken = hashedRefreshToken;
 
 		const updatedUser = await user.save({ validateBeforeSave: false });
 		if(!updatedUser) {

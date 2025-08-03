@@ -6,6 +6,7 @@ import { HTTP_STATUS } from "@/constant";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { APIError } from "@/utils/APIError";
 import { APIResponse } from "@/utils/APIResponse";
+import { hashToken } from "@/utils/hashToken";
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
   	
@@ -19,9 +20,11 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	const hashedPassword = await bcrypt.hash(newPassword, 10);
 
+	const hashedToken = hashToken(token);
+
 	const user = await User.findOneAndUpdate(
 		{
-			resetPasswordToken: token,
+			resetPasswordToken: hashedToken,
 			resetPasswordExpires: { $gt: new Date() }
 		},
 		{

@@ -28,11 +28,11 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 	const response = NextResponse.json(
         new APIResponse(
-			200, 
+			HTTP_STATUS.OK, 
 			null, 
 			"User Logged Out Successfully"
 		),
-        { status: 200 }
+        { status: HTTP_STATUS.OK }
     );
 
 	response.cookies.set("accessToken", "", { ...COOKIE_OPTIONS, maxAge: 0 });

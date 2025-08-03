@@ -25,7 +25,6 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 	if (!ALLOWED_TYPES.includes(file?.type)) {
 		throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid file type. Only JPG, PNG, and WEBP allowed.");
 	}
-
 	if (file.size > MAX_SIZE) {
 		throw new APIError(HTTP_STATUS.BAD_REQUEST, "File size exceeds 2MB limit");
 	}

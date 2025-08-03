@@ -20,7 +20,6 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 	}
 
 	const user = await User.findOne({ email });
-
 	if(!user || !(await user.isPasswordCorrect(password))) {
 		throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Invalid user credentials");
 	}
