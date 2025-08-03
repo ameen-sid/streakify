@@ -4,6 +4,8 @@ import { IDiscipline, DisciplineModel, DisciplineDocument } from "./discipline.t
 import { DISCIPLINE_STATUS, MODEL_NAMES } from "@/constant";
 import Task from "./task.model";
 import Day from "./day.model";
+import "@/models/user.model";
+import "@/models/discipline.model";
 
 const disciplineSchema = new Schema<IDiscipline>({
 	name: {

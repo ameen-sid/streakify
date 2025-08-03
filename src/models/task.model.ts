@@ -2,6 +2,10 @@ import { Schema, model, models } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { ITask, TaskModel } from "./task.types";
 import { MODEL_NAMES } from "@/constant";
+import "@/models/user.model";
+import "@/models/discipline.model";
+import "@/models/task.model";
+import "@/models/day.model";
 
 const taskSchema = new Schema<ITask>({
 	name: {

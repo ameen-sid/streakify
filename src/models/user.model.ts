@@ -3,6 +3,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserDocument, UserDocumentMethods, UserModel } from "./user.types";
 import { MODEL_NAMES, GENDER_OPTIONS, DEFAULT_AVATAR } from "@/constant";
+import "@/models/user.model";
+import "@/models/discipline.model";
+import "@/models/task.model";
+import "@/models/day.model";
 
 const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	username: {
