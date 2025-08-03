@@ -1,5 +1,5 @@
 import nodemailer, { SendMailOptions, SentMessageInfo, TransportOptions } from "nodemailer";
-import { APP_NAME, HTTP_STATUS } from "@/constant";
+import { APP_NAME, EMAIL_USERNAME, HTTP_STATUS } from "@/constant";
 import { APIError } from "./APIError";
 
 interface MailSenderProps {
@@ -28,7 +28,7 @@ const mailSender = async ({
 		} as TransportOptions );
 
 		const mailOptions: SendMailOptions = {
-			from: APP_NAME,
+			from: `"${APP_NAME}" <${EMAIL_USERNAME}>`,
 			to: email,
 			subject: title,
 			html: body,

@@ -6,8 +6,11 @@ import { ListTodo, History, Settings, LayoutDashboard, Star, UserCircle } from "
 // --- APPLICATION ---
 export const APP_NAME = "Streakify";
 
+// --- EMAIL USERNAME ---
+export const EMAIL_USERNAME = "codehell7@gmail.com";
+
 // --- GEMINI AI ---
-export const MODEL_NAME =  "gemini-1.5-flash-latest";
+export const MODEL_NAME =  "gemini-2.5-flash-lite";
 
 // --- DISCIPLINE STATUS ---
 export const DISCIPLINE_STATUS = {
