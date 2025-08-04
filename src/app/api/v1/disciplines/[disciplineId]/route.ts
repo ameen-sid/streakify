@@ -86,7 +86,10 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 		if(newEndDate < newStartDate) {
 			throw new APIError(HTTP_STATUS.BAD_REQUEST, "End date cannot be before the start date.");
 		}
-		
+		if (newEndDate < today) {
+			throw new APIError(HTTP_STATUS.BAD_REQUEST, "End date cannot be set to a date in the past.");
+		}
+
 		// handle the side effects of date changes
 		
 		// cleanup: if start date was moved forward, delete the now-irrelevant day logs
@@ -102,26 +105,6 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 			.session(session);
 		}
 
-		let finalStatus = originalDiscipline.status;
-
-		// status update: if the new end date is in the past, the discipline is now expired
-		if(newEndDate < today) {
-
-			const logs = await Day.find({ discipline: disciplineId })
-			.session(session);
-
-			let totalTasks = 0;
-			let completedTasks = 0;
-			logs.forEach(log => {
-
-				totalTasks += log.taskState.length;
-				completedTasks += log.taskState.filter(ts => ts.isCompleted).length;
-			});
-
-			const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-			finalStatus = completionRate >= 75 ? DISCIPLINE_STATUS.COMPLETED : DISCIPLINE_STATUS.FAILED;
-		}
-
 		const updatedDiscipline = await Discipline.findByIdAndUpdate(
 			disciplineId,
 			{
@@ -129,8 +112,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 					name: name.trim(),
 					description: description.trim(),
 					startDate: newStartDate,
-					endDate: newEndDate,
-					status: finalStatus
+					endDate: newEndDate
 				}
 			},
 			{ new: true, runValidators: true, session }
