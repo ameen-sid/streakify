@@ -21,7 +21,11 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    const activeDisciplines = await Discipline.find({ status: DISCIPLINE_STATUS.ACTIVE })
+    const activeDisciplines = await Discipline.find({ 
+        status: DISCIPLINE_STATUS.ACTIVE,
+        startDate: { $lte: today },
+        endDate: { $gte: today }
+    })
     .select('_id owner');
 
     if (activeDisciplines.length === 0) {
