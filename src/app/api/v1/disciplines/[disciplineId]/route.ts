@@ -67,6 +67,11 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 			throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found or you do not have permission to edit it.");
 		}
 
+		// prevent to edit finished discipline
+		if (originalDiscipline.status !== DISCIPLINE_STATUS.ACTIVE) {
+			throw new APIError(HTTP_STATUS.FORBIDDEN, "Cannot edit a discipline that has already been finished.");
+		}
+
 		const today = new Date();
         today.setUTCHours(0, 0, 0, 0);
         const newStartDate = new Date(startDate);
