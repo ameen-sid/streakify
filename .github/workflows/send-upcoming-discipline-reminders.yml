@@ -1,0 +1,18 @@
+name: Send Upcoming Discipline Reminders
+
+on:
+    schedule:
+        # Runs at 9 PM IST (15:30 UTC) and 10 AM IST (4:30 UTC)
+        - cron: "30 15 * * *"
+        - cron: "30 4 * * *"
+    workflow_dispatch:
+
+jobs:
+    run-cron:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Call Upcoming Reminder API
+              run: |
+                  curl --request POST \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/upcoming-discipline-reminders' \
+                  --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

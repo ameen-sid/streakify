@@ -1,0 +1,18 @@
+name: Update Discipline Statuses
+
+on:
+    schedule:
+        # Runs at UTC midnight and 8 AM IST (2:30 UTC)
+        - cron: "5 0 * * *" # Offset by 5 mins to avoid overlap
+        - cron: "35 2 * * *"
+    workflow_dispatch:
+
+jobs:
+    run-cron:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Call Update Statuses API
+              run: |
+                  curl --request POST \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/discipline-statuses' \
+                  --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

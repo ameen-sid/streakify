@@ -1,0 +1,17 @@
+name: Send Daily Reminders
+on:
+    schedule:
+        # Runs at 8 AM IST (2:30 UTC) and 3 PM IST (9:30 UTC)
+        - cron: "30 2 * * *"
+        - cron: "30 9 * * *"
+    workflow_dispatch:
+
+jobs:
+    run-cron:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Call Daily Reminders API
+              run: |
+                  curl --request POST \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/daily-reminders' \
+                  --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'
