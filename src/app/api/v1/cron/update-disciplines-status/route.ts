@@ -26,7 +26,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
                 endDate: { $lt: today },
             }
         },
-        // loop up all associated day logs for each discipline
+        // lookup all associated day logs for each discipline
         {
             $lookup: {
                 from: "days",
@@ -35,29 +35,40 @@ export const POST = asyncHandler(async (request: NextRequest) => {
                 as: "logs"
             }
         },
-        // calculate the completion rate of each discipline
+        // deconstruct the logs array to process each day individually
+        {
+            $unwind: {
+                path: "$logs",
+                preserveNullAndEmptyArray: true,
+            }
+        },
+        // deconstruct the taskState array to process each task individually
+        {
+            $unwind: {
+                path: "$logs.taskState",
+                preserveNullAndEmptyArray: true,
+            }
+        },
+        // group by discipline to count total and completed tasks
+        {
+            $group: {
+                _id: "$_id",
+                totalTasks: { $sum: 1 },
+                completedTasks: {
+                    $sum: {
+                        $cond: [{ $eq: ["$logs.taskState.isCompleted", true] }, 1, 0]
+                    }
+                }
+            }
+        },
+        // calculate the final completion rate
         {
             $project: {
-                status: 1,
                 completionRate: {
                     $cond: {
-                        if: { $eq: [{ $size: "$logs" }, 0] },
-                        then: 0,    // if there are no logs completion rate is 0%
-                        else: {
-                            $let: {
-                                vars: {
-                                    totalTasks: { $sum: { $map: { input: "$logs", as: "log", in: { $size: "$$log.taskState" } } } },
-                                    completedTasks: { $sum: { $map: { input: "$logs", as: "log", in: { $size: { $filter: { input: "$$log.taskState", as: "ts", cond: "$$ts.isCompleted" } } } } } }
-                                },
-                                in: {
-                                    $cond: {
-                                        if: { $gt: ["$$totalTasks", 0] },
-                                        then: { $multiply: [{ $divide: ["$$completedTasks", "$$totalTasks"] }, 100] },
-                                        else: 0
-                                    }
-                                }
-                            }
-                        }
+                        if: { $gt: ["$totalTasks", 0] },
+                        then: { $round: [{ $multiply: [{ $divide: ["$completedTasks", "$totalTasks"] }, 100] }, 2] },
+                        else: 0
                     }
                 }
             }

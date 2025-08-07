@@ -177,6 +177,7 @@ export const EMAIL_SUBJECTS = {
     DELETE_ACCOUNT_SCHEDULED: "Your Account Deletion is Scheduled",
 	DAILY_REMINDER: "A quick reminder to keep your streak going!",
 	INACTIVE_USER: "Your discipline is waiting for you...",
+	UPCOMING_DISCIPLINE_REMINDER: (disciplineName: string) => `Get Ready! Your Discipline '${disciplineName}' Starts Tomorrow`,
 	WEEKLY_PROGRESS_REPORT: `Your Weekly Summary from ${APP_NAME}`,
 } as const;
 
