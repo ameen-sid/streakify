@@ -14,5 +14,5 @@ jobs:
             - name: Call Account Deletions API
               run: |
                   curl --request POST \
-                  --url '${{ secrets.APP_URL }}/api/v1/cron/scheduled-users' \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/process-account-deletions' \
                   --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

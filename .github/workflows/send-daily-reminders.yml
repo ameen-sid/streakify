@@ -13,5 +13,5 @@ jobs:
             - name: Call Daily Reminders API
               run: |
                   curl --request POST \
-                  --url '${{ secrets.APP_URL }}/api/v1/cron/daily-reminders' \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/send-reminders/daily' \
                   --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

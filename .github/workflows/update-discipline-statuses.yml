@@ -14,5 +14,5 @@ jobs:
             - name: Call Update Statuses API
               run: |
                   curl --request POST \
-                  --url '${{ secrets.APP_URL }}/api/v1/cron/discipline-statuses' \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/update-disciplines-status' \
                   --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

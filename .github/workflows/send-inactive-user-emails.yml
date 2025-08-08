@@ -14,5 +14,5 @@ jobs:
             - name: Call Inactive User API
               run: |
                   curl --request POST \
-                  --url '${{ secrets.APP_URL }}/api/v1/cron/inactive-users' \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/send-reminders/inactive' \
                   --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

@@ -14,5 +14,5 @@ jobs:
             - name: Call Create Daily Logs API
               run: |
                   curl --request POST \
-                  --url '${{ secrets.APP_URL }}/api/v1/cron/day' \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/create-daily-logs' \
                   --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'

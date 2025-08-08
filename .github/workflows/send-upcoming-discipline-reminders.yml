@@ -14,5 +14,5 @@ jobs:
             - name: Call Upcoming Reminder API
               run: |
                   curl --request POST \
-                  --url '${{ secrets.APP_URL }}/api/v1/cron/upcoming-discipline-reminders' \
+                  --url '${{ secrets.APP_URL }}/api/v1/cron/send-reminders/upcoming' \
                   --header 'Authorization: Bearer ${{ secrets.CRON_SECRET }}'
