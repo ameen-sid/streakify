@@ -46,7 +46,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
         {
             $unwind: {
                 path: "$logs.taskState",
-                preserveNullAndEmptyArray: true,
+                preserveNullAndEmptyArrays: true,
             }
         },
         // group by discipline to count total and completed tasks
