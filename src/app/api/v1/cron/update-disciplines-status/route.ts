@@ -39,7 +39,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
         {
             $unwind: {
                 path: "$logs",
-                preserveNullAndEmptyArray: true,
+                preserveNullAndEmptyArrays: true,
             }
         },
         // deconstruct the taskState array to process each task individually
