@@ -57,7 +57,7 @@ export const updateTaskStatus = async (taskId: string) => {
 		DAILYLOG_ROUTES.UPDATE_TASK(taskId),
 		{ headers: HEADERS }
 	);
-    return response.data;
+    return response.data.data.currentStreak;
 };
 
 // --- GET LOGS BY DATE ---

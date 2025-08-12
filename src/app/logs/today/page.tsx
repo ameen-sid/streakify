@@ -124,7 +124,8 @@ const DailyContent = () => {
 
         try {
        
-            await updateTaskStatus(taskId);
+            const updatedStreak = await updateTaskStatus(taskId);
+            setDiscipline({currentStreak: updatedStreak, _id: discipline?._id!});
        
             toast.success("Task completed!");
         } catch (error) {
@@ -236,9 +237,9 @@ const DailyContent = () => {
         }
     };
 
-    if (loading) {
-        return <div className="p-8 text-center"><p>Loading your plan...</p></div>;
-    }
+    // if (loading) {
+    //     return <div className="p-8 text-center"><p>Loading your plan...</p></div>;
+    // }
 
     // if (!dailyLog) {
     //     return <div className="p-8 text-center"><p>Could not load your daily log. Please try again.</p></div>;
@@ -262,7 +263,7 @@ const DailyContent = () => {
                     {showStreak && discipline && (
                         <div className="flex items-center gap-2 bg-orange-100 text-orange-800 font-bold px-4 py-2 rounded-full animate-fade-in-pop">
                             <Flame size={20} className="text-orange-500" />
-                            <span>{discipline.currentStreak == 0 ? 1 : discipline.currentStreak} Day Streak!</span>
+                            <span>{discipline.currentStreak} Day Streak!</span>
                         </div>
                     )}
                 </header>
@@ -273,8 +274,9 @@ const DailyContent = () => {
                         <div className="w-full bg-gray-200 rounded-full h-2.5"><div className="bg-black h-2.5 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }}></div></div>
                     </div>
                 )}
-
-                <main>
+                
+                {loading ? <div className="p-8 text-center"><p>Loading your plan...</p></div>
+                : <main>
                     {totalCount && totalCount > 0 ? (
                         <div className="space-y-4">{dailyLog.day.taskState.map(ts => (<TaskItem key={ts._id} taskState={ts} onToggle={handleToggleTask}/>))}</div>
                     ) : (
@@ -303,7 +305,7 @@ const DailyContent = () => {
                         />
                         <button onClick={handleSaveHighlight} disabled={isSaving} className="mt-4 w-full sm:w-auto px-6 py-2 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors cursor-pointer disabled:bg-gray-400">{isSaving ? 'Saving...' : 'Save Highlight'}</button>
                     </div>
-                </main>
+                </main>}
                 
             </div>
         </div>
