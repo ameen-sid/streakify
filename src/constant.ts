@@ -96,8 +96,8 @@ export const CRON_ROUTES = {
 
 // --- NAVIGATION ---
 export const APP_NAVIGATION_LINKS = [
+	{ name: "Today's Log", href: '/logs/today', icon: ListTodo },
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: "Today's Log", href: '/logs/today', icon: ListTodo },
     { name: 'Disciplines', href: '/disciplines', icon: Settings },
     { name: 'Highlights', href: '/dashboard/highlights', icon: Star },
     { name: 'Past Logs', href: (date: string) => `/logs/${date}`, icon: History },

@@ -56,7 +56,7 @@ const LoginPage = () => {
             setCredentials(initialState);
             toast.success("Login Successful", { id: toastId });
 
-            router.push("/dashboard");
+            router.push("/logs/today");
         } catch(error) {
 
             if(error instanceof AxiosError) {
