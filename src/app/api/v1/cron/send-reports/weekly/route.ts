@@ -1,5 +1,5 @@
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import Day from "@/models/day.model";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
 import { asyncHandler } from "@/utils/asyncHandler";
@@ -27,40 +27,113 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     const previousMonday = new Date(lastSunday);
     previousMonday.setUTCDate(lastSunday.getUTCDate() - 6);
 
-    const usersWithWeeklyStats = await User.aggregate([
-        // look up the Day logs for each user within the last week.
+    // const usersWithWeeklyStats = await User.aggregate([
+    //     // look up the Day logs for each user within the last week.
+    //     {
+    //         $lookup: {
+    //             from: "days",
+    //             let: { userId: "$_id" },
+    //             pipeline: [
+    //                 {
+    //                     $match: {
+    //                         $expr: {
+    //                             $and: [
+    //                                 { $eq: ["$user", "$$userId"] },
+    //                                 { $gte: ["$date", previousMonday] },
+    //                                 { $lte: ["$date", lastSunday] }
+    //                             ]
+    //                         }
+    //                     }
+    //                 }
+    //             ],
+    //             as: "weeklyLogs"
+    //         }
+    //     },
+    //     // filter out users who had no activity this week.
+    //     {
+    //         $match: { "weeklyLogs": { $ne: [] } }
+    //     },
+    //     // look up the user's active discipline 
+    //     // calculate stats for each remaining user.
+    //     {
+    //         $project: {
+    //             email: 1,
+    //             fullname: 1,
+    //             stats: {
+    //                 totalTasks: { $sum: { $map: { input: "$weeklyLogs", as: "log", in: { $size: "$$log.taskState" } } } },
+    //                 completedTasks: { $sum: { $map: { input: "$weeklyLogs", as: "log", in: { $size: { $filter: { input: "$$log.taskState", as: "ts", cond: "$$ts.isCompleted" } } } } } }
+    //             }
+    //         }
+    //     }
+    // ]);
+
+    const usersWithWeeklyStats = await Day.aggregate([
+        // find all logs within the past week
         {
-            $lookup: {
-                from: "days",
-                let: { userId: "$_id" },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ["$user", "$$userId"] },
-                                    { $gte: ["$date", previousMonday] },
-                                    { $lte: ["$date", lastSunday] }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                as: "weeklyLogs"
+            $match: {
+                date: {
+                    $gte: previousMonday,
+                    $lte: lastSunday
+                }
             }
         },
-        // filter out users who had no activity this week.
+        // deconstruct the taskState array to process each task
         {
-            $match: { "weeklyLogs": { $ne: [] } }
+            $unwind: "$taskState"
         },
-        // calculate stats for each remaining user.
+        // group by user to calculate their weekly stats
+        {
+            $group: {
+                _id: "$user", // group by the user's id
+                totalTasks: { $sum: 1 },
+                completedTasks: {
+                    $sum: { $cond: [{ $eq: ["$taskState.isCompleted", true] }, 1, 0] }
+                },
+                // get the id of most recent discipline they worked on this week
+                lastDisciplineId: { $last: "$discipline" }
+            }
+        },
+        // look up the user's details (email, fullname)
+        {
+            $lookup: {
+                from: "users",
+                localField: "_id",
+                foreignField: "_id",
+                as: "userDetails"
+            }
+        },
+        // look up the details of their most recent discipline to get the longest streak
+        {
+            $lookup: {
+                from: "disciplines",
+                localField: "lastDisciplineId",
+                foreignField: "_id",
+                as: "disciplineDetails"
+            }
+        },
+        // filter out any potential mismatches and deconstruct the arrays
+        {
+            $match: { 
+                "userDetails": { $ne: [] }, 
+                "disciplineDetails": { $ne: [] } 
+            }
+        },
+        {
+            $unwind: "$userDetails"
+        },
+        {
+            $unwind: "$disciplineDetails"
+        },
+        // project the final shape for the email service
         {
             $project: {
-                email: 1,
-                fullname: 1,
+                _id: 1,
+                email: "$userDetails.email",
+                fullname: "$userDetails.fullname",
+                longestStreak: "$disciplineDetails.longestStreak",
                 stats: {
-                    totalTasks: { $sum: { $map: { input: "$weeklyLogs", as: "log", in: { $size: "$$log.taskState" } } } },
-                    completedTasks: { $sum: { $map: { input: "$weeklyLogs", as: "log", in: { $size: { $filter: { input: "$$log.taskState", as: "ts", cond: "$$ts.isCompleted" } } } } } }
+                    totalTasks: "$totalTasks",
+                    completedTasks: "$completedTasks"
                 }
             }
         }
@@ -83,7 +156,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 			const { totalTasks, completedTasks } = user.stats;
             const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
             
-            const longestStreak = 0;
+            const longestStreak = user.longestStreak;
 
             const prompt = `A user had a weekly task completion rate of ${completionRate}%. Write a short, encouraging, and actionable insight for their weekly summary email.`;
             const aiInsight = await generateText(prompt);
