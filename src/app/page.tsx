@@ -1,62 +1,67 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { BrainCircuit } from "lucide-react";
-import AiTag from "@/components/ai-tag";
-import { APP_NAME } from "@/constant";
+import Header from "@/components/pages/home/header";
+import HeroSection from "@/components/pages/home/hero-section";
+import AppMockup from "@/components/pages/home/app-mockup";
+import FeaturesSection from "@/components/pages/home/feature-section";
+import TechStackSection from "@/components/pages/home/tech-stack-section";
+import CTASection from "@/components/pages/home/cta-section";
+import Footer from "@/components/common/footer";
+
+const StreakifyHomepage = () => {
+	return (
+		<div className="relative overflow-hidden">
+			{/* Decorative background blobs for the glassmorphism effect */}
+			<div className="absolute top-0 -left-1/3 w-2/3 h-2/3 bg-blue-500/20 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
+			<div className="absolute top-0 -right-1/3 w-2/3 h-2/3 bg-purple-500/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+			<div className="absolute bottom-0 left-1/4 w-1/2 h-1/2 bg-indigo-500/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+
+			<div className="relative z-10">
+				<Header />
+				<main>
+					<HeroSection />
+					<AppMockup />
+					<FeaturesSection />
+					<TechStackSection />
+					<CTASection />
+				</main>
+				<Footer />
+			</div>
+			<style>{`
+				@keyframes blob {
+				0% { transform: translate(0px, 0px) scale(1); }
+				33% { transform: translate(30px, -50px) scale(1.1); }
+				66% { transform: translate(-20px, 20px) scale(0.9); }
+				100% { transform: translate(0px, 0px) scale(1); }
+				}
+				.animate-blob {
+				animation: blob 7s infinite;
+				}
+				.animation-delay-2000 {
+				animation-delay: 2s;
+				}
+				.animation-delay-4000 {
+				animation-delay: 4s;
+				}
+				.bg-grid-gray-800\\/\\[0\\.1\\] {
+					background-image: linear-gradient(white 1px, transparent 1px), linear-gradient(to right, white 1px, transparent 1px);
+					background-size: 4rem 4rem;
+					background-color: transparent;
+					opacity: 0.05;
+				}
+      		`}</style>
+		</div>
+	);
+};
 
 const Home = () => {
 	return (
-		<div className="min-h-screen bg-white text-black font-sans">
-			<div className="container mx-auto px-4 h-screen">
-				<div className="grid lg:grid-cols-2 items-center h-full gap-16">
-					
-					{/* Left Column: Image/Graphic (visible on desktop) */}
-					<div className="hidden lg:flex items-center justify-center h-full">
-						<BrainCircuit className="w-2/3 h-auto max-w-xs text-black" />
-					</div>
-
-					{/* Right Column: Content */}
-					<div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-						
-						{/* Graphic for Mobile View */}
-						<div className="lg:hidden mb-12">
-							<BrainCircuit className="w-40 h-auto text-black" />
-						</div>
-
-						{/* Text Content */}
-						<div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-4">
-							<h1 className="text-4xl md:text-5xl font-bold leading-tight">
-								{APP_NAME}
-							</h1>
-							<AiTag />
-						</div>
-
-						<p className="mt-2 text-lg text-gray-600 max-w-md">
-							Build lasting disciplines and achieve your goals, one day.
-						</p>
-
-						{/* Action Buttons */}
-						<div className="mt-10 w-full max-w-xs space-y-4">
-							<Link
-								href="/login"
-								className="w-full block bg-black text-white font-semibold py-4 px-4 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
-								Sign In
-							</Link>
-							<Link
-								href="/signup"
-								className="w-full block bg-white text-black font-semibold py-4 px-4 rounded-lg text-center border-2 border-black hover:bg-gray-100 transition-colors duration-300">
-								Create account
-							</Link>
-						</div>
-						
-					</div>
-
-				</div>
-			</div>
+		// Using a near-black background for a high-contrast theme
+		<div className="bg-gray-950 text-white font-sans antialiased">
+			<StreakifyHomepage />
 		</div>
 	);
-}
+};
 
 export default Home;
