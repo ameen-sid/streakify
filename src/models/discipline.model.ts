@@ -1,11 +1,12 @@
 import { Schema, model, models } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { IDiscipline, DisciplineModel, DisciplineDocument } from "./discipline.types";
+import { IDiscipline, DisciplineModel, DisciplineDocument } from "@/models/types";
 import { DISCIPLINE_STATUS, MODEL_NAMES } from "@/constant";
-import Task from "./task.model";
-import Day from "./day.model";
-import "@/models/user.model";
-import "@/models/discipline.model";
+import { User, Task, Day } from "@/models";
+// import Task from "./task.model";
+// import Day from "./day.model";
+// import "@/models/user.model";
+// import "@/models/discipline.model";
 
 const disciplineSchema = new Schema<IDiscipline>({
 	name: {
@@ -56,14 +57,12 @@ disciplineSchema.pre<DisciplineDocument>('deleteOne', { document: true, query: f
 	try {
 
 		await Task.deleteMany({ discipline: this._id });
-
 		await Day.deleteMany({ discipline: this._id });
-
 		next();
 	} catch(error) {
 		
 		if (error instanceof Error)	next(error);
-  		else	next(new Error("Unknown error occurred"));
+		else	next(new Error("Unknown error occurred"));
 	}
 });
 

@@ -1,10 +1,11 @@
 import { Schema, model, models } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { IDay, DayModel, ITaskState } from "./day.types";
+import { IDay, DayModel, ITaskState } from "@/models/types";
 import { MODEL_NAMES } from "@/constant";
-import "@/models/user.model";
-import "@/models/discipline.model";
-import "@/models/task.model";
+import { User, Discipline, Task } from "@/models";
+// import "@/models/user.model";
+// import "@/models/discipline.model";
+// import "@/models/task.model";
 
 const taskStateSchema = new Schema<ITaskState>({
 	task: {
