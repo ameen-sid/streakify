@@ -11,7 +11,7 @@ export const APP_NAME = "Streakify";
 export const EMAIL_USERNAME = "codehell7@gmail.com";
 
 // --- GEMINI AI ---
-export const MODEL_NAME =  "gemini-2.5-flash-lite";
+export const MODEL_NAME = "gemini-2.5-flash-lite";
 
 // --- DISCIPLINE STATUS ---
 export const DISCIPLINE_STATUS = {

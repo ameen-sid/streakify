@@ -2,15 +2,15 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const PUBLIC_PATHS = [
-  '/signup',
-  '/signup/confirmation',
-  '/verify-email',
-  '/login',
-  '/forgot-password',
-  '/reset-password',
-  '/reset-password/success',
-  '/recover-account',
-  '/dashboard/profile/settings/deletion-confirmation',
+	'/signup',
+	'/signup/confirmation',
+	'/verify-email',
+	'/login',
+	'/forgot-password',
+	'/reset-password',
+	'/reset-password/success',
+	'/recover-account',
+	'/dashboard/profile/settings/deletion-confirmation',
 ];
 
 const isPublicRoute = (path: string): boolean => {
@@ -25,7 +25,7 @@ const isPublicRoute = (path: string): boolean => {
 }
 
 export const middleware = async (request: NextRequest) => {
-	
+
 	const { pathname } = request.nextUrl;
 	const token = request.cookies.get("accessToken")?.value;
 
@@ -49,12 +49,12 @@ export const config = {
 	matcher: [
 		// Public paths
 		'/signup/:path*',
-  		'/verify-email',
-  		'/login',
-  		'/forgot-password',
-  		'/reset-password/',
-  		'/reset-password/success',
-  		'/recover-account',
+		'/verify-email',
+		'/login',
+		'/forgot-password',
+		'/reset-password/',
+		'/reset-password/success',
+		'/recover-account',
 		'/dashboard/profile/settings/deletion-confirmation',
 
 		// Private Paths
