@@ -1,7 +1,7 @@
 import { DEFAULT_ERROR_MESSAGE } from "@/constant";
 
 class APIError extends Error {
-	
+
 	statusCode: number;
 	data: Record<string, unknown> | null;
 	success: boolean;
@@ -13,7 +13,7 @@ class APIError extends Error {
 		errors: Error[] = [], 
 		stack?: string
 	) {
-		
+
 		super(message);
 		this.statusCode = statusCode;
 		this.data = null;

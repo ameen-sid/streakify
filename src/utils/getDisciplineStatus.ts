@@ -23,8 +23,8 @@ interface Discipline {
 const getDisciplineState = ({ startDate, endDate, status }: Discipline): ComputedDisciplineStatus => {
 
 	const now = normalizeDate(new Date());
-  	const start = normalizeDate(new Date(startDate));
-  	const end = normalizeDate(new Date(endDate));
+	const start = normalizeDate(new Date(startDate));
+	const end = normalizeDate(new Date(endDate));
 
 	if(status === DISCIPLINE_STATUS.COMPLETED)	return DISCIPLINE_STATUS.COMPLETED;
 	if(status === DISCIPLINE_STATUS.FAILED)	return DISCIPLINE_STATUS.FAILED;
@@ -35,7 +35,7 @@ const getDisciplineState = ({ startDate, endDate, status }: Discipline): Compute
 
 	// if(end < now && status === DISCIPLINE_STATUS.ACTIVE)	return DISCIPLINE_STATUS.FAILED;
 
-  	return DISCIPLINE_STATUS.UNKNOWN;
+	return DISCIPLINE_STATUS.UNKNOWN;
 };
 
 export { getDisciplineState };

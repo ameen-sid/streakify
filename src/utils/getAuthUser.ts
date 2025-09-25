@@ -1,8 +1,8 @@
 import { jwtVerify } from "jose";
-import User from "@/models/user.model";
-import { HTTP_STATUS, USER_HIDE_FIELDS } from "@/constant";
 import { NextRequest } from "next/server";
-import { APIError } from "./APIError";
+import { User } from "@/models";
+import { HTTP_STATUS, USER_HIDE_FIELDS } from "@/constant";
+import { APIError } from "@/utils";
 
 /** 
  * Verifies the JWT from the request cookies and returns the authenticated user.
@@ -21,7 +21,7 @@ const getAuthUser = async (request: NextRequest) => {
 		const secret = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET!);
 		const { payload } = await jwtVerify(token, secret);
 		const decodedPayload = payload as { _id: string };
-		
+
 		const user = await User.findById(decodedPayload._id).select(USER_HIDE_FIELDS);
 		if(!user) {
 			throw new APIError(HTTP_STATUS.NOT_FOUND, "User not found.");

@@ -1,6 +1,5 @@
 import { APP_NAME, EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
-import { APIError } from "../APIError";
-import { mailSender } from "../mailSender";
+import { APIError, mailSender } from "@/utils";
 
 const deleteAccountScheduleTemplate = (
 	username: string,

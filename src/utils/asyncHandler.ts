@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { APIError } from "./APIError";
-import { APIResponse } from "./APIResponse";
+import { APIError, APIResponse } from "@/utils";
 
 type AsyncFunction = (req: NextRequest, ...args: any[]) => Promise<NextResponse>;
 
@@ -13,7 +12,6 @@ const asyncHandler = (fn: AsyncFunction) => {
 		} catch (error) {
 
 			console.error("API Error Caught: ", error);
-			
 			if(error instanceof APIError) {
 
 				return NextResponse.json(

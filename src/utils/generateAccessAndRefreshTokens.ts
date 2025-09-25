@@ -1,8 +1,7 @@
 import { Types } from "mongoose";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { HTTP_STATUS } from "@/constant";
-import { APIError } from "./APIError";
-import { hashToken } from "./hashToken";
+import { APIError, hashToken } from "@/utils";
 
 const generateAccessAndRefreshTokens = async (
 	userId: Types.ObjectId

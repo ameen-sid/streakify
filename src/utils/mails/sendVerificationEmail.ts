@@ -1,6 +1,5 @@
 import { APP_NAME, EMAIL_SUBJECTS, HTTP_STATUS } from "@/constant";
-import { APIError } from "../APIError";
-import { mailSender } from "../mailSender";
+import { APIError, mailSender } from "@/utils";
 
 const verificationEmailTemplate = (
 	username: string,
@@ -9,8 +8,8 @@ const verificationEmailTemplate = (
 	return `<!DOCTYPE html>
 			<html lang="en">
 				<head>
-    				<meta charset="UTF-8">
-    				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+					<meta charset="UTF-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1.0">
 					<meta http-equiv="X-UA-Compatible" content="ie=edge">
 					<title>Verify Your Email Address</title>
 					<style>
@@ -98,8 +97,8 @@ const verificationEmailTemplate = (
 										</td>
 									</tr>
 
-                				</table>
-            				</td>
+								</table>
+							</td>
 						</tr>
 					</table>
 

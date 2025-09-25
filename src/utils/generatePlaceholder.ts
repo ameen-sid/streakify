@@ -1,5 +1,5 @@
 const generatePlaceholder = (fullname: string): string => {
-	
+
 	const parts = fullname.trim().split(' ');
 	const first = parts[0]?.[0] ?? '';
 	const second = parts[1]?.[0] ?? '';

@@ -1,8 +1,8 @@
 import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from "cloudinary";
 import streamifier from "streamifier";
-import cloudinaryConnect from "@/config/cloudinary";
+import { cloudinaryConnect } from "@/config";
 import { FOLDER_NAME, RESOURCE_TYPE, HTTP_STATUS } from "@/constant";
-import { APIError } from "./APIError";
+import { APIError } from "@/utils";
 
 const uploadOnCloudinary = async (
 	fileBuffer: Buffer,
@@ -10,9 +10,7 @@ const uploadOnCloudinary = async (
 ): Promise<{ url: string }> => {
 
 	await cloudinaryConnect();
-
 	const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${filename.split('.')[0]}`;
-	
 	return new Promise((resolve, reject) => {
 
 		const uploadStream = cloudinary.uploader.upload_stream(
@@ -24,13 +22,13 @@ const uploadOnCloudinary = async (
 			(error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
 
 				if (error) {
-                    
+
 					console.error("Cloudinary upload stream error:", error);
                     return reject(new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to upload file to cloud service."));
                 }
 
 				if (!result || !result.secure_url) {
-                 
+
 					console.error("Cloudinary upload failed: No result or secure_url returned.");
                     return reject(new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "File upload failed after processing."));
                 }

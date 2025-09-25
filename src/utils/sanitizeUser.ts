@@ -1,4 +1,4 @@
-import { UserDocument, IUser } from "@/models/user.types";
+import { UserDocument, IUser } from "@/models/types";
 import { SENSITIVE_USER_FIELDS } from "@/constant";
 
 type SensitiveField = typeof SENSITIVE_USER_FIELDS[number];

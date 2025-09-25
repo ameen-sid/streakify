@@ -1,6 +1,6 @@
 import nodemailer, { SendMailOptions, SentMessageInfo, TransportOptions } from "nodemailer";
 import { APP_NAME, EMAIL_USERNAME, HTTP_STATUS } from "@/constant";
-import { APIError } from "./APIError";
+import { APIError } from "@/utils";
 
 interface MailSenderProps {
 	email: string;
@@ -38,7 +38,7 @@ const mailSender = async ({
 
 		return mailResponse;
 	} catch (error) {
-		
+
 		console.error("Error while sending mail: ", error);
 		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to send the email.");
 	}

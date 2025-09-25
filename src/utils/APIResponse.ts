@@ -1,7 +1,7 @@
 import { DEFAULT_SUCCESS_MESSAGE } from "@/constant";
 
 class APIResponse<T> {
-	
+
 	statusCode: number;
 	data: T;
 	message: string;

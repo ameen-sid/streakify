@@ -2,7 +2,7 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MODEL_NAME, HTTP_STATUS } from "@/constant";
-import { APIError } from "./APIError";
+import { APIError } from "@/utils";
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -19,7 +19,7 @@ const generateText = async (prompt: string): Promise<string> => {
 
 		const response = result.response;
 		const text = response.text();
-		
+
 		return text;
 	} catch(error) {
 
