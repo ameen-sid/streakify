@@ -1,4 +1,5 @@
 name: Send Daily Reminders
+
 on:
     schedule:
         # Runs at 8 AM IST (2:30 UTC) and 3 PM IST (9:30 UTC)
