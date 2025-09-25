@@ -15,7 +15,7 @@ export type DisciplineInfo = {
 };
 
 export const getTasksForDiscipline = async (disciplineId: string): Promise<{ tasks: Task[], discipline: DisciplineInfo }> => {
-    
+
 	const response = await axios.get(
         TASK_ROUTES.GET_BY_DISCIPLINE(disciplineId),
         { headers: HEADERS }
@@ -31,7 +31,7 @@ export type TaskData = {
 };
 
 export const createTask = async (disciplineId: string, data: TaskData) => {
-  
+
 	const response = await axios.post(
         TASK_ROUTES.CREATE(disciplineId), 
         data,
@@ -42,7 +42,7 @@ export const createTask = async (disciplineId: string, data: TaskData) => {
 
 // --- GET TASK BY ID ---
 export const getTaskById = async (taskId: string): Promise<Task> => {
-  
+
 	const response = await axios.get(
         TASK_ROUTES.GET_BY_ID(taskId),
         { headers: HEADERS }
@@ -52,7 +52,7 @@ export const getTaskById = async (taskId: string): Promise<Task> => {
 
 // --- UPDATE TASK ---
 export const updateTask = async (taskId: string, data: TaskData) => {
-  
+
 	const response = await axios.patch(
         TASK_ROUTES.UPDATE(taskId), 
         data,
@@ -63,7 +63,7 @@ export const updateTask = async (taskId: string, data: TaskData) => {
 
 // --- DELETE TASK ---
 export const deleteTask = async (taskId: string) => {
-  
+
 	const response = await axios.delete(TASK_ROUTES.DELETE(taskId));
     return response.data;
 };

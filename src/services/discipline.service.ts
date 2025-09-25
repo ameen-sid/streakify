@@ -42,7 +42,7 @@ export const createDiscipline = async (data: DisciplineData) => {
 
 // --- GET DISCIPLINE BY ID ---
 export const getDisciplineById = async (id: string): Promise<DisciplineData> => {
-    
+
     const response = await axios.get(
         DISCIPLINE_ROUTES.GET_BY_ID(id),
         { headers: HEADERS }
@@ -52,7 +52,7 @@ export const getDisciplineById = async (id: string): Promise<DisciplineData> => 
 
 // --- UPDATE DISCIPLINE ---
 export const updateDiscipline = async (id: string, data: DisciplineData) => {
-   
+
     const response = await axios.patch(
         DISCIPLINE_ROUTES.UPDATE(id), 
         data,

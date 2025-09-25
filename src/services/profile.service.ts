@@ -23,7 +23,7 @@ export const getProfile = async (): Promise<ProfilePageDate> => {
 		PROFILE_ROUTES.GET_PROFILE,
 		{ headers: HEADERS }
 	);
-	
+
 	const { username, fullname, avatar } = response.data.data;
 	return { username, fullname, avatar };
 };
@@ -120,7 +120,7 @@ type SideBarData = {
 };
 
 export const getProfileForNav = async (): Promise<SideBarData> => {
-    
+
 	const response = await axios.get(
 		PROFILE_ROUTES.GET_PROFILE,
 		{ headers: HEADERS }

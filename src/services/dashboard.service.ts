@@ -15,7 +15,7 @@ type DashboardData = {
 };
 
 export const getDashboardData = async (month: string): Promise<DashboardData> => {
-  
+
     const response = await axios.get(
         DASHBOARD_ROUTES.GET_SUMMARY(month),
         { headers: HEADERS }
@@ -30,7 +30,7 @@ export type HighlightLog = {
 };
 
 export const getHighlightsForMonth = async (month: string): Promise<HighlightLog[]> => {
-    
+
 	const response = await axios.get(
         DASHBOARD_ROUTES.GET_HIGHLIGHTS(month),
         { headers: HEADERS }

@@ -31,7 +31,7 @@ type DailyLog = {
 };
 
 export const getDailyLog = async (): Promise<DailyLog> => {
-   
+
 	const response = await axios.get(
 		DAILYLOG_ROUTES.GET_TODAY,
 		{ headers: HEADERS }
@@ -41,7 +41,7 @@ export const getDailyLog = async (): Promise<DailyLog> => {
 
 // --- SAVE HIGHLIGHT ---
 export const saveHighlight = async (highlight: string) => {
-  
+
 	const response = await axios.post(
 		DAILYLOG_ROUTES.SAVE_HIGHLIGHT, 
 		{ highlight },
@@ -52,7 +52,7 @@ export const saveHighlight = async (highlight: string) => {
 
 // --- UPDATE TASK STATUS ---
 export const updateTaskStatus = async (taskId: string) => {
-    
+
 	const response = await axios.patch(
 		DAILYLOG_ROUTES.UPDATE_TASK(taskId),
 		{ headers: HEADERS }
@@ -69,7 +69,7 @@ type PastLog = {
 };
 
 export const getLogByDate = async (date: string): Promise<PastLog | null> => {
-  
+
 	const response = await axios.get(
 		DAILYLOG_ROUTES.GET_BY_DATE(date),
 		{ headers: HEADERS }
