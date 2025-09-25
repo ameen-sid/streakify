@@ -15,7 +15,7 @@ const cloudinaryConnect = async () => {
 
 		console.log("Connected to Cloudinary Successfully");
 	} catch(error) {
-		
+
 		console.error("Error in connecting to cloudinary: ", error);
 		throw error;
 	}
