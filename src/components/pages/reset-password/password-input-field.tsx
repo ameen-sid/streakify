@@ -11,7 +11,7 @@ interface PasswordFieldProps {
 }
 
 const PasswordInputField = ({ label, name, value, placeholder, onChange }: PasswordFieldProps) => {
-    
+
 	const [isVisible, setIsVisible] = useState(false); 
 	return (
         <div>

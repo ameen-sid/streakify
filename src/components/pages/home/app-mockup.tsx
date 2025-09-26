@@ -1,10 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Check, Bot } from "lucide-react"
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks";
 
 const AppMockup = () => {
-	
+
 	const animationProps = useScrollAnimation();
 	return (
 		<motion.div

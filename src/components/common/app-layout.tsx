@@ -6,8 +6,7 @@ import Link from "next/link";
 import { BrainCircuit, LogOut, Menu, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { APP_NAME, APP_NAVIGATION_LINKS, DEFAULT_AVATAR } from "@/constant";
-import { getProfile } from "@/services/profile.service";
-import { logoutUser } from "@/services/auth.service";
+import { getProfile, logoutUser } from "@/services";
 import { AxiosError } from "axios";
 
 type UserData = {
@@ -55,11 +54,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, user, date }: { sidebarOpen: boo
                 toast.error(error?.response?.data.message);
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Log out Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 			    // console.error("Log out Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -120,7 +119,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, user, date }: { sidebarOpen: boo
 };
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
-    
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [user, setUser] = useState<UserData | null>(null);
     const today = new Date().toISOString().split('T')[0];
@@ -129,19 +128,19 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
         const fetchUser = async () => {
             try {
-                
+
                 const userData = await getProfile();
-                
+
                 setUser(userData);
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Profile Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-				    
+
                     // console.error("Profile Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
@@ -151,7 +150,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
                 }
             }
         };
-        
+
         fetchUser();
     }, []);
 

@@ -2,7 +2,7 @@ import React from "react";
 import { AlertTriangle } from "lucide-react";
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, disciplineName }: { isOpen: boolean, onClose: () => void, onConfirm: () => void, disciplineName: string }) => {
-    
+
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs z-50 flex justify-center items-center p-4">

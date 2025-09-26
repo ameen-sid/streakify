@@ -5,7 +5,7 @@ import { BrainCircuit, Menu, X } from "lucide-react";
 import { APP_NAME } from "@/constant";
 
 const Header = () => {
-	
+
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	return (
 		<motion.header

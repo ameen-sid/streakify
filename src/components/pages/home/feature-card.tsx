@@ -1,9 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks";
 
 const FeatureCard = ({ icon, title, description, index }: any) => {
-	
+
 	const animationProps = useScrollAnimation();
 	return (
 		<motion.div

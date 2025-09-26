@@ -2,14 +2,14 @@ import React from "react";
 import Link from "next/link";
 import { Calendar, Flag, Pencil, Trash2 } from "lucide-react";
 import { Discipline, ComputedDisciplineStatus } from "@/app/disciplines/page";
-import { getDisciplineState } from "@/utils/getDisciplineStatus";
+import { getDisciplineState } from "@/utils";
 import { DISCIPLINE_STATUS } from "@/constant";
 
 const DisciplineCard = ({ discipline, onDeleteClick }: { discipline: Discipline, onDeleteClick: (discipline: Discipline) => void }) => {
-	
+
 	const computedStatus = getDisciplineState(discipline);
 	const getStatusStyles = (status: ComputedDisciplineStatus) => {
-		
+
 		switch (status) {
 			case DISCIPLINE_STATUS.ACTIVE: return 'bg-green-100 text-green-800';
 			case DISCIPLINE_STATUS.UPCOMING: return 'bg-blue-100 text-blue-800';

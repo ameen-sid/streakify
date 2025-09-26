@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks";
 import nextjs from "../../../../public/assets/icons/nextjs.svg";
 import react from "../../../../public/assets/icons/react.svg";
 import tailwindcss from "../../../../public/assets/icons/tailwind-css.svg";
@@ -11,7 +11,7 @@ import vercel from "../../../../public/assets/icons/vercel.svg";
 import github from "../../../../public/assets/icons/github.svg";
 
 const TechStackSection = () => {
-	
+
 	const animationProps = useScrollAnimation();
 	const techs = [
 		{

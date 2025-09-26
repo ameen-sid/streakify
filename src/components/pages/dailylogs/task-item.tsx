@@ -3,7 +3,7 @@ import { CheckCircle, Circle } from "lucide-react"
 import { TaskState } from "@/app/logs/today/page";
 
 const TaskItem = ({ taskState, onToggle }: { taskState: TaskState, onToggle: (id: string) => void }) => {
-    
+
     const { task, isCompleted } = taskState;
     return (
         <div 

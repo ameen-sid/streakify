@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks";
 
 const CTASection = () => {
-	
+
 	const animationProps = useScrollAnimation();
 	return (
 		<section className="py-24 sm:py-32">

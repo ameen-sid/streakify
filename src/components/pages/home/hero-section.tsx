@@ -2,10 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Bot, ArrowRight } from "lucide-react"
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks";
 
 const HeroSection = () => {
-	
+
 	const animationProps = useScrollAnimation();
 	return (
 		<section className="relative pt-24 pb-32 text-center overflow-hidden">

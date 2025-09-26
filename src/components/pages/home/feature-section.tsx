@@ -11,12 +11,12 @@ import {
 	Zap,
 	Star,
 } from "lucide-react";
-import useScrollAnimation from "@/hooks/useScrollAnimation";
-import FeatureCard from "./feature-card";
+import { useScrollAnimation } from "@/hooks";
+import { FeatureCard } from "@/components/pages/home";
 import { APP_NAME } from "@/constant";
 
 const FeaturesSection = () => {
-	
+
 	const animationProps = useScrollAnimation();
 	const features = {
 		"AI-Powered Enhancement": [
