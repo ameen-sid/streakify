@@ -1,15 +1,12 @@
 import connectDB from "@/database";
-import Day from "@/models/day.model";
+import { Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { generateText } from "@/utils/generateText";
-import { sendWeeklyProgressReportEmail } from "@/utils/mails/sendWeeklyProgressReportEmail";
+import { APIError, APIResponse, asyncHandler, generateText } from "@/utils";
+import { sendWeeklyProgressReportEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-	
+
 	const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");
@@ -19,7 +16,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
-    
+
     const dayOfWeek = today.getUTCDay();
     const lastSunday = new Date(today);
     lastSunday.setUTCDate(today.getUTCDate() - dayOfWeek);
@@ -152,10 +149,10 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
     const emailPromises = usersWithWeeklyStats.map(async (user) => {
         try {
-            
+
 			const { totalTasks, completedTasks } = user.stats;
             const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-            
+
             const longestStreak = user.longestStreak;
 
             const prompt = `A user had a weekly task completion rate of ${completionRate}%. Write a short, encouraging, and actionable insight for their weekly summary email.`;

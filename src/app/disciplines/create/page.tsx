@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Zap } from "lucide-react";
 import toast from "react-hot-toast";
-import { createDiscipline } from "@/services/discipline.service";
-import { generateText } from "@/utils/generateText";
-import AppLayout from "@/components/common/app-layout";
-import FormField from "@/components/pages/create-discipline/form-field";
+import { createDiscipline } from "@/services";
+import { generateText } from "@/utils";
+import { AppLayout } from "@/components/common";
+import { FormField } from "@/components/pages/create-discipline";
 import { AxiosError } from "axios";
 
 export type DisciplineData = {
@@ -26,34 +26,34 @@ const initialState: DisciplineData = {
 };
 
 const CreateDisciplineContent = () => {
-    
+
     const router = useRouter();
-    
+
     const [discipline, setDiscipline] = useState<DisciplineData>(initialState);
     const [loading, setLoading] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-       
+
         const { name, value } = e.target;
         setDiscipline(prev => ({ ...prev, [name]: value }));
     };
 
     const handleGenerateDescription = async () => {
-        
+
         if (!discipline.name) {
-        
+
             toast.error("Please enter a discipline name first.");
             return;
         }
-        
+
         setIsGenerating(true);
         const toastId = toast.loading("Generating...");
         try {
-        
+
             const prompt = `Write a brief, one-sentence description for a personal discipline named "${discipline.name}". The description should be encouraging and clear.`;
             const generatedDescription = await generateText(prompt);
-        
+
             setDiscipline(prev => ({ ...prev, description: generatedDescription }));
             toast.success("Description generated!", { id: toastId });
         } catch (error) {
@@ -64,11 +64,11 @@ const CreateDisciplineContent = () => {
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Description Generation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                
+
 			    // console.error("Description Generation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -78,29 +78,29 @@ const CreateDisciplineContent = () => {
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        
+
         e.preventDefault();
         setLoading(true);
         const toastId = toast.loading(`Creating new discipline...`);
         try {
-        
+
             await createDiscipline(discipline);
-        
+
             toast.success("Discipline created successfully!", { id: toastId });
             router.push("/disciplines");
         } catch (error) {
-        
+
             if(error instanceof AxiosError) {
 
                 // console.error("Discipline Creation Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 			    // console.error("Discipline Creation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 			    // console.error("Discipline Creation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -112,7 +112,7 @@ const CreateDisciplineContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
-                
+
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">

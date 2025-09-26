@@ -1,14 +1,11 @@
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -31,7 +28,7 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
     }
 
 	userWithPassword.password = newPassword;
-    
+
     const updatedUser = await userWithPassword.save();
 	if(!updatedUser) {
 		throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to update password");

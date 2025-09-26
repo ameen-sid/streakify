@@ -1,11 +1,8 @@
 import connectDB from "@/database";
-import Day from "@/models/day.model";
+import { Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 /**
  * @route GET /api/v1/dashboard/highlights
@@ -14,7 +11,7 @@ import { APIResponse } from "@/utils/APIResponse";
  * @access Private (Requires user to be logged in)
  */
 export const GET = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -28,10 +25,10 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 
 	const year = parseInt(month.split('-')[0]);
 	const monthIndex = parseInt(month.split('-')[1]) - 1;
-    
+
 	// create the start date explicitly in UTC
 	const startDate = new Date(Date.UTC(year, monthIndex, 1));
-    
+
 	// create the end date by going to the start of the next month and subtracting one millisecond
 	const endDate = new Date(Date.UTC(year, monthIndex + 1, 1));
 	endDate.setUTCMilliseconds(-1);

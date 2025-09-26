@@ -5,15 +5,15 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, CheckCircle, LayoutDashboard, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
-import { recoverAccount } from "@/services/profile.service";
-import AuthCard from "@/components/common/auth-card";
+import { recoverAccount } from "@/services";
+import { AuthCard } from "@/components/common";
 import { AxiosError } from "axios";
 
 const RecoverAccountPage = () => {
 
     const router = useRouter();
     const params = useParams();
-    
+
     const [status, setStatus] = useState<'recovering' | 'success' | 'error'>('recovering');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -35,7 +35,7 @@ const RecoverAccountPage = () => {
                 toast.success("Account Recovered Successfully!");
                 setStatus('success');
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Account Recovery Failed: ", error?.response?.data.message);
@@ -43,12 +43,12 @@ const RecoverAccountPage = () => {
                     setErrorMessage(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Account Recovery Failed: ", error.message);
                     toast.error(error.message);
                     setErrorMessage(error.message);
                 } else {
-                    
+
                     // console.error("Account Recovery Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                     setErrorMessage(String(error));
@@ -89,9 +89,9 @@ const RecoverAccountPage = () => {
                 </AuthCard>
             )}
             {status === 'error' && (
-                 <AuthCard icon={<AlertTriangle className="h-12 w-12 text-red-500 bg-black" />} title="Recovery Failed">
+                <AuthCard icon={<AlertTriangle className="h-12 w-12 text-red-500 bg-black" />} title="Recovery Failed">
                     <p className="mt-4 text-red-600 max-w-xs">{errorMessage}</p>
-                     <div className="mt-8 w-full">
+                    <div className="mt-8 w-full">
                         <Link href="/login" className="w-full inline-flex items-center justify-center py-3 px-4 rounded-lg font-semibold text-white bg-black">
                             Back to Login
                         </Link>

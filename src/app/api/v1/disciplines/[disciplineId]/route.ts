@@ -1,20 +1,16 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
-import Day from "@/models/day.model";
+import { Discipline, Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
-	
+
 	const { disciplineId } = await params;
 	if (!disciplineId) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
@@ -36,7 +32,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 });
 
 export const PATCH = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	
+
 	await connectDB();
 
 	const session = await mongoose.startSession();
@@ -96,7 +92,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 		}
 
 		// handle the side effects of date changes
-		
+
 		// cleanup: if start date was moved forward, delete the now-irrelevant day logs
 		if(newStartDate > originalStartDate) {
 
@@ -147,7 +143,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 });
 
 export const DELETE = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);

@@ -1,14 +1,12 @@
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
+import { Discipline } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { sendInactiveUserEmail } from "@/utils/mails/sendInactiveUserEmail";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { sendInactiveUserEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-    
+
     const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");
@@ -93,9 +91,9 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     const loginUrl = `${baseUrl}/login`;
 
     const emailPromises = inactiveUsers.map(user => {
-        
+
         if (user && user.email) {
-            
+
             return sendInactiveUserEmail(
                 user.email, 
                 user.fullname, 
@@ -103,7 +101,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
             )
                 .then(() => ({ status: 'fulfilled', userId: user._id }))
                 .catch(error => {
-                    
+
                     console.error(`Failed to send inactive user email to ${user._id}:`, error);
                     return { status: 'rejected', userId: user._id, reason: error.message };
                 });

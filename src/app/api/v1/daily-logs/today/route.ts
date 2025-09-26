@@ -1,16 +1,11 @@
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
-import Task from "@/models/task.model";
-import Day from "@/models/day.model";
+import { Discipline, Task, Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const GET = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -67,7 +62,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 		status: DISCIPLINE_STATUS.ACTIVE 
 	})
     .select("_id name currentStreak longestStreak");
-	
+
 	if (!populatedDayLog) {
         throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to fetch or create today's log.");
     }

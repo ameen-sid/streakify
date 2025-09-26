@@ -3,9 +3,9 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { MessageSquareQuote } from "lucide-react";
 import toast from "react-hot-toast";
-import { getHighlightsForMonth } from "@/services/dashboard.service";
-import AppLayout from "@/components/common/app-layout";
-import HighlightCard from "@/components/pages/dashboard-highlights/highlight-card";
+import { getHighlightsForMonth } from "@/services";
+import { AppLayout } from "@/components/common";
+import { HighlightCard } from "@/components/pages/dashboard-highlights";
 import { AxiosError } from "axios";
 
 export type HighlightLog = {
@@ -16,7 +16,7 @@ export type HighlightLog = {
 const MonthlyHighlightsContent = () => {
 
     const [selectedMonth, setSelectedMonth] = useState(() => {
-    
+
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -31,12 +31,12 @@ const MonthlyHighlightsContent = () => {
 
     useEffect(() => {
         const fetchHighlights = async () => {
-           
+
             setLoading(true);
             try {
-           
+
                 const data = await getHighlightsForMonth(selectedMonth);
-           
+
                 setHighlights(data);
             } catch (error) {
                 
@@ -46,11 +46,11 @@ const MonthlyHighlightsContent = () => {
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Highlights Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Highlights Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -70,7 +70,7 @@ const MonthlyHighlightsContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-4xl mx-auto">
-                
+
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-black">Monthly Highlights</h1>
@@ -101,7 +101,7 @@ const MonthlyHighlightsContent = () => {
                         </div>
                     )}
                 </section>
-                
+
             </div>
         </div>
     );

@@ -5,10 +5,9 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { PlusCircle, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import { getTasksForDiscipline, deleteTask } from "@/services/task.service";
-import AppLayout from "@/components/common/app-layout";
-import DeleteConfirmationModal from "@/components/pages/tasks/delete-confirmation-modal";
-import TaskCard from "@/components/pages/tasks/task-card";
+import { getTasksForDiscipline, deleteTask } from "@/services";
+import { AppLayout } from "@/components/common";
+import { DeleteConfirmationModal, TaskCard } from "@/components/pages/tasks";
 import { AxiosError } from "axios";
 
 export type Task = {
@@ -24,7 +23,7 @@ export type DisciplineInfo = {
 };
 
 const DisciplineTasksContent = () => {
-    
+
     const params = useParams();
     const disciplineId = params.disciplineId as string;
 
@@ -38,28 +37,28 @@ const DisciplineTasksContent = () => {
         if (!disciplineId) return;
 
         const getAllTasks = async () => {
-        
+
             setLoading(true);
             try {
-        
+
                 const { tasks, discipline } = await getTasksForDiscipline(disciplineId);
-        
+
                 tasks.sort((a, b) => a.priority - b.priority);
                 setTasks(tasks);
                 setDiscipline(discipline);
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Tasks Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Tasks Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Tasks Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -72,40 +71,40 @@ const DisciplineTasksContent = () => {
     }, [disciplineId]);
 
     const openDeleteModal = (task: Task) => {
-    
+
         setTaskToDelete(task);
         setIsModalOpen(true);
     };
 
     const closeDeleteModal = () => {
-    
+
         setTaskToDelete(null);
         setIsModalOpen(false);
     };
 
     const handleConfirmDelete = async () => {
-       
+
         if (!taskToDelete) return;
         const toastId = toast.loading("Deleting task...");
         try {
-       
+
             await deleteTask(taskToDelete._id);
-       
+
             setTasks(tasks.filter(t => t._id !== taskToDelete._id));
             toast.success("Task Deleted Successfully", { id: toastId });
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Task Deletion Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Task Deletion Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 			    // console.error("Task Deletion Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -117,7 +116,7 @@ const DisciplineTasksContent = () => {
     if (loading) {
         return <div className="p-8 text-center"><p>Loading tasks...</p></div>;
     }
-    
+
     // if (!discipline) {
     //     return <div className="p-8 text-center"><p>Could not load discipline details.</p></div>;
     // }
@@ -126,7 +125,7 @@ const DisciplineTasksContent = () => {
         <>
             <div className="p-4 sm:p-6 lg:p-8">
                 <div className="w-full max-w-4xl mx-auto">
-                    
+
                     <header className="mb-8">
                         <Link href="/disciplines" className="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-black mb-4">
                             <ArrowLeft size={16} className="mr-2" />Back to Disciplines
@@ -149,7 +148,7 @@ const DisciplineTasksContent = () => {
                             <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-200"><h3 className="text-xl font-semibold text-black">No Tasks Yet</h3><p className="mt-2 text-gray-500">Click &quot;Add New Task&quot; to set up the tasks for this discipline.</p></div>
                         )}
                     </main>
-                    
+
                 </div>
             </div>
             <DeleteConfirmationModal isOpen={isModalOpen} onClose={closeDeleteModal} onConfirm={handleConfirmDelete} taskName={taskToDelete?.name || ''} />

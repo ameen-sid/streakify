@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { COOKIE_OPTIONS, HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { generateAccessAndRefreshTokens } from "@/utils/generateAccessAndRefreshTokens";
-import { hashToken } from "@/utils/hashToken";
-import { sanitizeUser } from "@/utils/sanitizeUser";
-import { sendWelcomeEmail } from "@/utils/mails/sendWelcomeEmail";
+import { 
+	APIError, 
+	APIResponse, 
+	asyncHandler, 
+	generateAccessAndRefreshTokens, 
+	hashToken, 
+	sanitizeUser 
+} from "@/utils";
+import { sendWelcomeEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
 
@@ -18,7 +20,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 	const session = await mongoose.startSession();
 	try {
-		
+
 		session.startTransaction();
 
 		const body = await request.json();
@@ -44,13 +46,13 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const disciplinePageLink = `${baseUrl}/disciplines`;
-        
+
 		await sendWelcomeEmail(
 			user.email, 
 			user.username, 
 			disciplinePageLink
 		);
-		
+
 		await session.commitTransaction();
 
 		const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
@@ -58,7 +60,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		const cookieStore = await cookies();
 		cookieStore.set("accessToken", accessToken, COOKIE_OPTIONS);
 		cookieStore.set("refreshToken", refreshToken, COOKIE_OPTIONS);
-		
+
         return NextResponse.json(
             new APIResponse(
                 HTTP_STATUS.OK,
@@ -68,7 +70,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
             { status: HTTP_STATUS.OK }
         );
 	} catch(error) {
-		
+
 		await session.abortTransaction();
 		throw error;
 	} finally {

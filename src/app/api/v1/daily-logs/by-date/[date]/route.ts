@@ -1,14 +1,11 @@
 import connectDB from "@/database";
-import Day from "@/models/day.model";
+import { Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { MODEL_NAMES, HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { date: string } }) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);

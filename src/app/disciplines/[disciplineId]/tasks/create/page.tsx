@@ -4,8 +4,8 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import { createTask } from "@/services/task.service";
-import AppLayout from "@/components/common/app-layout";
+import { createTask } from "@/services";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 type TaskData = {
@@ -25,18 +25,18 @@ const CreateTaskContent = () => {
     const router = useRouter();
     const params = useParams();
     const disciplineId = params.disciplineId as string;
-    
+
     const [task, setTask] = useState<TaskData>(initialState);
     const [loading, setLoading] = useState(false);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        
+
         const { name, value } = e.target;
         setTask(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        
+
         e.preventDefault();
         setLoading(true);
         const toastId = toast.loading("Creating new task...");
@@ -48,7 +48,7 @@ const CreateTaskContent = () => {
             };
 
             await createTask(disciplineId, dataToSend);
-            
+
             toast.success("Task created successfully!", { id: toastId });
             router.back();
         } catch (error) {
@@ -59,11 +59,11 @@ const CreateTaskContent = () => {
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 			    // console.error("Task Creation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 			    // console.error("Task Creation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -76,7 +76,7 @@ const CreateTaskContent = () => {
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
-                    
+
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
                             <button onClick={() => router.back()} className="p-2 rounded-full hover:bg-gray-100">
@@ -108,7 +108,7 @@ const CreateTaskContent = () => {
                             </div>
                         </form>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

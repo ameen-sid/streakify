@@ -1,13 +1,11 @@
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-    
+
     const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");

@@ -7,7 +7,7 @@ const NotFoundPage = () => {
         <div className="min-h-screen bg-white text-black flex items-center justify-center p-4 font-sans">
             <div className="w-full max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    
+
                     {/* Left Column: Text Content */}
                     <div className="text-center md:text-left">
                         <p className="text-lg font-semibold text-black uppercase tracking-wider">
@@ -40,7 +40,7 @@ const NotFoundPage = () => {
                     {/* Right Column: Graphic */}
                     <div className="hidden md:flex items-center justify-center">
                         <div className="relative w-full max-w-md">
-                           <p className="text-[12rem] lg:text-[16rem] font-black text-gray-100 leading-none">404</p>
+                            <p className="text-[12rem] lg:text-[16rem] font-black text-gray-100 leading-none">404</p>
                         </div>
                     </div>
 

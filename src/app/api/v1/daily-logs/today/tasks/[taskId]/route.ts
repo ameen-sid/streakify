@@ -1,16 +1,12 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
-import Day from "@/models/day.model";
+import { Discipline, Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const PATCH = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	
+
 	await connectDB();
 
 	const session = await mongoose.startSession();
@@ -63,7 +59,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
 		// if streak threshold isn't met. we're done. commit and return
 		if (!streakAchieved) {
-         
+
 			await session.commitTransaction();
             return NextResponse.json(
 				new APIResponse(
@@ -83,7 +79,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 		.session(session);
 
 		if (!discipline) {
-         
+
 			await session.commitTransaction();
             return NextResponse.json(
 				new APIResponse(
@@ -109,7 +105,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
             const yesterdayCompleted = yesterdayLog.taskState.filter(ts => ts.isCompleted).length;
             const yesterdayTotal = yesterdayLog.taskState.length;
             const yesterdayCompletionRate = yesterdayTotal > 0 ? (yesterdayCompleted / yesterdayTotal) * 100 : 0;
-            
+
             if (yesterdayCompletionRate >= 75) {
                 newStreak = discipline.currentStreak + 1;
             }

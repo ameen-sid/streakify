@@ -1,18 +1,13 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
-import Task from "@/models/task.model";
+import { Discipline, Task, Day } from "@/models";
+import { ITaskState } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import Day from "@/models/day.model";
-import { ITaskState } from "@/models/day.types";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -33,7 +28,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
     }
 
 	const tasks = await Task.find({ discipline: disciplineId });
-	
+
 	return NextResponse.json(
         new APIResponse(
             HTTP_STATUS.OK,
@@ -48,7 +43,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 });
 
 export const POST = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
-	
+
 	await connectDB();
 
 	const session = await mongoose.startSession();
@@ -78,7 +73,7 @@ export const POST = asyncHandler(async (request: NextRequest, { params }: { para
         if (!name?.trim() || !description?.trim() || !priority) {
             throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields (name, description, priority) are required");
         }
-        
+
         const createdTask = await Task.create({
             name,
             description,
@@ -89,7 +84,7 @@ export const POST = asyncHandler(async (request: NextRequest, { params }: { para
         if (!createdTask) {
             throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to create task. Please try again.");
         }
-        
+
         // update today's log (if it exists)
         const today = new Date();
         today.setUTCHours(0, 0, 0, 0);
@@ -119,7 +114,7 @@ export const POST = asyncHandler(async (request: NextRequest, { params }: { para
             const rateAfter = totalAfter > 0 ? (completedAfter / totalAfter) * 100 : 0;
 
             if (wasTodayAStreakDay && rateAfter < 75) {
-                
+
                 await Discipline.updateOne(
                     { _id: disciplineId, owner: user._id },
                     { $inc: { currentStreak: -1 } }

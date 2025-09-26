@@ -3,9 +3,9 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { Calendar } from "lucide-react";
 import toast from "react-hot-toast";
-import { getLogByDate } from "@/services/dailylog.service";
-import PastTaskItem from "@/components/pages/pastlogs/past-logs-item";
-import AppLayout from "@/components/common/app-layout";
+import { getLogByDate } from "@/services";
+import { PastTaskItem } from "@/components/pages/pastlogs";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 type Task = {
@@ -36,14 +36,14 @@ const PastLogsContent = () => {
 
     useEffect(() => {
         const fetchLogForDate = async (date: string) => {
-            
+
             setLoading(true);
             setLogData(null);
             // const toastId = toast.loading(`Fetching log for ${date}...`);
             try {
-            
+
                 const data = await getLogByDate(date);
-            
+
                 if (data) {
                     data.taskState.sort((a,b) => a.task.priority - b.task.priority);
                     setLogData(data);
@@ -52,18 +52,18 @@ const PastLogsContent = () => {
                 }
                 // toast.success("Log fetched!", { id: toastId });
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Log Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Log Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Log Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -84,7 +84,7 @@ const PastLogsContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
-               
+
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-black">Past Logs</h1>
@@ -132,7 +132,7 @@ const PastLogsContent = () => {
                         </div>
                     )}
                 </main>
-                
+
             </div>
         </div>
     );

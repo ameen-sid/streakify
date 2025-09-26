@@ -6,9 +6,9 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 import { GENDER_OPTIONS } from "@/constant";
-import { signUpUser } from "@/services/auth.service";
-import SparkleIcon from "@/components/icons/sparkle-icon";
-import InputField from "@/components/pages/signup/input-field";
+import { signUpUser } from "@/services";
+import { SparkleIcon } from "@/components/icons";
+import { InputField } from "@/components/pages/signup";
 import { AxiosError } from "axios";
 
 export type UserSignUpData = {
@@ -30,7 +30,7 @@ const initialState: UserSignUpData = {
 };
 
 const SignUp = () => {
-	
+
     const router = useRouter();
 
 	const [user, setUser] = useState<UserSignUpData>(initialState);
@@ -48,7 +48,7 @@ const SignUp = () => {
 
         e.preventDefault();
 		if (user.password !== user.confirmPassword) {
-            
+
 			toast.error("Oops! Passwords must match");
             return;
         }
@@ -72,11 +72,11 @@ const SignUp = () => {
                 toast.error(error?.response?.data.message, { id: toastId });
             }
 			else if (error instanceof Error) {
-                    
+
 				// console.error("Signup Failed: ", error);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 				// console.error("Signup Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -88,7 +88,7 @@ const SignUp = () => {
 	return (
 		<div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
 			<div className="w-full max-w-md bg-white rounded-3xl shadow-lg flex flex-col items-center text-center overflow-hidden p-8 sm:p-10">
-				
+
 				{/* Icon */}
 				<div className="text-black mb-6">
 					<SparkleIcon className="h-12 w-12" />
@@ -99,11 +99,11 @@ const SignUp = () => {
 
 					<h1 className="text-3xl font-bold text-black">Create account</h1>
 					<form onSubmit={onSignUp} className="mt-8 space-y-4 text-left">
-                        
+
 						<InputField label="Username" name="username" value={user.username} onChange={handleChange} />
                         <InputField label="Email Address" name="email" value={user.email} onChange={handleChange} type="email" />
                         <InputField label="Full Name" name="fullname" value={user.fullname} onChange={handleChange} />
-						
+
 						<div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
                             <select name="gender" value={user.gender} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white" required>

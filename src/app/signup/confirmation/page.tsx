@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { MailCheck, ArrowLeft } from "lucide-react";
-import AuthCard from "@/components/common/auth-card";
+import { AuthCard } from "@/components/common";
 
 const VerifyEmailContent = () =>  {
 

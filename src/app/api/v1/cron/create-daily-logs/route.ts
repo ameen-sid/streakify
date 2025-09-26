@@ -1,16 +1,12 @@
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
-import Task from "@/models/task.model";
-import Day from "@/models/day.model";
-import { ITask } from "@/models/task.types";
+import { Discipline, Task, Day } from "@/models";
+import { ITask } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-    
+
     const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");
@@ -51,7 +47,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     type TasksByDiscipline = Record<string, ITask[]>;
 
     const tasksByDiscipline = allTasks.reduce((acc: TasksByDiscipline, task) => {
-        
+
         const key = task.discipline.toString();
         if (!acc[key])  acc[key] = [];
         acc[key].push(task);
@@ -59,7 +55,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     }, {});
 
     const dayCreationPromises = activeDisciplines.map(async (discipline) => {
-        
+
         const userId = discipline.owner;
         const disciplineId = discipline._id;
         const tasks = tasksByDiscipline[disciplineId.toString()] || [];
@@ -86,7 +82,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
                 discipline: disciplineId,
                 taskState: taskStateData,
             });
-            
+
             return { status: 'created', userId };
 
         } catch (error) {
@@ -97,7 +93,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     });
 
     const results = await Promise.allSettled(dayCreationPromises);
-    
+
     const summary = {
         totalActiveDisciplines: activeDisciplines.length,
         created: results.filter(r => r.status === 'fulfilled' && r.value.status === 'created').length,

@@ -4,8 +4,8 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import { getTaskById, updateTask } from "@/services/task.service";
-import AppLayout from "@/components/common/app-layout";
+import { getTaskById, updateTask } from "@/services";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 type TaskData = {
@@ -41,18 +41,18 @@ const EditTaskContent = () => {
 
                 setTask(data);
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Task Details Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Task Details Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Task Details Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -65,40 +65,40 @@ const EditTaskContent = () => {
     }, [taskId]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        
+
         const { name, value } = e.target;
         setTask(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-       
+
         e.preventDefault();
         setLoading(true);
         const toastId = toast.loading("Updating task...");
         try {
-           
+
             const dataToSend = {
                 ...task,
                 priority: Number(task.priority)
             };
-           
+
             await updateTask(taskId, dataToSend);
-           
+
             toast.success("Task updated successfully!", { id: toastId });
             router.back();
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Task Updation Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Task Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 				// console.error("Task Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -110,7 +110,7 @@ const EditTaskContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
-                
+
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
@@ -147,7 +147,7 @@ const EditTaskContent = () => {
                         )}
                     </div>
                 </div>
-                
+
             </div>
         </div>
     );

@@ -5,11 +5,10 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Zap } from "lucide-react";
 import toast from "react-hot-toast";
-import { getDisciplineById, updateDiscipline } from "@/services/discipline.service";
-import { generateText } from "@/utils/generateText";
-import { formatDateForInput } from "@/utils/formatDateForInput";
-import AppLayout from "@/components/common/app-layout";
-import FormField from "@/components/pages/edit-discipline/form-field";
+import { getDisciplineById, updateDiscipline } from "@/services";
+import { generateText, formatDateForInput } from "@/utils";
+import { AppLayout } from "@/components/common";
+import { FormField } from "@/components/pages/edit-discipline";
 import { AxiosError } from "axios";
 
 export type DisciplineData = {
@@ -27,7 +26,7 @@ const initialState: DisciplineData = {
 };
 
 const UpdateDisciplineContent = () => {
-    
+
     const router = useRouter();
     const params = useParams();
     const disciplineId = params.disciplineId as string;
@@ -40,12 +39,12 @@ const UpdateDisciplineContent = () => {
         if (!disciplineId) return;
 
         const fetchDiscipline = async () => {
-    
+
             setLoading(true);
             try {
-    
+
                 const data = await getDisciplineById(disciplineId);
-    
+
                 setDiscipline({
                     name: data.name,
                     description: data.description,
@@ -53,18 +52,18 @@ const UpdateDisciplineContent = () => {
                     endDate: formatDateForInput(data.endDate),
                 });
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Discipline Details Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Discipline Details Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Discipline Details Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -77,15 +76,15 @@ const UpdateDisciplineContent = () => {
     }, [disciplineId]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        
+
         const { name, value } = e.target;
         setDiscipline(prev => ({ ...prev, [name]: value }));
     };
 
     const handleGenerateDescription = async () => {
-        
+
         if (!discipline.name) {
-        
+
             toast.error("Please enter a discipline name first.");
             return;
         }
@@ -93,25 +92,25 @@ const UpdateDisciplineContent = () => {
         setIsGenerating(true);
         const toastId = toast.loading("Generating...");
         try {
-        
+
             const prompt = `Write a brief, one-sentence description for a personal discipline named "${discipline.name}". The description should be encouraging and clear.`;
             const generatedDescription = await generateText(prompt);
-        
+
             setDiscipline(prev => ({ ...prev, description: generatedDescription }));
             toast.success("Description generated!", { id: toastId });
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Description Generation Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message);
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Description Generation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                
+
 			    // console.error("Description Generation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -121,14 +120,14 @@ const UpdateDisciplineContent = () => {
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        
+
         e.preventDefault();
         setLoading(true);
         const toastId = toast.loading("Updating discipline...");
         try {
-        
+
             await updateDiscipline(disciplineId, discipline);
-        
+
             toast.success("Discipline updated successfully!", { id: toastId });
             router.push("/disciplines");
         } catch (error) {
@@ -139,11 +138,11 @@ const UpdateDisciplineContent = () => {
                 toast.error(error?.response?.data.message);
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Discipline Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 			    // console.error("Discipline Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -156,7 +155,7 @@ const UpdateDisciplineContent = () => {
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
-                    
+
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
                             <Link href="/disciplines" className="p-2 rounded-full hover:bg-gray-100">
@@ -193,7 +192,7 @@ const UpdateDisciplineContent = () => {
                             </form>
                         )}
                     </div>
-                    
+
                 </div>
             </div>
         </div>

@@ -1,16 +1,20 @@
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { ALLOWED_TYPES, HTTP_STATUS, MAX_SIZE } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { uploadOnCloudinary, getPublicIdFromUrl, deleteFromCloudinary } from "@/utils/cloudinary";
-import { sanitizeUser } from "@/utils/sanitizeUser";
+import { 
+    APIError, 
+    APIResponse, 
+    asyncHandler, 
+    getAuthUser, 
+    uploadOnCloudinary, 
+    getPublicIdFromUrl, 
+    deleteFromCloudinary, 
+    sanitizeUser 
+} from "@/utils";
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -37,7 +41,7 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
     }
 
 	if (user.avatar) {
-        
+
 		const oldPublicId = getPublicIdFromUrl(user.avatar);
         if (oldPublicId) {
             await deleteFromCloudinary(oldPublicId);

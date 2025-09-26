@@ -1,13 +1,8 @@
 "use client";
 
 import React from "react";
-import Header from "@/components/pages/home/header";
-import HeroSection from "@/components/pages/home/hero-section";
-import AppMockup from "@/components/pages/home/app-mockup";
-import FeaturesSection from "@/components/pages/home/feature-section";
-import TechStackSection from "@/components/pages/home/tech-stack-section";
-import CTASection from "@/components/pages/home/cta-section";
-import Footer from "@/components/common/footer";
+import { Header, HeroSection, AppMockup, FeaturesSection, TechStackSection, CTASection } from "@/components/pages/home";
+import { Footer } from "@/components/common";
 
 const StreakifyHomepage = () => {
 	return (
@@ -50,7 +45,7 @@ const StreakifyHomepage = () => {
 					background-color: transparent;
 					opacity: 0.05;
 				}
-      		`}</style>
+			`}</style>
 		</div>
 	);
 };

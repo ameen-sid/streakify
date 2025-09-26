@@ -21,9 +21,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body
-				className={`${roboto.variable}`}
-			>
+			<body className={`${roboto.variable}`} >
 				<Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 1000, error: { duration: 3000 } }} />
 				{children}
 			</body>

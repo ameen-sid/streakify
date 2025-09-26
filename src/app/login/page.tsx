@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import { loginUser } from "@/services/auth.service";
-import SparkleIcon from "@/components/icons/sparkle-icon-single";
+import { loginUser } from "@/services";
+import { SparkleIconSingle } from "@/components/icons";
 import { AxiosError } from "axios";
 
 type Credentials = {
@@ -20,7 +20,7 @@ const initialState: Credentials = {
 };
 
 const LoginPage = () => {
-    
+
     const router = useRouter();
 
 	const [credentials, setCredentials] = useState<Credentials>(initialState);
@@ -29,13 +29,13 @@ const LoginPage = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
 
     const validateEmail = (email: string): boolean => {
-        
+
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     };
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        
+
 		const { name, value } = e.target;
         if (name === "email") {
             setIsEmailValid(validateEmail(value));
@@ -81,10 +81,10 @@ const LoginPage = () => {
 	return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
             <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg">
-                
+
                 <div className="relative mb-8">
                     <div className="absolute top-0 right-0 text-black">
-                        <SparkleIcon />
+                        <SparkleIconSingle />
                     </div>
                     <h1 className="text-3xl font-bold">Hi, Welcome! 👋</h1>
                 </div>
@@ -156,7 +156,7 @@ const LoginPage = () => {
                         </Link>
                     </p>
                 </div>
-                
+
             </div>
         </div>
     );

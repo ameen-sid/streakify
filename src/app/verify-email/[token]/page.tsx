@@ -4,16 +4,16 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Mail, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
-import { verifyEmail } from "@/services/auth.service";
-import VerificationSuccessModal from "@/components/pages/verify-email/verification-success-modal";
-import AuthCard from "@/components/common/auth-card";
+import { verifyEmail } from "@/services";
+import { VerificationSuccessModal } from "@/components/pages/verify-email";
+import { AuthCard } from "@/components/common";
 import { AxiosError } from "axios";
 
 const VerifyEmailTokenPage = () => {
 
 	const router = useRouter();
     const params = useParams();
-	
+
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -36,7 +36,7 @@ const VerifyEmailTokenPage = () => {
                 toast.success("Verified Successfully!");
                 setStatus('success');
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Verification Failed: ", error?.response?.data.message);
@@ -44,12 +44,12 @@ const VerifyEmailTokenPage = () => {
                     setErrorMessage(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Verification Failed: ", error.message);
                     toast.error(error.message);
                     setErrorMessage(error.message);   
                 } else {
-                    
+
                     // console.error("Verification Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                     setErrorMessage(String(error));   
@@ -60,7 +60,7 @@ const VerifyEmailTokenPage = () => {
 
         onVerify();
     }, [params.token]);
-    
+
     useEffect(() => {
         if (status === 'success') {
 

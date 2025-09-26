@@ -4,11 +4,10 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import { Zap, TrendingUp, Target, BarChart } from "lucide-react";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import toast from "react-hot-toast";
-import { getDashboardData } from "@/services/dashboard.service";
-import { generateText } from "@/utils/generateText";
-import TaskBreakdownChart from "@/components/pages/dashboard/task-breakdown-chart";
-import StatsCard from "@/components/pages/dashboard/stats-card";
-import AppLayout from "@/components/common/app-layout";
+import { getDashboardData } from "@/services";
+import { generateText } from "@/utils";
+import { TaskBreakdownChart, StatsCard } from "@/components/pages/dashboard";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
@@ -30,10 +29,10 @@ type DashboardData = {
 };
 
 const DashboardContent = () => {
-   
+
     const [aiInsight, setAiInsight] = useState("");
     const [selectedMonth, setSelectedMonth] = useState(() => {
-    
+
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -48,14 +47,14 @@ const DashboardContent = () => {
 
     useEffect(() => {
         const fetchDashboardData = async () => {
-       
+
             setLoading(true);
             setDashboardData(null);
             setAiInsight("");
             try {
-       
+
                 const data = await getDashboardData(selectedMonth);
-       
+
                 if (Object.keys(data).length === 0) {
                     setDashboardData(null);
                 } else {
@@ -66,28 +65,28 @@ const DashboardContent = () => {
 
                     await generateText(prompt)
                     .then(generatedText => {
-                        
+
                         setAiInsight(generatedText);
                     }).catch(err => {
-                        
+
                         // console.error("AI Insight Generation Failed:", err);
                         setAiInsight("Could not generate an insight at this time.");
                     });
 
                 }
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Data Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
-			    else if (error instanceof Error) {
-                    
+                else if (error instanceof Error) {
+
 				    // console.error("Data Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Data Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -104,7 +103,7 @@ const DashboardContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-7xl mx-auto">
-                
+
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-black">Monthly Summary</h1>
@@ -164,7 +163,7 @@ const DashboardContent = () => {
                         <p className="mt-2 text-gray-500">There is no activity recorded for this month.</p>
                     </div>
                 )}
-                
+
             </div>
         </div>
     );

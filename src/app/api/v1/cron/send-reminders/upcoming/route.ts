@@ -1,14 +1,12 @@
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
+import { Discipline } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { MODEL_NAMES, HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { sendUpcomingDisciplineReminderEmail } from "@/utils/mails/sendUpcomingDisciplineReminderEmail";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { sendUpcomingDisciplineReminderEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-    
+
     const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");
@@ -54,7 +52,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 			)
                 .then(() => ({ status: 'fulfilled', userId: user._id }))
                 .catch(error => {
-                    
+
 					console.error(`Failed to send upcoming reminder to user ${user._id}:`, error);
                     return { status: 'rejected', userId: user._id, reason: error.message };
                 });

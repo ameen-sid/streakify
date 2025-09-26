@@ -5,9 +5,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { GENDER_OPTIONS } from "@/constant";
-import { getProfileDetails, updateProfileDetails } from "@/services/profile.service";
-import { formatDateForInput } from "@/utils/formatDateForInput";
-import AppLayout from "@/components/common/app-layout";
+import { getProfileDetails, updateProfileDetails } from "@/services";
+import { formatDateForInput } from "@/utils";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 type UserDetails = {
@@ -23,7 +23,7 @@ const initialState: UserDetails = {
 };
 
 const EditProfileDetailsContent = () => {
-    
+
     const [userDetails, setUserDetails] = useState<UserDetails>(initialState);
     const [loading, setLoading] = useState(true);
 
@@ -32,9 +32,9 @@ const EditProfileDetailsContent = () => {
 
             setLoading(true);
             try {
-                
+
                 const data = await getProfileDetails();
-                
+
                 setUserDetails({
                     fullname: data.fullname,
                     gender: data.gender,
@@ -48,11 +48,11 @@ const EditProfileDetailsContent = () => {
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Profile Details Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Profile Details Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -65,34 +65,34 @@ const EditProfileDetailsContent = () => {
     }, []);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    
+
         const { name, value } = e.target;
         setUserDetails(prevDetails => ({ ...prevDetails, [name]: value }));
     };
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    
+
         e.preventDefault();
         setLoading(true);
         const toastId = toast.loading("Saving changes...");
         try {
-    
+
             await updateProfileDetails(userDetails);
-    
+
             toast.success("Details updated successfully!", { id: toastId });
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Profile Updation Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
                 else if (error instanceof Error) {
-                    
+
 				// console.error("Profile Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 				// console.error("Profile Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -108,7 +108,7 @@ const EditProfileDetailsContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
-                
+
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
@@ -144,7 +144,7 @@ const EditProfileDetailsContent = () => {
                         </form>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     );

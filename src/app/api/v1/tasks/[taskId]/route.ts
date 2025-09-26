@@ -1,23 +1,17 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
-import Task from "@/models/task.model";
-import Day from "@/models/day.model";
-import { IDiscipline } from "@/models/discipline.types";
-import { ITask } from "@/models/task.types" ;
+import { Discipline, Task, Day } from "@/models";
+import { IDiscipline, ITask } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 interface IPopulatedTask extends Omit<ITask, 'discipline'> {
 	discipline: IDiscipline;
 };
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -48,7 +42,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 });
 
 export const PATCH = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
@@ -63,7 +57,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
     if (!name?.trim() || !description?.trim() || !priority) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "All fields are required");
     }
-	
+
 	const taskToUpdate = await Task.findById(taskId)
 	.populate<IPopulatedTask>({
 		path: 'discipline',
@@ -71,7 +65,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 	});
 
 	if(!taskToUpdate || !taskToUpdate.discipline.owner.equals(user._id)) {
-	    throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to edit it.");
+        throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to edit it.");
 	}
 
 	const updatedTask = await Task.findByIdAndUpdate(
@@ -101,9 +95,9 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 });
 
 export const DELETE = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
-	
+
 	await connectDB();
-	
+
 	const session = await mongoose.startSession();
     try {
 
@@ -138,7 +132,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 			date: today 
 		})
 		.session(session);
-        
+
         let wasTodayAStreakDay = false;
         if (todayLog) {
 
@@ -168,7 +162,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
         let isTodayAStreakDay = false;
         if (logAfterDelete && logAfterDelete.taskState.length > 0) {
-            
+
             const completedCountAfter = logAfterDelete.taskState.filter(ts => ts.isCompleted).length;
             const totalCountAfter = logAfterDelete.taskState.length;
             const rateAfter = (completedCountAfter / totalCountAfter) * 100;
@@ -178,11 +172,11 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
         }
 
         if (wasTodayAStreakDay && !isTodayAStreakDay) {
-            
+
             discipline.currentStreak -= 1;
             await discipline.save({ session });
         } else if (!wasTodayAStreakDay && isTodayAStreakDay) {
-            
+
             discipline.currentStreak += 1;
             if (discipline.currentStreak > discipline.longestStreak) {
                 discipline.longestStreak = discipline.currentStreak;

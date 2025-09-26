@@ -1,15 +1,12 @@
 import bcrypt from "bcrypt";
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { hashToken } from "@/utils/hashToken";
+import { APIError, APIResponse, asyncHandler, hashToken } from "@/utils";
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
-  	
+
 	await connectDB();
 
 	const body = await request.json();

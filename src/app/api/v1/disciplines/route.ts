@@ -1,22 +1,19 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
+import { Discipline } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 export const GET = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
 
 	const disciplines = await Discipline.find({ owner: user._id })
     .sort({ startDate: -1 });
-	
+
 	return NextResponse.json(
         new APIResponse(
             HTTP_STATUS.OK,
@@ -28,7 +25,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 });
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
     const session = await mongoose.startSession();
@@ -121,7 +118,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
         // If any were found, update them in a bulk operation.
         if (disciplinesToUpdate.length > 0) {
-            
+
             const bulkUpdateOps = disciplinesToUpdate.map(disc => {
                 const newStatus = disc.completionRate >= 75 ? DISCIPLINE_STATUS.COMPLETED : DISCIPLINE_STATUS.FAILED;
                 return {

@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import { changePassword } from "@/services/profile.service";
-import AppLayout from "@/components/common/app-layout";
-import PasswordInputField from "@/components/pages/change-password/password-input-field";
+import { changePassword } from "@/services";
+import { AppLayout } from "@/components/common";
+import { PasswordInputField } from "@/components/pages/change-password";
 import { AxiosError } from "axios";
 
 export type PasswordsType = {
@@ -25,25 +25,25 @@ const initialState: PasswordsType = {
 const ChangePasswordContent = () => {
 
     const router = useRouter();
-    
+
     const [passwords, setPasswords] = useState<PasswordsType>(initialState);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-       
+
         const { name, value } = e.target;
         setPasswords(prev => ({ ...prev, [name]: value }));
         setError('');
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        
+
         e.preventDefault();
         setError('');
 
         if (passwords.newPassword !== passwords.confirmPassword) {
-        
+
             setError('New passwords do not match.');
             return;
         }
@@ -59,7 +59,7 @@ const ChangePasswordContent = () => {
 
             router.push("/dashboard/profile");
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Password Updation Failed: ", error?.response?.data.message);
@@ -67,12 +67,12 @@ const ChangePasswordContent = () => {
                 setError(error?.response?.data.message);
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Password Updation Failed: ", error.message);
                 // toast.error(error.message, { id: toastId });
                 setError(error.message);
             } else {
-                    
+
 			    // console.error("Password Updation Failed: ", String(error));
                 // toast.error("An unexpected error occurred", { id: toastId });
                 setError(String(error));
@@ -85,7 +85,7 @@ const ChangePasswordContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
-                
+
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">

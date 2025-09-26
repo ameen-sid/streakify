@@ -1,20 +1,17 @@
 import connectDB from "@/database";
-import Day from "@/models/day.model";
-import { IDay } from "@/models/day.types";
-import { IUser } from "@/models/user.types";
+import { Day } from "@/models";
+import { IUser, IDay } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS, MODEL_NAMES } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { sendDailyReminderEmail } from "@/utils/mails/sendDailyReminderEmail";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { sendDailyReminderEmail } from "@/utils/mails";
 
 interface IPopulatedDay extends Omit<IDay, 'user'> {
     user: IUser;
 };
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-    
+
     const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");
@@ -47,10 +44,10 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     }
 
     const emailPromises = logsWithIncompleteTasks.map(log => {
-        
+
         const user = log.user;
         if (user && user.email) {
-            
+
             const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
             const tasksLink = `${baseUrl}/today`;
 
@@ -66,7 +63,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
                     return { status: 'rejected', userId: user._id, reason: error.message };
                 });
         }
-        
+
         return Promise.resolve({ status: 'skipped', reason: 'User data missing' });
     });
 

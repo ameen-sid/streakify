@@ -1,13 +1,9 @@
 import connectDB from "@/database";
-import Day from "@/models/day.model";
-import { ITask } from "@/models/task.types";
-import { IDay } from "@/models/day.types";
+import { Day } from "@/models";
+import { ITask, IDay } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { MODEL_NAMES, HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
 
 interface IPopulatedDay extends Omit<IDay, 'taskState'> {
     taskState: {
@@ -23,12 +19,12 @@ interface IPopulatedDay extends Omit<IDay, 'taskState'> {
  * @access Private (Requires user to be logged in)
  */
 export const GET = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const user = await getAuthUser(request);
     const userId = user._id;
-	
+
 	const { searchParams } = new URL(request.url);
     const month = searchParams.get("month");
     if (!month || !/^\d{4}-\d{2}$/.test(month)) {
@@ -44,15 +40,15 @@ export const GET = asyncHandler(async (request: NextRequest) => {
     endDate.setUTCMilliseconds(-1);
 
 	const monthlyLogs = await Day.find({
-    	user: userId,
-    	date: {
-	        $gte: startDate,
-    	    $lte: endDate,
-    	},
+		user: userId,
+		date: {
+			$gte: startDate,
+			$lte: endDate,
+		},
 	}).populate({
-    	path: "taskState.task",
-    	model: MODEL_NAMES.TASK,
-    	select: "name"
+		path: "taskState.task",
+		model: MODEL_NAMES.TASK,
+		select: "name"
 	}) as unknown as IPopulatedDay[];
 
 	if (monthlyLogs.length === 0) {
@@ -75,8 +71,8 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 	monthlyLogs.sort((a, b) => a.date.getTime() - b.date.getTime()).forEach((log, index) => {
 
 		const completedCount = log.taskState.filter(ts => ts.isCompleted).length;
-    	totalCompletedTasks += completedCount;
-    	totalTasksInMonth += log.taskState.length;
+		totalCompletedTasks += completedCount;
+		totalTasksInMonth += log.taskState.length;
 
 		const dailyCompletionRate = log.taskState.length > 0 ? (completedCount / log.taskState.length) * 100 : 0;
 
@@ -116,7 +112,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
         monthlyStats,
         taskBreakdown,
     };
-	
+
 	return NextResponse.json(
 		new APIResponse(
 			HTTP_STATUS.OK,

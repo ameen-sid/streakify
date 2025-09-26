@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import SparkleIcon from "@/components/icons/sparkle-icon";
-import AuthCard from "@/components/common/auth-card";
-import AuthButton from "@/components/common/auth-button";
+import { SparkleIcon } from "@/components/icons";
+import { AuthCard, AuthButton } from "@/components/common";
 
 const PasswordChangeConfirmationPage = () => {
 	return (

@@ -1,18 +1,20 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { COOKIE_OPTIONS, HTTP_STATUS } from "@/constant";
-import { getAuthUser } from "@/utils/getAuthUser";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { generateToken } from "@/utils/generateToken";
-import { hashToken } from "@/utils/hashToken";
-import { sendDeleteAccountScheduleEmail } from "@/utils/mails/sendDeleteAccountScheduleEmail";
+import { 
+	APIError, 
+	APIResponse, 
+	asyncHandler, 
+	getAuthUser, 
+	generateToken, 
+	hashToken
+} from "@/utils";
+import { sendDeleteAccountScheduleEmail } from "@/utils/mails";
 
 export const DELETE = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
 
 	const session = await mongoose.startSession();

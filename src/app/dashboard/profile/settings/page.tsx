@@ -5,21 +5,21 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
-import { deleteAccount } from "@/services/profile.service";
-import AppLayout from "@/components/common/app-layout";
+import { deleteAccount } from "@/services";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose: () => void, onConfirm: () => void }) => {
-    
+
     const [confirmText, setConfirmText] = useState('');
     const isConfirmEnabled = confirmText === 'DELETE';
-    
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-opacity-50 backdrop-blur-xs z-50 flex justify-center items-center p-4">
             <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
-                
+
                 <div className="flex items-center">
                     <div className="bg-red-100 p-3 rounded-full mr-4">
                         <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -59,32 +59,32 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }: { isOpen: boole
 };
 
 const AccountSettingsContent = () => {
-    
+
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleAccountDeletion = async () => {
-        
+
         const toastId = toast.loading("Scheduling account for deletion...");
         try {
-            
+
             await deleteAccount();
 
             toast.success("Account deletion scheduled.", { id: toastId });
             router.push("/dashboard/profile/settings/deletion-confirmation");
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Account Deletion Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Account Deletion Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                
+
 			    // console.error("Account Deletion Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -96,7 +96,7 @@ const AccountSettingsContent = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-2xl mx-auto">
-                
+
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-6">
@@ -121,7 +121,7 @@ const AccountSettingsContent = () => {
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <DeleteConfirmationModal
                 isOpen={isModalOpen}

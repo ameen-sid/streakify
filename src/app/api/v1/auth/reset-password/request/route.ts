@@ -1,24 +1,20 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { generateToken } from "@/utils/generateToken";
-import { hashToken } from "@/utils/hashToken";
-import { sendResetPasswordEmail } from "@/utils/mails/sendResetPasswordEmail";
+import { APIError, APIResponse, asyncHandler, generateToken, hashToken } from "@/utils";
+import { sendResetPasswordEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
-	
+
 	const session = await mongoose.startSession();
 	try {
-		
+
 		session.startTransaction();
-		
+
 		const body = await request.json();
         const { email } = body;
         if (!email.trim()) {

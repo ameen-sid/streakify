@@ -2,8 +2,7 @@
 
 import React from "react";
 import { ShieldOff } from "lucide-react";
-import AuthCard from "@/components/common/auth-card";
-import AuthButton from "@/components/common/auth-button";
+import { AuthCard, AuthButton } from "@/components/common";
 
 const AccountDeletedPage = () => {
     return (

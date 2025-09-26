@@ -4,10 +4,9 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import { getDisciplines, deleteDiscipline } from "@/services/discipline.service";
-import AppLayout from "@/components/common/app-layout";
-import DeleteConfirmationModal from "@/components/pages/disciplines/delete-confirmation-modal";
-import DisciplineCard from "@/components/pages/disciplines/discipline-card";
+import { getDisciplines, deleteDiscipline } from "@/services";
+import { AppLayout } from "@/components/common";
+import { DeleteConfirmationModal, DisciplineCard } from "@/components/pages/disciplines";
 import { AxiosError } from "axios";
 
 export type StoredDisciplineStatus = 'Active' | 'Completed' | 'Failed';
@@ -45,11 +44,11 @@ const MyDisciplinesContent = () => {
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Disciplines Fetch Failed: ", error.message);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Disciplines Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -62,19 +61,19 @@ const MyDisciplinesContent = () => {
     }, []);
 
     const openDeleteModal = (discipline: Discipline) => {
-       
+
         setDisciplineToDelete(discipline);
         setIsModalOpen(true);
     };
 
     const closeDeleteModal = () => {
-       
+
         setDisciplineToDelete(null);
         setIsModalOpen(false);
     };
 
     const handleConfirmDelete = async () => {
-       
+
         if (!disciplineToDelete) return;
         const toastId = toast.loading("Deleting discipline...");
         try {
@@ -84,18 +83,18 @@ const MyDisciplinesContent = () => {
             setDisciplines(disciplines.filter(d => d._id !== disciplineToDelete._id));
             toast.success("Discipline deleted.", { id: toastId });
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Discipline Deletion Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 		 	    // console.error("Discipline Deletion Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 			    // console.error("Discipline Deletion Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -108,7 +107,7 @@ const MyDisciplinesContent = () => {
         <>
             <div className="p-4 sm:p-6 lg:p-8">
                 <div className="w-full max-w-4xl mx-auto">
-                    
+
                     <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                         <div>
                             <h1 className="text-3xl font-bold text-black">My Disciplines</h1>

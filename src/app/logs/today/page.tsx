@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Zap, Flame } from "lucide-react";
 import toast from "react-hot-toast";
-import { getDailyLog, updateTaskStatus, saveHighlight } from "@/services/dailylog.service";
-import { generateText } from "@/utils/generateText";
-import TaskItem from "@/components/pages/dailylogs/task-item";
-import AppLayout from "@/components/common/app-layout";
+import { getDailyLog, updateTaskStatus, saveHighlight } from "@/services";
+import { generateText } from "@/utils";
+import { TaskItem } from "@/components/pages/dailylogs";
+import { AppLayout } from "@/components/common";
 import { AxiosError } from "axios";
 
 type Task = {
@@ -40,7 +40,7 @@ type DailyLog = {
 };
 
 const DailyContent = () => {
-    
+
     const [dailyLog, setDailyLog] = useState<DailyLog | null>(null);
     const [discipline, setDiscipline] = useState<Discipline | null>(null);
     const [loading, setLoading] = useState(true);
@@ -50,23 +50,23 @@ const DailyContent = () => {
 
     useEffect(() => {
         const loadData = async () => {
-           
+
             setLoading(true);
             try {
-           
+
                 const data = await getDailyLog();
-               
+
                 const logData = data.day;
                 const disciplineData = data.discipline;
-                
+
                 if (logData && logData.taskState) {
                     logData.taskState.sort((a, b) => a.task.priority - b.task.priority);
                 }
                 if(logData && disciplineData)   setDailyLog(data);
                 setDiscipline(disciplineData);
-                
+
                 if (logData && logData.taskState.length > 0) {
-                    
+
                     const completedCount = logData.taskState.filter(ts => ts.isCompleted).length;
                     const totalCount = logData.taskState.length;
                     const completionRate = (completedCount / totalCount) * 100;
@@ -75,18 +75,18 @@ const DailyContent = () => {
                     }
                 }
             } catch (error) {
-                
+
                 if(error instanceof AxiosError) {
 
                     // console.error("Today's Log Fetch Failed: ", error?.response?.data.message);
                     toast.error(error?.response?.data.message);
                 }
                 else if (error instanceof Error) {
-                    
+
 				    // console.error("Today's Log Fetch Failed: ", error);
                     toast.error(error.message);
                 } else {
-                    
+
 				    // console.error("Today's Log Fetch Failed: ", String(error));
                     toast.error("An unexpected error occurred");
                 }
@@ -99,7 +99,7 @@ const DailyContent = () => {
     }, []);
 
     const handleToggleTask = async (taskId: string) => {
-       
+
         if (!dailyLog) return;
 
         const taskStateToToggle = dailyLog.day.taskState.find(ts => ts.task._id === taskId);
@@ -123,24 +123,24 @@ const DailyContent = () => {
         }
 
         try {
-       
+
             const updatedStreak = await updateTaskStatus(taskId);
             setDiscipline({currentStreak: updatedStreak, _id: discipline?._id!});
-       
+
             toast.success("Task completed!");
         } catch (error) {
-       
+
             if(error instanceof AxiosError) {
 
                 // console.error("Task Mark as Completed Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message);
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Task Mark as Completed Failed: ", error.message);
                 toast.error(error.message);
             } else {
-                    
+
 			    // console.error("Task Mark as Completed Failed: ", String(error));
                 toast.error("An unexpected error occurred");
             }
@@ -150,32 +150,32 @@ const DailyContent = () => {
     };
 
     const handleSaveHighlight = async () => {
-        
+
         if (!dailyLog) {
-            
+
             toast.error("Add tasks to add highlight!");
             return;
         }
         setIsSaving(true);
         const toastId = toast.loading("Saving highlight...");
         try {
-        
+
             await saveHighlight(dailyLog.day.highlight);
-        
+
             toast.success("Highlight saved!", { id: toastId });
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Highlight Updation Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message, { id: toastId });
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Highlight Updation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 				// console.error("Highlight Updation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -183,17 +183,17 @@ const DailyContent = () => {
             setIsSaving(false);
         }
     };
-    
+
     const handleGenerateHighlight = async () => {
-        
+
         if (!dailyLog) {
-            
+
             toast.error("Add tasks to generate a highlights!");
             return;
         }
         const completedTasks = dailyLog.day.taskState.filter(ts => ts.isCompleted).map(ts => ts.task.name);
         if (completedTasks.length === 0) {
-        
+
             toast.error("Complete at least one task to generate a highlight!");
             return;
         }
@@ -201,10 +201,10 @@ const DailyContent = () => {
         setIsGenerating(true);
         const toastId = toast.loading("Generating highlight...");
         try {
-        
+
             const prompt = `Based on completing these tasks today: ${completedTasks.join(', ')}. Write a one-sentence, encouraging summary of the day from a first-person perspective.`;
             const generatedText = await generateText(prompt);
-        
+
             setDailyLog(prev => {
                 if (!prev) return null;
                 return {
@@ -217,18 +217,18 @@ const DailyContent = () => {
             });
             toast.success("Highlight generated!", { id: toastId });
         } catch (error) {
-            
+
             if(error instanceof AxiosError) {
 
                 // console.error("Highlight Generation Failed: ", error?.response?.data.message);
                 toast.error(error?.response?.data.message);
             }
             else if (error instanceof Error) {
-                    
+
 				// console.error("Highlight Generation Failed: ", error.message);
                 toast.error(error.message, { id: toastId });
             } else {
-                    
+
 				// console.error("Highlight Generation Failed: ", String(error));
                 toast.error("An unexpected error occurred", { id: toastId });
             }
@@ -254,7 +254,7 @@ const DailyContent = () => {
         <div className="p-4 sm:p-6 lg:p-8">
             <style>{`@keyframes fadeInPop { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } } .animate-fade-in-pop { animation: fadeInPop 0.5s ease-out forwards; }`}</style>
             <div className="w-full max-w-2xl mx-auto">
-               
+
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-black">Today&apos;s Plan</h1>
@@ -274,7 +274,7 @@ const DailyContent = () => {
                         <div className="w-full bg-gray-200 rounded-full h-2.5"><div className="bg-black h-2.5 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }}></div></div>
                     </div>
                 )}
-                
+
                 {loading ? <div className="p-8 text-center"><p>Loading your plan...</p></div>
                 : <main>
                     {totalCount && totalCount > 0 ? (
@@ -306,7 +306,7 @@ const DailyContent = () => {
                         <button onClick={handleSaveHighlight} disabled={isSaving} className="mt-4 w-full sm:w-auto px-6 py-2 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors cursor-pointer disabled:bg-gray-400">{isSaving ? 'Saving...' : 'Save Highlight'}</button>
                     </div>
                 </main>}
-                
+
             </div>
         </div>
     );

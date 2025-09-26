@@ -1,13 +1,11 @@
 import connectDB from "@/database";
-import Discipline from "@/models/discipline.model";
+import { Discipline } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-    
+
     const cronSecret = request.headers.get('Authorization')?.split('Bearer ')[1];
     if (cronSecret !== process.env.CRON_SECRET) {
         throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Invalid cron secret.");
@@ -88,7 +86,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
     }
 
     const bulkUpdateOps = disciplinesToUpdate.map(disc => {
-        
+
         const newStatus = disc.completionRate >= 75 ? DISCIPLINE_STATUS.COMPLETED : DISCIPLINE_STATUS.FAILED;
         return {
             updateOne: {

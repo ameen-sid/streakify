@@ -1,21 +1,23 @@
 import mongoose from "mongoose";
 import connectDB from "@/database";
-import User from "@/models/user.model";
+import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { APIError } from "@/utils/APIError";
-import { APIResponse } from "@/utils/APIResponse";
-import { generateToken } from "@/utils/generateToken";
-import { generatePlaceholder } from "@/utils/generatePlaceholder";
-import { hashToken } from "@/utils/hashToken";
-import { sanitizeUser } from "@/utils/sanitizeUser";
-import { sendVerificationEmail } from "@/utils/mails/sendVerificationEmail";
+import { 
+    APIError, 
+    APIResponse, 
+    asyncHandler, 
+    generateToken, 
+    generatePlaceholder, 
+    hashToken, 
+    sanitizeUser 
+} from "@/utils";
+import { sendVerificationEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
-	
+
 	await connectDB();
-	
+
 	const session = await mongoose.startSession();
     session.startTransaction();
 	try {
@@ -28,7 +30,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
-  			throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid email format");
+            throw new APIError(HTTP_STATUS.BAD_REQUEST, "Invalid email format");
 		}
 
 		const existedUser = await User.findOne({

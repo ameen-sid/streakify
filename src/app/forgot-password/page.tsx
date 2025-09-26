@@ -4,12 +4,12 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import { sendResetPasswordToken } from "@/services/auth.service";
-import SparkleIcon from "@/components/icons/sparkle-icon-single";
+import { sendResetPasswordToken } from "@/services";
+import { SparkleIconSingle } from "@/components/icons";
 import { AxiosError } from "axios";
 
 const ForgotPasswordPage = () => {
-	
+
 	const [email, setEmail] = useState("");
 	const [isEmailValid, setIsEmailValid] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -22,14 +22,14 @@ const ForgotPasswordPage = () => {
 	};
 
 	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-		
+
         const newEmail = e.target.value;
         setEmail(newEmail);
         setIsEmailValid(validateEmail(newEmail));
 	};
 
 	const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-		
+
         e.preventDefault();
 		if (!isEmailValid) return;
 
@@ -66,7 +66,7 @@ const ForgotPasswordPage = () => {
 	return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
             <div className="w-full max-w-md bg-white rounded-3xl shadow-lg flex flex-col overflow-hidden p-6 sm:p-8">
-                
+
                 <header className="flex items-center justify-between">
                     <Link href="/login">
                         <button className="p-2 cursor-pointer rounded-full hover:bg-gray-100">
@@ -74,7 +74,7 @@ const ForgotPasswordPage = () => {
                         </button>
                     </Link>
                     <div className="text-black">
-                        <SparkleIcon />
+                        <SparkleIconSingle />
                     </div>
                 </header>
 
@@ -145,7 +145,7 @@ const ForgotPasswordPage = () => {
                         </Link>
                     </p>
                 </footer>
-                
+
             </div>
         </div>
     );
