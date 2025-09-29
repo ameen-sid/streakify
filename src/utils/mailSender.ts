@@ -1,3 +1,5 @@
+"use server";
+
 import nodemailer, { SendMailOptions, SentMessageInfo, TransportOptions } from "nodemailer";
 import { APP_NAME, EMAIL_USERNAME, HTTP_STATUS } from "@/constant";
 import { APIError } from "@/utils";

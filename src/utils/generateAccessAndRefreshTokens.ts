@@ -1,3 +1,5 @@
+"use server";
+
 import { Types } from "mongoose";
 import { User } from "@/models";
 import { HTTP_STATUS } from "@/constant";

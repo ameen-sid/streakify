@@ -1,3 +1,5 @@
+"use server";
+
 import { jwtVerify } from "jose";
 import { NextRequest } from "next/server";
 import { User } from "@/models";

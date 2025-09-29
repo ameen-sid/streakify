@@ -1,3 +1,5 @@
+"use server";
+
 import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from "cloudinary";
 import streamifier from "streamifier";
 import { cloudinaryConnect } from "@/config";
