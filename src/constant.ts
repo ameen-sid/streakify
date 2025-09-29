@@ -106,6 +106,12 @@ export const APP_NAVIGATION_LINKS = [
     { name: 'Profile', href: '/dashboard/profile', icon: UserCircle },
 ];
 
+export const NAV_LINKS = [
+    { href: '/leaderboard', label: 'Leaderboard' },
+    { href: '/contact-us', label: 'Contact Us' },
+    { href: '/about-us', label: 'About Us' },
+];
+
 // ------------------------------
 // ----- FRONTEND CONSTANTS -----
 
