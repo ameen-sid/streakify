@@ -113,7 +113,7 @@ const ForgotPasswordPage = () => {
                                     <button
                                         type="submit"
                                         disabled={loading || !isEmailValid}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                     >
                                         {loading ? <Loader className="w-5 h-5 animate-spin" /> : null}
                                         {loading ? 'Sending...' : 'Send Reset Link'}
@@ -134,7 +134,7 @@ const ForgotPasswordPage = () => {
                             </>
                         )}
 
-                        <div className="mt-8 pt-6  cursor-pointer border-t border-gray-800 w-full">
+                        <div className="mt-8 pt-6 cursor-pointer border-t border-gray-800 w-full">
                             <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
                                 <ArrowLeft size={16} />
                                 Back to Login

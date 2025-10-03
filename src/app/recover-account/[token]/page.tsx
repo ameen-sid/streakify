@@ -1,36 +1,14 @@
 "use client";
 
-import React, { useState, ReactNode } from "react";
+import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ShieldQuestion, Loader, CheckCircle, AlertTriangle, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { recoverAccount } from "@/services";
 import { SimpleHeader, SimpleFooter } from "@/components/common";
 import { AxiosError } from "axios";
-
-const StatusCard = ({ icon, title, message, children }: { icon: ReactNode, title: string, message: string, children?: ReactNode }) => {
-
-    const cardVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-    };
-
-    return (
-        <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={cardVariants}
-            className="max-w-md mx-auto bg-gray-900/50 border border-gray-800 rounded-2xl p-8 md:p-12 text-center shadow-2xl"
-        >
-            <div className="flex justify-center mb-6">{icon}</div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">{title}</h1>
-            <p className="text-gray-400 mb-8 min-h-[48px]">{message}</p>
-            {children}
-        </motion.div>
-    );
-};
+import { StatusCard } from "@/components/pages/recover-account";
 
 const RecoverAccountPage = () => {
 
@@ -104,13 +82,13 @@ const RecoverAccountPage = () => {
                     >
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link href="/login" className="w-full">
-                                <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg">
+                                <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg cursor-pointer">
                                     Cancel
                                 </button>
                             </Link>
                             <button
                                 onClick={handleRecovery}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg"
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg cursor-pointer"
                             >
                                 Yes, Recover My Account
                             </button>
