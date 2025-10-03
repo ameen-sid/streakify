@@ -1,28 +1,31 @@
 "use client";
 
 import React from "react";
-import { HeroSection, AppMockup, FeaturesSection, TechStackSection, CTASection } from "@/components/pages/home";
 import { Header, Footer } from "@/components/common";
+import { HeroSection, AppMockup, FeaturesSection, TechStackSection, CTASection } from "@/components/pages/home";
 
 const StreakifyHomepage = () => {
 	return (
-		<div className="relative overflow-hidden">
-			{/* Decorative background blobs for the glassmorphism effect */}
-			<div className="absolute top-0 -left-1/3 w-2/3 h-2/3 bg-blue-500/20 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
-			<div className="absolute top-0 -right-1/3 w-2/3 h-2/3 bg-purple-500/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-			<div className="absolute bottom-0 left-1/4 w-1/2 h-1/2 bg-indigo-500/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+		<div className="bg-gray-950 text-white font-sans antialiased">
 
-			<div className="relative z-10">
-				<Header />
-				<main>
-					<HeroSection />
-					<AppMockup />
-					<FeaturesSection />
-					<TechStackSection />
-					<CTASection />
-				</main>
-				<Footer />
-			</div>
+			<Header />
+			<main className="relative isolate">
+                {/* The decorative background blobs are positioned absolutely within this new context. */}
+                <div className="absolute inset-0 -z-10 overflow-hidden">
+                    <div className="absolute top-0 -left-1/3 w-2/3 h-2/3 bg-blue-500/20 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
+                    <div className="absolute top-0 -right-1/3 w-2/3 h-2/3 bg-purple-500/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                    <div className="absolute bottom-0 left-1/4 w-1/2 h-1/2 bg-indigo-500/20 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                </div>
+
+                {/* The actual page content sections */}
+                <HeroSection />
+                <AppMockup />
+                <FeaturesSection />
+                <TechStackSection />
+                <CTASection />
+            </main>
+			<Footer />
+
 			<style>{`
 				@keyframes blob {
 				0% { transform: translate(0px, 0px) scale(1); }

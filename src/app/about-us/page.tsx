@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Footer } from "@/components/common";
-import { Header } from "@/components/pages/home";
+import { Header, Footer } from "@/components/common";
 import { AboutHero, OurStory, OurValues } from "@/components/pages/about-us";
 
 const AboutUsPage = () => {

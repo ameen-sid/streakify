@@ -31,7 +31,9 @@ const Header = () => {
 		<header className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-lg border-b border-gray-800">
 			<div className="container mx-auto px-6 py-4 flex justify-between items-center">
 				<div className="flex items-center gap-3">
-					<BrainCircuit className="w-8 h-8 text-blue-400" />
+					<Link href="/">
+						<BrainCircuit className="w-8 h-8 text-blue-400" />
+					</Link>
 					<span className="text-2xl font-bold tracking-tight">
 						{APP_NAME}
 					</span>
@@ -42,10 +44,10 @@ const Header = () => {
 				</nav>
 				<div className="hidden md:flex items-center gap-4">
 					<Link href="/login">
-						<button className="text-gray-300 hover:text-white transition-colors">Sign In</button>
+						<button className="text-gray-300 hover:text-white cursor-pointer transition-colors">Sign In</button>
 					</Link>
 					<Link href="/signup">
-						<button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg">Create Account</button>
+						<button className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-semibold px-5 py-2 rounded-lg">Create Account</button>
 					</Link>
 				</div>
 
@@ -67,10 +69,10 @@ const Header = () => {
 						{NAV_LINKS.map(link => <NavLink key={link.label} {...link} />)}
                         <div className="w-full border-t border-gray-800 my-2"></div>
                         <Link href="/login">
-							<button className="text-gray-300 hover:text-white">Sign In</button>
+							<button className="text-gray-300 cursor-pointer hover:text-white">Sign In</button>
 						</Link>
 						<Link href="/signup">
-							<button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg w-full">
+							<button className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg w-full">
 								Create Account
 							</button>
 						</Link>
