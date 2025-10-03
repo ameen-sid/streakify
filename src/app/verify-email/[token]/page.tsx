@@ -7,19 +7,7 @@ import toast from "react-hot-toast";
 import { verifyEmail, resendVerificationEmail } from "@/services";
 import { VerificationCard } from "@/components/pages/verify-email";
 import { AxiosError } from "axios";
-import { APP_NAME } from "@/constant";
-
-// this will get from common components after merge
-const SimpleHeader = () => (
-    <header className="py-6">
-        <div className="container mx-auto px-6 flex justify-center">
-            <div className="flex items-center gap-3">
-                <BrainCircuit className="w-8 h-8 text-blue-400" />
-                <span className="text-2xl font-bold tracking-tight">{APP_NAME}</span>
-            </div>
-        </div>
-    </header>
-);
+import { SimpleHeader, SimpleFooter } from "@/components/common";
 
 const VerifyEmailPage = () => {
 
@@ -185,9 +173,7 @@ const VerifyEmailPage = () => {
                     {renderContent()}
                 </div>
             </main>
-            <footer className="py-6 text-center text-gray-500 text-sm">
-                &copy; {new Date().getFullYear()} Streakify. All rights reserved.
-            </footer>
+            <SimpleFooter />
         </div>
     );
 }
