@@ -3,45 +3,100 @@
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { MailCheck, ArrowLeft } from "lucide-react";
-import { AuthCard } from "@/components/common";
+import { motion } from "framer-motion";
+import { BrainCircuit, MailCheck, ArrowLeft, Loader } from "lucide-react";
+import { APP_NAME } from "@/constant";
 
-const VerifyEmailContent = () =>  {
+const SimpleHeader = () => (
+    <header className="py-6">
+        <div className="container mx-auto px-6 flex justify-center">
+            <div className="flex items-center gap-3">
+                <BrainCircuit className="w-8 h-8 text-blue-400" />
+                <span className="text-2xl font-bold tracking-tight">Streakify</span>
+            </div>
+        </div>
+    </header>
+);
 
-    const searchParams = useSearchParams();
+const SimpleFooter = () => (
+	<footer className="py-6 text-center text-gray-500 text-sm">
+		&copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.
+	</footer>
+)
+
+const VerifyEmailContent = () => {
+
+    const searchParams = useSearchParams(); 
     const userEmail = searchParams.get("email");
 
     return (
         <>
-            <p className="mt-4 text-gray-600 max-w-xs">
-                We&apos;ve sent a verification link to <span className="font-semibold text-black">{userEmail || 'your email'}</span>. Please check your inbox and click the link to activate your account.
+            <p className="text-gray-400">
+                We've sent a verification link to{' '}
+                <span className="font-semibold text-blue-400">{userEmail || 'your email'}</span>.
+                Please check your inbox and click the link to activate your account.
             </p>
-
-            <p className="mt-8 text-xs text-gray-500">
-                Can&apos;t find the email? Check your spam folder.
+            <p className="mt-6 text-sm text-gray-500">
+                Can't find the email? Be sure to check your spam folder.
             </p>
-
-            <footer className="mt-8 pt-4 border-t border-gray-200 w-full">
-                <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black">
-                    <ArrowLeft size={16} />
-                    Back to Login
-                </Link>
-            </footer>
         </>
     );
 };
 
-const VerifyEmailPage = () => {
-    return (
-        <AuthCard
-            icon={<MailCheck className="h-12 w-12" />}
-            title="Verify your email"
-        >
-            <Suspense fallback={<p className="mt-4 text-gray-600">Loading...</p>}>
-                <VerifyEmailContent />
-            </Suspense>
-        </AuthCard>
-    );
-}
+const SignupConfirmationPage = () => {
 
-export default VerifyEmailPage;
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    };
+
+    return (
+        <div
+            className="bg-gray-950 text-white font-sans antialiased min-h-screen flex flex-col"
+            style={{
+                backgroundImage: `
+                radial-gradient(circle at top left, rgba(29, 78, 216, 0.1), transparent 40%),
+                radial-gradient(circle at top right, rgba(29, 78, 216, 0.1), transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px) `,
+                backgroundSize: '100% 100%, 100% 100%, 40px 40px, 40px 40px',
+            }}>
+            <div className="flex flex-col flex-grow">
+                <SimpleHeader />
+                <main className="flex-grow flex items-center justify-center">
+                    <div className="container mx-auto px-6">
+                        <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={cardVariants}
+                            className="max-w-md mx-auto bg-gray-900/50 border border-gray-800 rounded-2xl p-8 md:p-12 text-center shadow-2xl"
+                        >
+                            <div className="flex justify-center mb-6">
+                                <MailCheck className="w-16 h-16 text-blue-500" />
+                            </div>
+                            <h1 className="text-2xl md:text-3xl font-bold mb-4">Check Your Inbox</h1>
+                            <div className="min-h-[120px]">
+                                <Suspense fallback={
+                                    <div className="flex justify-center items-center h-full">
+                                        <Loader className="w-8 h-8 text-gray-500 animate-spin" />
+                                    </div>
+                                }>
+                                    <VerifyEmailContent />
+                                </Suspense>
+                            </div>
+                            <div className="mt-8 pt-6 border-t border-gray-800 w-full">
+                                <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                                    <ArrowLeft size={16} />
+                                    Back to Login
+                                </Link>
+                            </div>
+                        </motion.div>
+                    </div>
+                </main>
+                <SimpleFooter />
+            </div>
+        </div>
+    );
+};
+
+export default SignupConfirmationPage;
