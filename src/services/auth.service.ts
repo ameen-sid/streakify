@@ -34,6 +34,16 @@ export const verifyEmail = async (token: string) => {
 	return response.data;
 };
 
+// -- RESEND VERIFICATION EMAIL --
+export const resendVerificationEmail = async (email: string) => {
+
+	const response = await axios.post(
+		AUTH_ROUTES.RESEND_VERIFICATION_EMAIL,
+		{ email }
+	);
+	return response.data;
+}
+
 // --- LOGIN ---
 type Credentials = {
     email: string;
