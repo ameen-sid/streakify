@@ -1,4 +1,4 @@
-import { signUpUser, verifyEmail, loginUser, logoutUser, sendResetPasswordToken, resetPassword, refreshAccessToken } from "./auth.service";
+import { signUpUser, resendVerificationEmail, verifyEmail, loginUser, logoutUser, sendResetPasswordToken, resetPassword, refreshAccessToken } from "./auth.service";
 import { getProfile, getProfileDetails, updateProfileDetails, updateAvatar, changePassword, deleteAccount, recoverAccount, getProfileForNav } from "./profile.service";
 import { getDisciplines, createDiscipline, getDisciplineById, updateDiscipline, deleteDiscipline } from "./discipline.service";
 import { getTasksForDiscipline, createTask, getTaskById, updateTask, deleteTask } from "./task.service";
@@ -8,6 +8,7 @@ import { getDailyLog, saveHighlight, updateTaskStatus, getLogByDate } from "./da
 export {
 	// auth
 	signUpUser,
+	resendVerificationEmail,
 	verifyEmail,
 	loginUser,
 	logoutUser,

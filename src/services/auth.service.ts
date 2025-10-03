@@ -34,6 +34,9 @@ export const verifyEmail = async (token: string) => {
 	return response.data;
 };
 
+// -- RESEND VERIFICATION EMAIL --
+export const resendVerificationEmail = async (email: string) => {}
+
 // --- LOGIN ---
 type Credentials = {
     email: string;
