@@ -1,104 +1,144 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, ReactNode } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck, CheckCircle, LayoutDashboard, AlertTriangle } from "lucide-react";
+import { motion } from "framer-motion";
+import { ShieldQuestion, Loader, CheckCircle, AlertTriangle, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { recoverAccount } from "@/services";
-import { AuthCard } from "@/components/common";
+import { SimpleHeader, SimpleFooter } from "@/components/common";
 import { AxiosError } from "axios";
+
+const StatusCard = ({ icon, title, message, children }: { icon: ReactNode, title: string, message: string, children?: ReactNode }) => {
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    };
+
+    return (
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={cardVariants}
+            className="max-w-md mx-auto bg-gray-900/50 border border-gray-800 rounded-2xl p-8 md:p-12 text-center shadow-2xl"
+        >
+            <div className="flex justify-center mb-6">{icon}</div>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">{title}</h1>
+            <p className="text-gray-400 mb-8 min-h-[48px]">{message}</p>
+            {children}
+        </motion.div>
+    );
+};
 
 const RecoverAccountPage = () => {
 
-    const router = useRouter();
     const params = useParams();
+    const router = useRouter();
 
-    const [status, setStatus] = useState<'recovering' | 'success' | 'error'>('recovering');
+    const [status, setStatus] = useState('confirming'); // 'confirming', 'recovering', 'success', 'error'
     const [errorMessage, setErrorMessage] = useState('');
 
-    useEffect(() => {
+    const handleRecovery = async () => {
+
+        setStatus('recovering');
         const token = params.token as string;
-        if (!token) {
+        const toastId = toast.loading("Recovering your account...");
+        try {
 
+            await recoverAccount(token);
+
+            toast.success("Account recovered successfully!", { id: toastId });
+            setStatus('success');
+            router.push('/dashboard');
+        } catch (error) {
+
+            const message = error instanceof AxiosError ? error.response?.data.message : "An API error occurred.";
+            toast.error(message, { id: toastId });
+            setErrorMessage(message);
             setStatus('error');
-            setErrorMessage("Recovery token not found in the URL.");
-            return;
         }
+    };
 
-        const onRecovery = async () => {
-            try {
+    const renderContent = () => {
 
-                const response = await recoverAccount(token);
-                // console.log("Account Recovery Status: ", response);
-
-                toast.success("Account Recovered Successfully!");
-                setStatus('success');
-            } catch (error) {
-
-                if(error instanceof AxiosError) {
-
-                    // console.error("Account Recovery Failed: ", error?.response?.data.message);
-                    toast.error(error?.response?.data.message);
-                    setErrorMessage(error?.response?.data.message);
-                }
-                else if (error instanceof Error) {
-
-				    // console.error("Account Recovery Failed: ", error.message);
-                    toast.error(error.message);
-                    setErrorMessage(error.message);
-                } else {
-
-                    // console.error("Account Recovery Failed: ", String(error));
-                    toast.error("An unexpected error occurred");
-                    setErrorMessage(String(error));
-                }
-                setStatus('error');
-            }
-        };
-
-        onRecovery();
-    }, [params.token]);
-
-    useEffect(() => {
-        if (status === 'success') {
-
-            const redirectTimer = setTimeout(() => {
-                router.push('/dashboard');
-            }, 3000);
-            return () => clearTimeout(redirectTimer);
+        switch (status) {
+            case 'recovering':
+                return <StatusCard icon={<Loader className="w-16 h-16 text-blue-500 animate-spin" />} title="Recovering Account..." message="Please wait while we restore your account data." />;
+            case 'success':
+                return (
+                    <StatusCard
+                        icon={<CheckCircle className="w-16 h-16 text-green-500" />}
+                        title="Account Recovered!"
+                        message="Your account has been successfully restored. You can now log in."
+                    >
+                        <Link href="/login">
+                            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center justify-center gap-2">
+                                Proceed to Login <ArrowRight size={18} />
+                            </button>
+                        </Link>
+                    </StatusCard>
+                );
+            case 'error':
+                return (
+                    <StatusCard
+                        icon={<AlertTriangle className="w-16 h-16 text-red-500" />}
+                        title="Recovery Failed"
+                        message={errorMessage || "This recovery link is invalid or has expired."}
+                    >
+                        <Link href="/login">
+                            <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg">
+                                Back to Login
+                            </button>
+                        </Link>
+                    </StatusCard>
+                );
+            case 'confirming':
+            default:
+                return (
+                    <StatusCard
+                        icon={<ShieldQuestion className="w-16 h-16 text-blue-500" />}
+                        title="Confirm Account Recovery"
+                        message="You have requested to recover your account. Clicking 'Recover' will cancel its scheduled deletion. Are you sure you want to proceed?"
+                    >
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <Link href="/login" className="w-full">
+                                <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg">
+                                    Cancel
+                                </button>
+                            </Link>
+                            <button
+                                onClick={handleRecovery}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg"
+                            >
+                                Yes, Recover My Account
+                            </button>
+                        </div>
+                    </StatusCard>
+                );
         }
-    }, [status, router]);
+    };
 
     return (
-        <>
-            {status === 'recovering' && (
-                <AuthCard icon={<ShieldCheck className="h-12 w-12 text-white bg-black" />} title="Recovering Your Account">
-                    <p className="mt-4 text-gray-600 max-w-xs">Please wait while we restore your account access...</p>
-                </AuthCard>
-            )}
-            {status === 'success' && (
-                <AuthCard icon={<CheckCircle className="h-12 w-12 text-green-500 bg-black" />} title="Account Recovered!">
-                    <p className="mt-4 text-gray-600 max-w-xs">Your account has been successfully restored. Redirecting you to the dashboard.</p>
-                    <div className="mt-8 w-full">
-                        <Link href="/dashboard" className="w-full inline-flex items-center justify-center py-3 px-4 rounded-lg font-semibold text-white bg-black">
-                            <LayoutDashboard size={20} className="mr-2" />
-                            Go to Dashboard
-                        </Link>
-                    </div>
-                </AuthCard>
-            )}
-            {status === 'error' && (
-                <AuthCard icon={<AlertTriangle className="h-12 w-12 text-red-500 bg-black" />} title="Recovery Failed">
-                    <p className="mt-4 text-red-600 max-w-xs">{errorMessage}</p>
-                    <div className="mt-8 w-full">
-                        <Link href="/login" className="w-full inline-flex items-center justify-center py-3 px-4 rounded-lg font-semibold text-white bg-black">
-                            Back to Login
-                        </Link>
-                    </div>
-                </AuthCard>
-            )}
-        </>
+        <div className="bg-gray-950 text-white font-sans antialiased min-h-screen flex flex-col"
+            style={{
+                backgroundImage: `
+                radial-gradient(circle at top left, rgba(29, 78, 216, 0.1), transparent 40%),
+                radial-gradient(circle at top right, rgba(29, 78, 216, 0.1), transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px) `,
+                backgroundSize: '100% 100%, 100% 100%, 40px 40px, 40px 40px',
+            }}
+        >
+            <SimpleHeader />
+            <main className="flex-grow flex items-center justify-center">
+                <div className="container mx-auto px-6">
+                    {renderContent()}
+                </div>
+            </main>
+            <SimpleFooter />
+        </div>
     );
 };
 
