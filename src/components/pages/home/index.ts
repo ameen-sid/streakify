@@ -1,4 +1,3 @@
-import Header from "./header";
 import HeroSection from "./hero-section";
 import AppMockup from "./app-mockup";
 import FeatureCard from "./feature-card";
@@ -7,7 +6,6 @@ import TechStackSection from "./tech-stack-section";
 import CTASection from "./cta-section";
 
 export {
-	Header,
 	HeroSection,
 	AppMockup,
 	FeatureCard,

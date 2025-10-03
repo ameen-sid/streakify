@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Header, HeroSection, AppMockup, FeaturesSection, TechStackSection, CTASection } from "@/components/pages/home";
-import { Footer } from "@/components/common";
+import { HeroSection, AppMockup, FeaturesSection, TechStackSection, CTASection } from "@/components/pages/home";
+import { Header, Footer } from "@/components/common";
 
 const StreakifyHomepage = () => {
 	return (
