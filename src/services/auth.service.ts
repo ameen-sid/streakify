@@ -35,7 +35,14 @@ export const verifyEmail = async (token: string) => {
 };
 
 // -- RESEND VERIFICATION EMAIL --
-export const resendVerificationEmail = async (email: string) => {}
+export const resendVerificationEmail = async (email: string) => {
+
+	const response = await axios.post(
+		AUTH_ROUTES.RESEND_VERIFICATION_EMAIL,
+		{ email }
+	);
+	return response.data;
+}
 
 // --- LOGIN ---
 type Credentials = {

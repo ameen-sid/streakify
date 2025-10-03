@@ -34,6 +34,7 @@ export const API_BASE_URL = "/api/v1";
 // --- AUTH ---
 export const AUTH_ROUTES = {
 	SIGN_UP: `${API_BASE_URL}/auth/signup`,
+	RESEND_VERIFICATION_EMAIL: `${API_BASE_URL}/auth/resend-verification`,
 	VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
 	LOGIN: `${API_BASE_URL}/auth/login`,
 	LOGOUT: `${API_BASE_URL}/auth/logout`,
