@@ -193,9 +193,11 @@ export const MODEL_NAMES = {
 	DISCIPLINE: 'Discipline',
 	TASK: 'Task',
 	DAY: 'Day',
+	CONTACT_MESSAGE: 'ContactMessage',
 } as const;
 export const GENDER_OPTIONS = ["Male", "Female"] as const;
 export const DEFAULT_AVATAR = "https://placehold.co/100x100/E2E8F0/4A5568?text=AD";
+export const CONTACT_MESSAGE_REASONS = ["General Inquiry", "Bug Report", "Feature Request", "Account Support"] as const;
 
 // COOKIES OPTIONS
 export const COOKIE_OPTIONS: Partial<ResponseCookie> = {
