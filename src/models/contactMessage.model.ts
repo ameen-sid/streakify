@@ -15,7 +15,6 @@ const contactMessageSchema = new Schema<ContactMessageDocument>({
 		lowercase: true,
 		trim: true,
 		index: true,
-		match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email address"],
 	},
 	reason: {
 		type: String,
