@@ -10,42 +10,90 @@ const contactFormConfirmationTemplate = (
 					<meta charset="UTF-8">
 					<meta name="viewport" content="width=device-width, initial-scale=1.0">
 					<title>We've Received Your Message</title>
+					<style>
+						/* Bulletproof Resets */
+						body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+						table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+						img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+						table { border-collapse: collapse !important; }
+						body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+
+						/* Responsive Styles */
+						@media screen and (max-width: 600px) {
+							.container {
+								width: 100% !important;
+								max-width: 100% !important;
+							}
+						}
+					</style>
 				</head>
-				<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; margin: 0; padding: 0; background-color: #0A0F1F; color: #E0E0E0;">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<body style="margin: 0 !important; padding: 0 !important; background-color: #0A0F1F; color: #E0E0E0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%">
 						<tr>
-							<td align="center" style="padding: 20px;">
-								<div style="width: 100%; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #111827; border-radius: 8px; border: 1px solid #374151;">
-									<div style="text-align: center; padding-bottom: 20px;">
-										<div style="font-size: 28px; font-weight: bold; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 10px;">
-											<span style="color: #3B82F6; display: flex; align-items: center;">
-												<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain-circuit-icon lucide-brain-circuit"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg>
-											</span>
-											${APP_NAME}
-										</div>
-									</div>
+							<td align="center" style="background-color: #0A0F1F; padding: 20px;">
+								<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" class="container">
+									<tr>
+										<td align="center" valign="top" style="padding: 30px; background-color: #111827; border-radius: 8px; border: 1px solid #374151;">
+											<!-- Header -->
+											<table border="0" cellpadding="0" cellspacing="0" width="100%">
+												<tr>
+													<td align="center" style="padding-bottom: 20px;">
+														<table border="0" cellpadding="0" cellspacing="0">
+															<tr>
+																<td align="center" style="font-size: 28px; font-weight: bold; color: #FFFFFF;">
+																	<img src="https://res.cloudinary.com/dcq0t9ts0/image/upload/v1760066491/brain-circuit_m0k01d.png" alt="${APP_NAME} Logo" width="32" height="32" style="display: inline-block; border: 0; vertical-align: middle; margin-right: 6px;">
+																	<span style="vertical-align: middle;">${APP_NAME}</span>
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
 
-									<div style="padding: 20px 0; text-align: center;">
-										<h1 style="color: #FFFFFF; font-size: 24px; margin-top: 0;">We've Received Your Message!</h1>
-										<p style="color: #9CA3AF; font-size: 16px; line-height: 1.5;">
-											Hello ${fullname},
-										</p>
-										<p style="color: #9CA3AF; font-size: 16px; line-height: 1.5;">
-											Thanks for reaching out. This is an automated confirmation that we have successfully received your message. I'll review it and get back to you as soon as possible.
-										</p>
-										<p style="color: #9CA3AF; font-size: 16px; line-height: 1.5;">
-											Please allow 1-2 business days for a response.
-										</p>
-									</div>
+											<!-- Body -->
+											<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-top: 20px;">
+												<tr>
+													<td align="center" style="text-align: center;">
+														<h1 style="color: #FFFFFF; font-size: 24px; margin: 0 0 20px 0; font-weight: bold;">We've Received Your Message!</h1>
+														<p style="color: #9CA3AF; font-size: 16px; line-height: 1.5; margin: 0 0 15px 0;">
+															Hello ${fullname},
+														</p>
+														<p style="color: #9CA3AF; font-size: 16px; line-height: 1.5; margin: 0 0 15px 0;">
+															Thanks for reaching out. This is an automated confirmation that we have successfully received your message. I'll review it and get back to you as soon as possible.
+														</p>
+														<p style="color: #9CA3AF; font-size: 16px; line-height: 1.5; margin: 0;">
+															Please allow 1-2 business days for a response.
+														</p>
+													</td>
+												</tr>
+											</table>
 
-									<div style="padding: 20px 0; text-align: center;">
-										<a href="https://streakifyy.vercel.app" style="background-color: #3B82F6; color: #FFFFFF; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Visit Our Website</a>
-									</div>
+											<!-- CTA Button -->
+											<table border="0" cellpadding="0" cellspacing="0" width="100%">
+												<tr>
+													<td align="center" style="padding: 30px 0;">
+														<table border="0" cellspacing="0" cellpadding="0">
+															<tr>
+																<td align="center" style="border-radius: 8px;" bgcolor="#3B82F6">
+																	<a href="https://streakifyy.vercel.app" target="_blank" style="font-size: 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF; text-decoration: none; border-radius: 8px; padding: 12px 24px; border: 1px solid #3B82F6; display: inline-block; font-weight: bold;">Visit Our Website</a>
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
 
-									<div style="text-align: center; padding-top: 20px; border-top: 1px solid #374151; font-size: 12px; color: #6B7280;">
-										<p style="margin:0;">&copy; ${new Date().getFullYear()} ${APP_NAME}. All rights reserved.</p>
-									</div>
-								</div>
+											<!-- Footer -->
+											<table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px solid #374151;">
+												<tr>
+													<td align="center" style="padding-top: 20px; font-size: 12px; color: #6B7280;">
+														<p style="margin:0;">&copy; ${new Date().getFullYear()} ${APP_NAME}. All rights reserved.</p>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</table>
