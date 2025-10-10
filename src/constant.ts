@@ -9,6 +9,7 @@ export const APP_NAME = "Streakify";
 
 // --- EMAIL USERNAME ---
 export const EMAIL_USERNAME = "codehell7@gmail.com";
+export const ADMIN_EMAIL = "ameensid7@outlook.com";
 
 // --- GEMINI AI ---
 export const MODEL_NAME = "gemini-2.5-flash-lite";
@@ -185,6 +186,8 @@ export const EMAIL_SUBJECTS = {
 	INACTIVE_USER: "Your discipline is waiting for you...",
 	UPCOMING_DISCIPLINE_REMINDER: (disciplineName: string) => `Get Ready! Your Discipline '${disciplineName}' Starts Tomorrow`,
 	WEEKLY_PROGRESS_REPORT: `Your Weekly Summary from ${APP_NAME}`,
+	CONTACT_FORM_CONFIRMATION: `We've Received Your Message | ${APP_NAME}`,
+	CONTACT_FORM_ADMIN_NOTIFICATION: (reason: string) => `New Contact Message (${reason}) from ${APP_NAME}`,
 } as const;
 
 // --- MODELS ---

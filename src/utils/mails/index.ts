@@ -7,6 +7,8 @@ import { sendUpcomingDisciplineReminderEmail } from "./sendUpcomingDisciplineRem
 import { sendVerificationEmail } from "./sendVerificationEmail";
 import { sendWeeklyProgressReportEmail } from "./sendWeeklyProgressReportEmail";
 import { sendWelcomeEmail } from "./sendWelcomeEmail";
+import { sendContactFormConfirmationEmail } from "./sendContactFormConfirmationEmail";
+import { sendContactFormNotificationEmail } from "./sendContactFormNotificationEmail";
 
 export {
 	sendDailyReminderEmail,
@@ -17,5 +19,7 @@ export {
 	sendUpcomingDisciplineReminderEmail,
 	sendVerificationEmail,
 	sendWeeklyProgressReportEmail,
-	sendWelcomeEmail
+	sendWelcomeEmail,
+	sendContactFormConfirmationEmail,
+	sendContactFormNotificationEmail,
 };
