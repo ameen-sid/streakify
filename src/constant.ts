@@ -95,6 +95,11 @@ export const CRON_ROUTES = {
 	WEEKLY_PROGRESS_REPORT: `${API_BASE_URL}/cron/weekly-progress/report`,
 } as const;
 
+// --- CONTACT ROUTES ---
+export const CONTACT_ROUTES = {
+	SUBMIT_CONTACT_FORM: `${API_BASE_URL}/support/contact-messages`,
+} as const;
+
 // --- NAVIGATION ---
 export const APP_NAVIGATION_LINKS = [
 	{ name: "Today's Log", href: '/logs/today', icon: ListTodo },
