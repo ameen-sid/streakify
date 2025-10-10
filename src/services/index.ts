@@ -4,6 +4,7 @@ import { getDisciplines, createDiscipline, getDisciplineById, updateDiscipline, 
 import { getTasksForDiscipline, createTask, getTaskById, updateTask, deleteTask } from "./task.service";
 import { getDashboardData, getHighlightsForMonth } from "./dashboard.service";
 import { getDailyLog, saveHighlight, updateTaskStatus, getLogByDate } from "./dailylog.service";
+import { submitContactForm } from "./contact.service";
 
 export {
 	// auth
@@ -48,5 +49,8 @@ export {
 	getDailyLog,
 	saveHighlight,
 	updateTaskStatus,
-	getLogByDate
+	getLogByDate,
+
+	// contact form
+	submitContactForm,
 };

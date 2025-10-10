@@ -9,6 +9,7 @@ export const APP_NAME = "Streakify";
 
 // --- EMAIL USERNAME ---
 export const EMAIL_USERNAME = "codehell7@gmail.com";
+export const ADMIN_EMAIL = "ameensid7@outlook.com";
 
 // --- GEMINI AI ---
 export const MODEL_NAME = "gemini-2.5-flash-lite";
@@ -93,6 +94,11 @@ export const CRON_ROUTES = {
 	DAILY_REMINDERS: `${API_BASE_URL}/cron/daily-reminders`,
 	INACTIVE_USERS: `${API_BASE_URL}/cron/inactive-users`,
 	WEEKLY_PROGRESS_REPORT: `${API_BASE_URL}/cron/weekly-progress/report`,
+} as const;
+
+// --- CONTACT ROUTES ---
+export const CONTACT_ROUTES = {
+	SUBMIT_CONTACT_FORM: `${API_BASE_URL}/support/contact-messages`,
 } as const;
 
 // --- NAVIGATION ---
@@ -186,6 +192,8 @@ export const EMAIL_SUBJECTS = {
 	INACTIVE_USER: "Your discipline is waiting for you...",
 	UPCOMING_DISCIPLINE_REMINDER: (disciplineName: string) => `Get Ready! Your Discipline '${disciplineName}' Starts Tomorrow`,
 	WEEKLY_PROGRESS_REPORT: `Your Weekly Summary from ${APP_NAME}`,
+	CONTACT_FORM_CONFIRMATION: `We've Received Your Message | ${APP_NAME}`,
+	CONTACT_FORM_ADMIN_NOTIFICATION: (reason: string) => `New Contact Message (${reason}) from ${APP_NAME}`,
 } as const;
 
 // --- MODELS ---
@@ -194,9 +202,11 @@ export const MODEL_NAMES = {
 	DISCIPLINE: 'Discipline',
 	TASK: 'Task',
 	DAY: 'Day',
+	CONTACT_MESSAGE: 'ContactMessage',
 } as const;
 export const GENDER_OPTIONS = ["Male", "Female"] as const;
 export const DEFAULT_AVATAR = "https://placehold.co/100x100/E2E8F0/4A5568?text=AD";
+export const CONTACT_MESSAGE_REASONS = ["General Inquiry", "Bug Report", "Feature Request", "Account Support"] as const;
 
 // COOKIES OPTIONS
 export const COOKIE_OPTIONS: Partial<ResponseCookie> = {
