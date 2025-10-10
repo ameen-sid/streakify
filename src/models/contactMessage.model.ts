@@ -24,8 +24,6 @@ const contactMessageSchema = new Schema<ContactMessageDocument>({
 	message: {
 		type: String,
 		required: [true, "Message is required"],
-		minlength: [50, "Message must be at least 50 characters long"],
-        maxlength: [5000, "Message cannot exceed 5000 characters"],
 	}
 },
 	{ timestamps: true }
