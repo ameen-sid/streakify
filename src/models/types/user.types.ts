@@ -4,13 +4,14 @@ export interface IUser {
 	_id: Types.ObjectId;
 	username: string;
 	email: string;
-	fullname: string;
-	avatar: string;
+	role: string;		// default
+	fullname: string;	// (optional) store when user want
+	avatar: string;		// default + generate
 	dateOfBirth: Date;	// (optional) store when user want
-	gender: string;
+	gender: string;		// (optional) store when user want
 	password: string;
 	refreshToken: string;	// (optional) store when user login, and delete when user account is deactivated
-	isVerified: boolean;
+	isVerified: boolean;	// default 
 	verifyEmailToken: string;	// (optional) store when user verify email, and delete when user verified
 	resetPasswordToken: string;	// (optional) store when user request reset password, and delete when password is reset
 	resetPasswordExpires: Date;	// (optional) store when user request reset password, and delete when password is reset

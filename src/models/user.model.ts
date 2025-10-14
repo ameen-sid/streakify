@@ -2,7 +2,7 @@ import { Schema, model, models } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserDocument, UserDocumentMethods, UserModel } from "@/models/types";
-import { MODEL_NAMES, GENDER_OPTIONS, DEFAULT_AVATAR } from "@/constant";
+import { MODEL_NAMES, ROLE_OPTIONS, GENDER_OPTIONS, DEFAULT_AVATAR } from "@/constant";
 import { Discipline, Task, Day } from "@/models";
 // import "@/models/user.model";
 // import "@/models/discipline.model";
@@ -26,13 +26,16 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 		trim: true,
 		index: true,
 	},
+	role: {
+		type: String,
+		enum: ROLE_OPTIONS,
+		default: ROLE_OPTIONS[1],
+	},
 	fullname: {
 		type: String,
-		required: [true, "Fullname is required"],
 	},
 	avatar: {
 		type: String,
-		required: true,
 		default: DEFAULT_AVATAR,
 	},
 	dateOfBirth: {
@@ -41,7 +44,6 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	gender: {
 		type: String,
 		enum: GENDER_OPTIONS,
-		required: [true, "Gender is required"],
 	},
 	password: {
 		type: String,
