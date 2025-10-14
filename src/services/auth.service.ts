@@ -5,19 +5,14 @@ import { AUTH_ROUTES, HEADERS } from "@/constant";
 type UserSignUpData = {
     username: string;
     email: string;
-    fullname: string;
-    gender: string;
     password: string;
-	confirmPassword: string;
 };
 
 export const signUpUser = async (userData: UserSignUpData) => {
 
-	const { confirmPassword, ...dataToSend } = userData;
-
 	const response = await axios.post(
 		AUTH_ROUTES.SIGN_UP, 
-		dataToSend, 
+		userData, 
 		{ headers: HEADERS }
 	);
 	return response.data;
