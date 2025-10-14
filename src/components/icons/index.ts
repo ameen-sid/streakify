@@ -1,11 +1,13 @@
 import FacebookIcon from "./facebook-icon";
-import GoogleIcon from "./google-icon";
 import SparkleIconSingle from "./sparkle-icon-single";
 import SparkleIcon from "./sparkle-icon";
+import GoogleIcon from "./google-icon";
+import GithubIcon from "./github-icon";
 
 export {
 	FacebookIcon,
-	GoogleIcon,
 	SparkleIconSingle,
-	SparkleIcon
+	SparkleIcon,
+	GoogleIcon,
+	GithubIcon,
 };
