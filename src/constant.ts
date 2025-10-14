@@ -31,10 +31,11 @@ export const HEADERS = {
 
 // --- API ROUTES ---
 export const API_BASE_URL = "/api/v1";
+export const API_BASE_URL_V2 = "/api/v2";
 
 // --- AUTH ---
 export const AUTH_ROUTES = {
-	SIGN_UP: `${API_BASE_URL}/auth/signup`,
+	SIGN_UP: `${API_BASE_URL_V2}/auth/signup`,
 	RESEND_VERIFICATION_EMAIL: `${API_BASE_URL}/auth/resend-verification`,
 	VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
 	LOGIN: `${API_BASE_URL}/auth/login`,
