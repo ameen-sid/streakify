@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import connectDB from "@/database";
 import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
-import { HTTP_STATUS } from "@/constant";
+import { cookies } from "next/headers";
+import { HTTP_STATUS, COOKIE_OPTIONS } from "@/constant";
 import { 
     APIError, 
     APIResponse, 
@@ -53,15 +54,19 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		const verificationToken = generateToken(user._id);
         const hashedToken = hashToken(verificationToken);
-
         user.verifyEmailToken = hashedToken;
+
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+        const hashedRefreshToken = hashToken(refreshToken);
+        user.refreshToken = hashedRefreshToken;
 
 		const createdUser = await user.save({ session });
         if (!createdUser) {
             throw new APIError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Failed to create user");
         }
 
-		const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const verificationUrl = `${baseUrl}/verify-email/${verificationToken}`;
 
 		await sendVerificationEmail(
@@ -69,6 +74,10 @@ export const POST = asyncHandler(async (request: NextRequest) => {
             createdUser.username,
             verificationUrl
         );
+
+        const cookieStore = await cookies();
+        cookieStore.set("accessToken", accessToken, COOKIE_OPTIONS);
+        cookieStore.set("refreshToken", refreshToken, COOKIE_OPTIONS);
 
 		await session.commitTransaction();
 
