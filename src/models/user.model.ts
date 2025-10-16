@@ -2,7 +2,7 @@ import { Schema, model, models } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { UserDocument, UserDocumentMethods, UserModel } from "@/models/types";
-import { MODEL_NAMES, ROLE_OPTIONS, GENDER_OPTIONS, DEFAULT_AVATAR } from "@/constant";
+import { MODEL_NAMES, ROLE_OPTIONS, AUTH_PROVIDER_OPTIONS, GENDER_OPTIONS, DEFAULT_AVATAR } from "@/constant";
 import { Discipline, Task, Day } from "@/models";
 // import "@/models/user.model";
 // import "@/models/discipline.model";
@@ -26,11 +26,32 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 		trim: true,
 		index: true,
 	},
+	password: {
+		type: String,
+		required: function() {
+			return !this.authProvider || this.authProvider === "credentials";
+		},
+		select: false,
+	},
+
 	role: {
 		type: String,
 		enum: ROLE_OPTIONS,
-		default: ROLE_OPTIONS[1],
+		default: "User",
 	},
+
+	authProvider: {
+		type: String,
+		enum: AUTH_PROVIDER_OPTIONS,
+		default: "credentials",
+		index: true,
+	},
+	providerId: {
+		type: String,
+		unique: false,
+		sparse: true,
+	},
+
 	fullname: {
 		type: String,
 	},
@@ -45,13 +66,14 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 		type: String,
 		enum: GENDER_OPTIONS,
 	},
-	password: {
-		type: String,
-		required: [true, "Password is required"],
+	socialLinks: {
+		type: Schema.Types.Mixed
 	},
+
 	refreshToken: {
 		type: String,
 	},
+
 	isVerified: {
 		type: Boolean,
 		default: false,
@@ -59,12 +81,17 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	verifyEmailToken: {
 		type: String,
 	},
+	emailVerifiedAt: {
+		type: Date,
+	},
+
 	resetPasswordToken: {
 		type: String,
 	},
 	resetPasswordExpires: {
 		type: Date,
 	},
+
 	isDeleted: {
 		type: Boolean,
 	},
@@ -77,9 +104,67 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 	isDeactivated: {
 		type: Boolean,
 	},
+
+	lastLoginAt: {
+		type: Date,
+	},
+	loginCount: {
+		type: Number,
+		default: 0,
+	},
+	lastActiveAt: {
+		type: Date,
+	},
+	ipAddress: {
+		type: String,
+	},
+	userAgent: {
+		type: String,
+	},
+	logoutAt: {
+		type: Date,
+	},
+	lastPasswordChangedAt: {
+		type: Date,
+	},
+
+	settings: {
+		notifications: {
+			streakAlert: {
+				type: Boolean,
+				default: true,
+			},
+			newFeatureAlert: {
+				type: Boolean,
+				default: true,
+			},
+		},
+		preferences: {
+			timeZone: {
+				type: String,
+				default: "UTC",
+			},
+		},
+		privacy: {
+			isProfilePublic: {
+				type: Boolean,
+				default: true,
+			},
+			streakLeaderboardVisibility: {
+				type: Boolean,
+				default: true,
+			},
+		},
+	},
 },
 	{ timestamps: true }
 );
+
+
+userSchema.index({ email: 1 });
+userSchema.index({ username: 1 });
+userSchema.index({ authProvider: 1 });
+userSchema.index({ lastLoginAt: -1 });
 
 
 userSchema.pre<UserDocument>('save', async function (next) {
