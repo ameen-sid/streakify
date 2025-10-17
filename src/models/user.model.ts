@@ -31,7 +31,6 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 		required: function() {
 			return !this.authProvider || this.authProvider === "credentials";
 		},
-		select: false,
 	},
 
 	role: {
@@ -44,7 +43,6 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 		type: String,
 		enum: AUTH_PROVIDER_OPTIONS,
 		default: "credentials",
-		index: true,
 	},
 	providerId: {
 		type: String,
@@ -161,8 +159,6 @@ const userSchema = new Schema<UserDocument & UserDocumentMethods>({
 );
 
 
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
 userSchema.index({ authProvider: 1 });
 userSchema.index({ lastLoginAt: -1 });
 
