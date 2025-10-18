@@ -6,8 +6,9 @@ import Link from "next/link";
 import { BrainCircuit, LogOut, Menu, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { APP_NAME, APP_NAVIGATION_LINKS, DEFAULT_AVATAR } from "@/constant";
-import { getProfile, logoutUser } from "@/services";
+import { getProfile } from "@/services";
 import { AxiosError } from "axios";
+import { signOut } from "next-auth/react";
 
 type UserData = {
     fullname: string;
@@ -41,11 +42,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, user, date }: { sidebarOpen: boo
         const toastId = toast.loading("Logging out...");
         try {
 
-            await logoutUser();
+            await signOut({ redirectTo: "/", callbackUrl: "/" });
 
             toast.success("Logged Out", { id: toastId });
-
-            router.push("/");
         } catch(error) {
 
             if(error instanceof AxiosError) {
