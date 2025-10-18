@@ -3,15 +3,16 @@ import connectDB from "@/database";
 import { Discipline } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const GET = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
 
-	const disciplines = await Discipline.find({ owner: user._id })
+	const disciplines = await Discipline.find({ owner: user.id })
     .sort({ startDate: -1 });
 
 	return NextResponse.json(
@@ -33,8 +34,8 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
         session.startTransaction();
 
-        const user = await getAuthUser(request);
-        const userId = user._id;
+        const user = await getAuthUser();
+        const userId = user.id;
 
         const body = await request.json();
         const { name, description, startDate, endDate } = body;

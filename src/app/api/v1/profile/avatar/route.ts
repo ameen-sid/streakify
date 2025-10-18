@@ -6,19 +6,19 @@ import {
     APIError, 
     APIResponse, 
     asyncHandler, 
-    getAuthUser, 
     uploadOnCloudinary, 
     getPublicIdFromUrl, 
     deleteFromCloudinary, 
     sanitizeUser 
 } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
 
 	const formData = await request.formData();
     const file = formData.get('avatar') as File | null;

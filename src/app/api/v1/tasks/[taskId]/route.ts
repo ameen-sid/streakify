@@ -4,7 +4,8 @@ import { Discipline, Task, Day } from "@/models";
 import { IDiscipline, ITask } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 interface IPopulatedTask extends Omit<ITask, 'discipline'> {
 	discipline: IDiscipline;
@@ -14,7 +15,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
 
 	const { taskId } = await params;
     if (!taskId) {
@@ -27,7 +28,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 		select: 'owner'
 	});
 
-	if (!task || !task.discipline.owner.equals(user._id)) {
+	if (!task || !task.discipline.owner.equals(user.id)) {
         throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to view it.");
     }
 
@@ -45,7 +46,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
 
 	const { taskId } = await params;
     if (!taskId) {
@@ -64,7 +65,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 		select: 'owner'
 	});
 
-	if(!taskToUpdate || !taskToUpdate.discipline.owner.equals(user._id)) {
+	if(!taskToUpdate || !taskToUpdate.discipline.owner.equals(user.id)) {
         throw new APIError(HTTP_STATUS.NOT_FOUND, "Task not found or you do not have permission to edit it.");
 	}
 
@@ -103,7 +104,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
 		session.startTransaction();
 
-        const user = await getAuthUser(request);
+        const user = await getAuthUser();
 
         const { taskId } = params;
         if (!mongoose.Types.ObjectId.isValid(taskId)) {
@@ -117,7 +118,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
         const discipline = await Discipline.findOne({ 
 			_id: taskToDelete.discipline, 
-			owner: user._id 
+			owner: user.id 
 		})
 		.session(session);
 

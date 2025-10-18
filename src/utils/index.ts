@@ -7,7 +7,6 @@ import { generateAccessAndRefreshTokens } from "./generateAccessAndRefreshTokens
 import { generatePlaceholder } from "./generatePlaceholder";
 import { generateText } from "./generateText";
 import { generateToken } from "./generateToken";
-import { getAuthUser } from "./getAuthUser";
 import { getDisciplineState } from "./getDisciplineStatus";
 import { hashToken } from "./hashToken";
 import { mailSender } from "./mailSender";
@@ -25,7 +24,6 @@ export {
 	generatePlaceholder,
 	generateText,
 	generateToken,
-	getAuthUser,
 	getDisciplineState,
 	hashToken,
 	mailSender,

@@ -3,7 +3,9 @@ import { Day } from "@/models";
 import { ITask, IDay } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { MODEL_NAMES, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
+// import { auth } from "@/lib/auth";
 
 interface IPopulatedDay extends Omit<IDay, 'taskState'> {
     taskState: {
@@ -22,8 +24,15 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
+
+	// const session = await auth();
+	// if(!session?.user) {
+	// 	throw new APIError(HTTP_STATUS.BAD_REQUEST, "Unauthorized");
+	// }
+
+	// const userId = session.user.id;
 
 	const { searchParams } = new URL(request.url);
     const month = searchParams.get("month");

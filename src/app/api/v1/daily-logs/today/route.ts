@@ -2,14 +2,15 @@ import connectDB from "@/database";
 import { Discipline, Task, Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const GET = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
 
 	const today = new Date();
     today.setUTCHours(0, 0, 0, 0);

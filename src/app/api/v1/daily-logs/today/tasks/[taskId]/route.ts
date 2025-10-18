@@ -3,7 +3,8 @@ import connectDB from "@/database";
 import { Discipline, Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const PATCH = asyncHandler(async (request: NextRequest, { params }: { params: { taskId: string } }) => {
 
@@ -14,8 +15,8 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
 		session.startTransaction();
 
-		const user = await getAuthUser(request);
-        const userId = user._id;
+		const user = await getAuthUser();
+        const userId = user.id;
 
 		const { taskId } = await params;
         if (!taskId) {

@@ -4,13 +4,14 @@ import { Discipline, Task, Day } from "@/models";
 import { ITaskState } from "@/models/types";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
 
 	const { disciplineId } = await params;
     if (!disciplineId) {
@@ -19,7 +20,7 @@ export const GET = asyncHandler(async (request: NextRequest, { params }: { param
 
 	const discipline = await Discipline.findOne({ 
 		_id: disciplineId, 
-		owner: user._id 
+		owner: user.id 
 	})
 	.select("_id name");
 
@@ -51,7 +52,7 @@ export const POST = asyncHandler(async (request: NextRequest, { params }: { para
 
         session.startTransaction();
 
-        const user = await getAuthUser(request);
+        const user = await getAuthUser();
 
         const { disciplineId } = await params;
         if (!disciplineId) {
@@ -60,7 +61,7 @@ export const POST = asyncHandler(async (request: NextRequest, { params }: { para
 
         const discipline = await Discipline.findOne({ 
             _id: disciplineId, 
-            owner: user._id 
+            owner: user.id 
         })
         .session(session);
 

@@ -7,11 +7,11 @@ import {
 	APIError, 
 	APIResponse, 
 	asyncHandler, 
-	getAuthUser, 
 	generateToken, 
 	hashToken
 } from "@/utils";
 import { sendDeleteAccountScheduleEmail } from "@/utils/mails";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const DELETE = asyncHandler(async (request: NextRequest) => {
 
@@ -22,8 +22,8 @@ export const DELETE = asyncHandler(async (request: NextRequest) => {
 
 		session.startTransaction();
 
-		const user = await getAuthUser(request);
-        const userId = user._id;
+		const user = await getAuthUser();
+        const userId = user.id;
 
 		const userToDelete = await User.findById(userId).session(session);
         if (!userToDelete) {

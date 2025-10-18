@@ -6,10 +6,10 @@ import {
 	APIError, 
 	APIResponse, 
 	asyncHandler, 
-	getAuthUser, 
 	generateAccessAndRefreshTokens, 
 	hashToken 
 } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
 
@@ -20,7 +20,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 		throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Refresh Token is required.");
 	}
 
-	const userId = (await getAuthUser(request))._id;
+	const userId = (await getAuthUser()).id;
 
 	const user = await User.findById(userId);
 	if(!user) {

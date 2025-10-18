@@ -2,20 +2,33 @@ import connectDB from "@/database";
 import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser, sanitizeUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler, sanitizeUser } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const GET = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
+	if(!user) {
+		throw new APIError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized");
+	}
 
-	const sanitizedUser = sanitizeUser(user);
+	// const session = await auth();
+	// if(!session?.user) {
+	// 	throw new APIError(HTTP_STATUS.BAD_REQUEST, "Unauthorized");
+	// }
+	
+	// const userId = session.user.id;
+	const userId = user.id;
+
+	// const sanitizedUser = sanitizeUser(session?.user);
 
 	return NextResponse.json(
         new APIResponse(
             HTTP_STATUS.OK,
-            sanitizedUser,
+            // session?.user,
+            user,
             "User profile fetched successfully",
         ),
         { status: HTTP_STATUS.OK }
@@ -26,8 +39,8 @@ export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
 
 	const body = await request.json();
     const { fullname, dateOfBirth, gender } = body;

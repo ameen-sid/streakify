@@ -2,14 +2,15 @@ import connectDB from "@/database";
 import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const PATCH = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
 
 	const body = await request.json();
     const { currentPassword, newPassword } = body;

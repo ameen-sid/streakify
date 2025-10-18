@@ -3,20 +3,21 @@ import connectDB from "@/database";
 import { Discipline, Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { DISCIPLINE_STATUS, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { disciplineId: string } }) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
 
 	const { disciplineId } = await params;
 	if (!disciplineId) {
         throw new APIError(HTTP_STATUS.BAD_REQUEST, "Discipline ID is required");
     }
 
-	const discipline = await Discipline.findOne({ _id: disciplineId, owner: user._id });
+	const discipline = await Discipline.findOne({ _id: disciplineId, owner: user.id });
     if (!discipline) {
         throw new APIError(HTTP_STATUS.NOT_FOUND, "Discipline not found");
     }
@@ -40,7 +41,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
 		session.startTransaction();
 
-		const user = await getAuthUser(request);
+		const user = await getAuthUser();
 
 		const { disciplineId } = await params;
 		if (!disciplineId) {
@@ -55,7 +56,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
 		const originalDiscipline = await Discipline.findOne({
 			_id: disciplineId,
-			owner: user._id,
+			owner: user.id,
 		})
 		.session(session);
 
@@ -146,7 +147,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
+	const user = await getAuthUser();
 
 	const { disciplineId } = await params;
     if (!disciplineId) {
@@ -155,7 +156,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, { params }: { pa
 
 	const disciplineToDelete = await Discipline.findOne({ 
 		_id: disciplineId, 
-		owner: user._id 
+		owner: user.id 
 	});
 
 	if (!disciplineToDelete) {

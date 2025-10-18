@@ -2,14 +2,15 @@ import connectDB from "@/database";
 import { Day } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { MODEL_NAMES, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const GET = asyncHandler(async (request: NextRequest, { params }: { params: { date: string } }) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
 
 	const { date } = await params;
     if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {

@@ -2,14 +2,15 @@ import connectDB from "@/database";
 import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
 import { COOKIE_OPTIONS, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, getAuthUser } from "@/utils";
+import { APIError, APIResponse, asyncHandler } from "@/utils";
+import { getAuthUser } from "@/lib/getAuthUser";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
 
 	await connectDB();
 
-	const user = await getAuthUser(request);
-    const userId = user._id;
+	const user = await getAuthUser();
+    const userId = user.id;
 
 	const updatedUser = await User.findByIdAndUpdate(
         userId,
