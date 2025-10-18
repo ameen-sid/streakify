@@ -2,21 +2,17 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const PUBLIC_PATHS = [
-	'/signup',
-	'/signup/confirmation',
-	'/verify-email',
-	'/login',
+	'/auth',
+	'/verify-email/token',
 	'/forgot-password',
-	'/reset-password',
+	'/reset-password/token',
 	'/reset-password/success',
-	'/recover-account',
-	'/dashboard/profile/settings/deletion-confirmation',
+	'/recover-account/token',
 ];
 
 const isPublicRoute = (path: string): boolean => {
 
 	if(PUBLIC_PATHS.includes(path))	return true;
-
 	return (
 		path.startsWith('/verify-email/') ||
 		path.startsWith('/reset-password/') ||
@@ -24,13 +20,34 @@ const isPublicRoute = (path: string): boolean => {
 	);
 }
 
+const isPrivateRoute = (path: string): boolean => {
+	return (
+		path.startsWith('/logs/') ||
+		path.startsWith('/disciplines/') ||
+		path.startsWith('/dashboard/')
+	);
+}
+
+const isOldRoute = (path: string): boolean => {
+
+	const oldRoutes = ['/signup', '/signup/confirmation', '/login'];
+	if(oldRoutes.includes(path))	return true;
+	return false;
+}
+
 export const middleware = async (request: NextRequest) => {
 
 	const { pathname } = request.nextUrl;
-	const token = request.cookies.get("accessToken")?.value;
+	const token = request.cookies.get("authjs.session-token")?.value;
+
+	// if user try to go old pages then redirect to home
+	if(isOldRoute(pathname)) {
+		return NextResponse.redirect(new URL("/", request.url));
+	}
 
 	const userLoggedIn = !!token;
 	const publicRoute = isPublicRoute(pathname);
+	const privateRoute = isPrivateRoute(pathname);
 
 	// if user is logged in and tries to access public pages, redirect to home
 	if(userLoggedIn && publicRoute) {
@@ -38,8 +55,8 @@ export const middleware = async (request: NextRequest) => {
 	}
 
 	// if user is not logged in and tries to access private pages, redirect to login
-	if(!userLoggedIn && !publicRoute) {
-		return NextResponse.redirect(new URL("/login", request.url));
+	if(!userLoggedIn && privateRoute) {
+		return NextResponse.redirect(new URL("/auth", request.url));
 	}
 
 	return NextResponse.next();
@@ -47,24 +64,25 @@ export const middleware = async (request: NextRequest) => {
 
 export const config = {
 	matcher: [
-		// Public paths
-		'/signup/:path*',
-		'/verify-email',
-		'/login',
-		'/forgot-password',
-		'/reset-password/',
-		'/reset-password/success',
-		'/recover-account',
-		'/dashboard/profile/settings/deletion-confirmation',
+		// Neutral Paths (neurtal paths are those, in which user can go irrespective of login)
+		'/',
+		'/contact-us',
+		'/about-us',
 
-		// Private Paths
-		'/dashboard',
-		'/dashboard/highlights',
-		'/dashboard/profile',
-		'/dashboard/profile/edit',
-		'/dashboard/profile/change-password',
-		'/dashboard/profile/settings',
+		// Public Paths (public paths are those, in which user can go after login)
+		'/auth',
+		'/verify-email/:path*',
+		'/forgot-password',
+		'/reset-password/:path*',
+		'/recover-account/:path*',
+		
+		// Private Paths (private paths are those, in which user can go after login)
 		'/logs/:path*',
 		'/disciplines/:path*',
+		'/dashboard/:path*',
+		
+		// Old paths
+		'/signup/:path*',
+		'/login',
 	],
 };
