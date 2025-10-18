@@ -30,32 +30,33 @@ const Header = () => {
 	return (
 		<header className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-lg border-b border-gray-800">
 			<div className="container mx-auto px-6 py-4 flex justify-between items-center">
-				<div className="flex items-center gap-3">
-					<Link href="/">
-						<BrainCircuit className="w-8 h-8 text-blue-400" />
-					</Link>
-					<span className="text-2xl font-bold tracking-tight">
-						{APP_NAME}
-					</span>
+				<div className="flex-1 flex justify-start">
+					<div className="flex items-center gap-3">
+						<Link href="/">
+							<BrainCircuit className="w-8 h-8 text-blue-400" />
+						</Link>
+						<span className="text-2xl font-bold tracking-tight">
+							{APP_NAME}
+						</span>
+					</div>
 				</div>
 
-				<nav className="hidden md:flex items-center gap-6">
+				<nav className="hidden md:flex flex-1 justify-center items-center gap-6">
 					{NAV_LINKS.map(link => <NavLink key={link.label} {...link} />)}
 				</nav>
-				<div className="hidden md:flex items-center gap-4">
-					<Link href="/login">
-						<button className="text-gray-300 hover:text-white cursor-pointer transition-colors">Sign In</button>
-					</Link>
-					<Link href="/signup">
-						<button className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-semibold px-5 py-2 rounded-lg">Create Account</button>
+				<div className="hidden md:flex flex-1 justify-end items-center">
+					<Link href="/auth">
+						<button className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-semibold px-5 py-2 rounded-lg">
+							Get Started
+						</button>
 					</Link>
 				</div>
 
 				<div className="md:hidden">
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
-                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                </div>
+					<button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
+						{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+					</button>
+				</div>
 			</div>
 
 			<motion.div
@@ -68,12 +69,9 @@ const Header = () => {
                     <nav className="flex flex-col items-center gap-4 p-6">
 						{NAV_LINKS.map(link => <NavLink key={link.label} {...link} />)}
                         <div className="w-full border-t border-gray-800 my-2"></div>
-                        <Link href="/login">
-							<button className="text-gray-300 cursor-pointer hover:text-white">Sign In</button>
-						</Link>
-						<Link href="/signup">
+                        <Link href="/auth" className="w-full">
 							<button className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg w-full">
-								Create Account
+								Get Started
 							</button>
 						</Link>
                     </nav>
