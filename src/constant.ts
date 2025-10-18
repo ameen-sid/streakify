@@ -180,6 +180,14 @@ export const SENSITIVE_USER_FIELDS = [
 	"deletedAt",
 	"deleteAccountToken",
 	"isDeactivated",
+	"lastLoginAt",
+	"loginCount",
+	"lastActiveAt",
+	"ipAddress",
+	"userAgent",
+	"logoutAt",
+	"lastPasswordChangedAt",
+	"settings",
 ] as const;
 
 // --- EMAIL CONSTANTS ---

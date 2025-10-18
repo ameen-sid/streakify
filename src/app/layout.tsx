@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "@/components/wrappers";
 import "./globals.css";
 import { APP_NAME } from "@/constant";
 
@@ -21,10 +22,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${roboto.variable}`} >
-				<Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 1000, error: { duration: 3000 } }} />
-				{children}
-			</body>
+			<AuthProvider>
+				<body className={`${roboto.variable}`} >
+					<Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 1000, error: { duration: 3000 } }} />
+					{children}
+				</body>
+			</AuthProvider>
 		</html>
 	);
 }

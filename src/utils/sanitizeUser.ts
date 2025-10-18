@@ -4,7 +4,7 @@ import { SENSITIVE_USER_FIELDS } from "@/constant";
 type SensitiveField = typeof SENSITIVE_USER_FIELDS[number];
 
 // return type excludes sensitive fields
-type SafeUser = Omit<IUser, SensitiveField>;
+export type SafeUser = Omit<IUser, SensitiveField | "_id"> & { id: string };
 
 const sanitizeUser = (user: UserDocument): SafeUser => {
 
@@ -18,9 +18,22 @@ const sanitizeUser = (user: UserDocument): SafeUser => {
 		deletedAt,
 		deleteAccountToken,
 		isDeactivated,
+		lastLoginAt,
+		loginCount,
+		lastActiveAt,
+		ipAddress,
+		userAgent,
+		logoutAt,
+		lastPasswordChangedAt,
+		settings,
+		_id,
 		...safeUser
 	} = user.toObject();
-	return safeUser;
+
+	return {
+		...safeUser,
+		id: user._id.toString(),
+	};
 };
 
 export { sanitizeUser };
