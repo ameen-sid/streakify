@@ -2,7 +2,7 @@ import { IUser, UserDocument, UserDocumentMethods, UserModel } from "./user.type
 import { IDiscipline, DisciplineDocument, DisciplineModel } from "./discipline.types";
 import { ITask, TaskDocument, TaskModel } from "./task.types";
 import { ITaskState, IDay, DayDocument, DayModel } from "./day.types";
-import { IContactMessage, ContactMessageDocument, ContactMessageModel } from "./contactmessage.types";
+import { IContactMessage, ContactMessageDocument, ContactMessageModel } from "./contactMessage.types";
 
 export type {
 	// user
