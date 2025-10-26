@@ -38,7 +38,7 @@ const isOldRoute = (path: string): boolean => {
 export const middleware = async (request: NextRequest) => {
 
 	const { pathname } = request.nextUrl;
-	const token = request.cookies.get("authjs.session-token")?.value;
+	const token = request.cookies.get("authjs.session-token")?.value || request.cookies.get("__Secure-authjs.session-token")?.value;
 
 	// if user try to go old pages then redirect to home
 	if(isOldRoute(pathname)) {
