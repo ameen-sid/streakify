@@ -30,7 +30,7 @@ const HeroSection = () => {
 					a time.
 				</p>
 				<div className="flex justify-center items-center gap-4">
-					<Link href="/signup">
+					<Link href="/auth">
 						<motion.button
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
