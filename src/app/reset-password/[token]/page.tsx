@@ -184,7 +184,7 @@ const ResetPasswordPage = () => {
                                 <p className="text-gray-400 mb-8">
                                     Your password has been updated. You can now log in with your new password.
                                 </p>
-                                <Link href="/login">
+                                <Link href="/auth">
                                     <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center justify-center gap-2">
                                         Back to Login <ArrowRight size={18} />
                                     </button>
@@ -192,7 +192,7 @@ const ResetPasswordPage = () => {
                             </>
                         )}
                         <div className="mt-8 pt-6 border-t border-gray-800 w-full">
-                            <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <Link href="/auth" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
                                 <ArrowLeft size={16} />
                                 Back to Login
                             </Link>

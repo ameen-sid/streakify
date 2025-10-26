@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, ReactNode } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Mail, BrainCircuit, CheckCircle, AlertTriangle, Loader, ArrowRight } from "lucide-react";
+import { Mail, CheckCircle, AlertTriangle, Loader, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { verifyEmail, resendVerificationEmail } from "@/services";
 import { VerificationCard } from "@/components/pages/verify-email";
@@ -63,7 +63,7 @@ const VerifyEmailPage = () => {
 
         if (status === 'success') {
             const redirectTimer = setTimeout(() => {
-                router.push('/dashboard');
+                router.push('/auth');
             }, 3000); // Redirect after 3 seconds
             return () => clearTimeout(redirectTimer);
         }
@@ -106,10 +106,10 @@ const VerifyEmailPage = () => {
                     <VerificationCard
                         icon={<CheckCircle className="w-16 h-16 text-green-500" />}
                         title="Verification Successful"
-                        message="Your email has been verified. Redirecting you to the dashboard..."
+                        message="Your email has been verified. Redirecting you to the login page..."
                         actionButton={
-                            <button onClick={() => router.push('/dashboard')} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg cursor-pointer flex items-center justify-center gap-2">
-                                Go to Dashboard <ArrowRight size={18} />
+                            <button onClick={() => router.push('/auth')} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg cursor-pointer flex items-center justify-center gap-2">
+                                Login <ArrowRight size={18} />
                             </button>
                         }
                     />

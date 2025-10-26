@@ -41,7 +41,7 @@ const ResetPasswordSuccessPage = () => {
                             <p className="text-gray-400 mb-8">
                                 Your password has been updated. You can now log in with your new password.
                             </p>
-                            <Link href="/login">
+                            <Link href="/auth">
                                 <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg cursor-pointer flex items-center justify-center gap-2">
                                     Back to Login <ArrowRight size={18} />
                                 </button>

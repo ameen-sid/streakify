@@ -182,7 +182,7 @@ export const authOptions: NextAuthConfig = {
 
 							// OAuth's signup flow
 							const newUser = new User({
-								username: name?.trim(),
+								username: name?.trim().replace(/\s+/g, "-").toLowerCase(),
 								email: email,
 								avatar: image ? image : generatePlaceholder(name),
 								authProvider: account?.provider,

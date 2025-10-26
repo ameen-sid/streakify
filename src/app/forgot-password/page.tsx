@@ -135,7 +135,7 @@ const ForgotPasswordPage = () => {
                         )}
 
                         <div className="mt-8 pt-6 cursor-pointer border-t border-gray-800 w-full">
-                            <Link href="/login" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <Link href="/auth" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
                                 <ArrowLeft size={16} />
                                 Back to Login
                             </Link>

@@ -2,13 +2,11 @@ import mongoose from "mongoose";
 import connectDB from "@/database";
 import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { COOKIE_OPTIONS, HTTP_STATUS } from "@/constant";
+import { HTTP_STATUS } from "@/constant";
 import { 
 	APIError, 
 	APIResponse, 
 	asyncHandler, 
-	generateAccessAndRefreshTokens, 
 	hashToken, 
 	sanitizeUser 
 } from "@/utils";
@@ -55,11 +53,11 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		await session.commitTransaction();
 
-		const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+		// const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
-		const cookieStore = await cookies();
-		cookieStore.set("accessToken", accessToken, COOKIE_OPTIONS);
-		cookieStore.set("refreshToken", refreshToken, COOKIE_OPTIONS);
+		// const cookieStore = await cookies();
+		// cookieStore.set("accessToken", accessToken, COOKIE_OPTIONS);
+		// cookieStore.set("refreshToken", refreshToken, COOKIE_OPTIONS);
 
         return NextResponse.json(
             new APIResponse(

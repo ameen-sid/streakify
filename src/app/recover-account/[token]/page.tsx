@@ -29,7 +29,7 @@ const RecoverAccountPage = () => {
 
             toast.success("Account recovered successfully!", { id: toastId });
             setStatus('success');
-            router.push('/dashboard');
+            router.push('/auth');
         } catch (error) {
 
             const message = error instanceof AxiosError ? error.response?.data.message : "An API error occurred.";
@@ -51,7 +51,7 @@ const RecoverAccountPage = () => {
                         title="Account Recovered!"
                         message="Your account has been successfully restored. You can now log in."
                     >
-                        <Link href="/login">
+                        <Link href="/auth">
                             <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center justify-center gap-2">
                                 Proceed to Login <ArrowRight size={18} />
                             </button>
@@ -65,7 +65,7 @@ const RecoverAccountPage = () => {
                         title="Recovery Failed"
                         message={errorMessage || "This recovery link is invalid or has expired."}
                     >
-                        <Link href="/login">
+                        <Link href="/auth">
                             <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg">
                                 Back to Login
                             </button>

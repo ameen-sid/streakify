@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import connectDB from "@/database";
 import { User } from "@/models";
 import { NextRequest, NextResponse } from "next/server";
-import { COOKIE_OPTIONS, HTTP_STATUS } from "@/constant";
-import { APIError, APIResponse, asyncHandler, generateAccessAndRefreshTokens, hashToken } from "@/utils";
+import { HTTP_STATUS } from "@/constant";
+import { APIError, APIResponse, asyncHandler, hashToken } from "@/utils";
 import { sendRecoverAccountEmail } from "@/utils/mails";
 
 export const POST = asyncHandler(async (request: NextRequest) => {
@@ -56,7 +56,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 
 		await session.commitTransaction();
 
-		const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+		// const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
 		const response = NextResponse.json(
             new APIResponse(
@@ -67,8 +67,8 @@ export const POST = asyncHandler(async (request: NextRequest) => {
             { status: HTTP_STATUS.OK }
         );
 
-		response.cookies.set("accessToken", accessToken, COOKIE_OPTIONS);
-        response.cookies.set("refreshToken", refreshToken, COOKIE_OPTIONS);
+		// response.cookies.set("accessToken", accessToken, COOKIE_OPTIONS);
+        // response.cookies.set("refreshToken", refreshToken, COOKIE_OPTIONS);
 
         return response;
 	} catch(error) {
